@@ -1,5 +1,4 @@
 import { useMemo, useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -92,6 +91,12 @@ export function TopBarPreferencesPopover({
   const [language, setLanguage] = useState<LanguageCode>("en");
   const [currency, setCurrency] = useState<Currency>("AED");
 
+  // IMPORTANT: Select content renders in a portal, so hover-leave would close the popover.
+  // Track select-open state and block the close timer while a select is open.
+  const [languageSelectOpen, setLanguageSelectOpen] = useState(false);
+  const [currencySelectOpen, setCurrencySelectOpen] = useState(false);
+  const anySelectOpen = languageSelectOpen || currencySelectOpen;
+
   const closeTimer = useRef<number | null>(null);
 
   const cancelClose = () => {
@@ -101,11 +106,22 @@ export function TopBarPreferencesPopover({
 
   const scheduleClose = () => {
     cancelClose();
-    closeTimer.current = window.setTimeout(() => setOpen(false), 160);
+    if (anySelectOpen) return;
+    closeTimer.current = window.setTimeout(() => {
+      // re-check in case a select opened while waiting
+      if (!anySelectOpen) setOpen(false);
+    }, 160);
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover
+      open={open}
+      onOpenChange={(v) => {
+        // never auto-close while a select is open
+        if (!v && anySelectOpen) return;
+        setOpen(v);
+      }}
+    >
       <div
         className={cn("inline-flex", className)}
         onMouseEnter={() => {
@@ -164,6 +180,17 @@ export function TopBarPreferencesPopover({
             <div>
               <div className="text-sm font-semibold text-[#111827]">Language</div>
               <Select
+                open={languageSelectOpen}
+                onOpenChange={(v) => {
+                  setLanguageSelectOpen(v);
+                  if (v) {
+                    cancelClose();
+                    setOpen(true);
+                  } else {
+                    // when closing the select, don't immediately close popover unless mouse actually left
+                    cancelClose();
+                  }
+                }}
                 value={language}
                 onValueChange={(v) => setLanguage(v as LanguageCode)}
               >
@@ -172,7 +199,11 @@ export function TopBarPreferencesPopover({
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl p-2">
                   {languages.map((l) => (
-                    <SelectItem key={l.code} value={l.code} className="rounded-xl">
+                    <SelectItem
+                      key={l.code}
+                      value={l.code}
+                      className="rounded-xl"
+                    >
                       {l.label}
                     </SelectItem>
                   ))}
@@ -183,6 +214,16 @@ export function TopBarPreferencesPopover({
             <div>
               <div className="text-sm font-semibold text-[#111827]">Currency</div>
               <Select
+                open={currencySelectOpen}
+                onOpenChange={(v) => {
+                  setCurrencySelectOpen(v);
+                  if (v) {
+                    cancelClose();
+                    setOpen(true);
+                  } else {
+                    cancelClose();
+                  }
+                }}
                 value={currency}
                 onValueChange={(v) => setCurrency(v as Currency)}
               >
@@ -191,7 +232,11 @@ export function TopBarPreferencesPopover({
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl p-2">
                   {currencies.map((c) => (
-                    <SelectItem key={c.code} value={c.code} className="rounded-xl">
+                    <SelectItem
+                      key={c.code}
+                      value={c.code}
+                      className="rounded-xl"
+                    >
                       {c.label}
                     </SelectItem>
                   ))}
