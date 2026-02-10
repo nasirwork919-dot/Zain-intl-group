@@ -129,13 +129,13 @@ export function HeroSearch({
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className="h-11 w-full justify-between rounded-2xl border-white/50 bg-white/70 shadow-sm hover:bg-white"
+                  className="h-11 w-full justify-between rounded-2xl border-white/50 bg-white/70 text-foreground shadow-sm hover:bg-white hover:text-foreground"
                 >
                   <span className="inline-flex items-center gap-2 text-sm">
                     <SlidersHorizontal className="h-4 w-4" />
                     Price
                   </span>
-                  <Badge className="rounded-full bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))] hover:bg-[hsl(var(--brand))]/10">
+                  <Badge className="rounded-full bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))] hover:bg-[hsl(var(--brand))]/10 hover:text-[hsl(var(--brand-ink))]">
                     ≤ {Math.round(maxPrice / 1000000)}M
                   </Badge>
                 </Button>

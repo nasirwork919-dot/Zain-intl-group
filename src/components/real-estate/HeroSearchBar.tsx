@@ -95,11 +95,16 @@ export function HeroSearchBar({
               value={value.query}
               onChange={(e) => onChange({ ...value, query: e.target.value })}
               placeholder="Search by area or community"
-              className="h-12 w-full rounded-full border-white/20 bg-white/12 pl-11 text-white placeholder:text-white/60 ring-1 ring-white/15 backdrop-blur focus-visible:ring-2 focus-visible:ring-white/25"
+              className="hero-find-input h-12 w-full rounded-full border-white/20 bg-white/12 pl-11 text-white placeholder:text-white/60 ring-1 ring-white/15 backdrop-blur focus-visible:ring-2 focus-visible:ring-white/25"
               onKeyDown={(e) => {
                 if (e.key === "Enter") onSubmit();
               }}
             />
+            {/* Hard override to prevent any global/input styles making the field white on hero */}
+            <style>{`
+              .hero-find-input{ color: rgba(255,255,255,.92) !important; background-color: rgba(255,255,255,.12) !important; }
+              .hero-find-input::placeholder{ color: rgba(255,255,255,.6) !important; }
+            `}</style>
           </div>
         </div>
 
