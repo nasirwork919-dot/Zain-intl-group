@@ -13,7 +13,10 @@ import {
   type HeroBarFilters,
   HeroSearchBar,
 } from "@/components/real-estate/HeroSearchBar";
-import { HeroSearch, type SearchFilters } from "@/components/real-estate/HeroSearch";
+import {
+  HeroSearch,
+  type SearchFilters,
+} from "@/components/real-estate/HeroSearch";
 import {
   featuredProperties,
   featuredStats,
@@ -24,6 +27,7 @@ import { PropertyDialog } from "@/components/real-estate/PropertyDialog";
 import { LeadCapture } from "@/components/real-estate/LeadCapture";
 import { CuratedOpportunities } from "@/components/real-estate/CuratedOpportunities";
 import { ScrollingTextSeparator } from "@/components/real-estate/ScrollingTextSeparator";
+import { ExperienceStatsStrip } from "@/components/real-estate/ExperienceStatsStrip";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -198,6 +202,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Reference-style stats strip */}
+      <ExperienceStatsStrip className="-mt-2" />
 
       <ScrollingTextSeparator label="A handpicked edit" />
 
@@ -454,19 +461,16 @@ const Index = () => {
             <div className="p-6">
               <div className="text-sm font-semibold">What you’ll get</div>
               <ul className="mt-3 grid gap-2 text-sm text-muted-foreground">
-                {[
-                  "Project comparisons",
-                  "Payment plan breakdowns",
-                  "ROI & rental insights",
-                  "Priority access",
-                ].map((t) => (
-                  <li key={t} className="inline-flex items-center gap-2">
-                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))]">
-                      <CheckCircle2 className="h-4 w-4" />
-                    </span>
-                    <span>{t}</span>
-                  </li>
-                ))}
+                {["Project comparisons", "Payment plan breakdowns", "ROI & rental insights", "Priority access"].map(
+                  (t) => (
+                    <li key={t} className="inline-flex items-center gap-2">
+                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))]">
+                        <CheckCircle2 className="h-4 w-4" />
+                      </span>
+                      <span>{t}</span>
+                    </li>
+                  ),
+                )}
               </ul>
 
               <Button
