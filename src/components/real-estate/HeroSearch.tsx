@@ -45,11 +45,11 @@ export function HeroSearch({
       { label: "Waterfront", set: () => setQuery("marina") },
       { label: "Family", set: () => setQuery("villa") },
     ],
-    []
+    [],
   );
 
   return (
-    <Card className="rounded-3xl border-white/30 bg-white/65 p-4 shadow-[0_18px_50px_-30px_rgba(15,23,42,0.55)] backdrop-blur supports-[backdrop-filter]:bg-white/55">
+    <Card className="rounded-[5px] border-white/30 bg-white/65 p-4 shadow-[0_18px_50px_-30px_rgba(15,23,42,0.55)] backdrop-blur supports-[backdrop-filter]:bg-white/55">
       <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -65,7 +65,7 @@ export function HeroSearch({
               <button
                 key={p.label}
                 onClick={p.set}
-                className="rounded-full bg-white/70 px-3 py-1 text-xs font-medium text-foreground ring-1 ring-black/5 transition hover:bg-white"
+                className="rounded-[5px] bg-white/70 px-3 py-1 text-xs font-medium text-foreground ring-1 ring-black/5 transition hover:bg-white"
               >
                 {p.label}
               </button>
@@ -81,7 +81,7 @@ export function HeroSearch({
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search by community, project, keyword…"
-                className="h-11 rounded-2xl border-white/50 bg-white/70 pl-9 shadow-sm focus-visible:ring-[hsl(var(--brand))]/30"
+                className="h-11 rounded-[5px] border-white/50 bg-white/70 pl-9 shadow-sm focus-visible:ring-[hsl(var(--brand))]/30"
               />
             </div>
           </div>
@@ -91,7 +91,7 @@ export function HeroSearch({
               value={location}
               onValueChange={(v) => setLocation(v as SearchFilters["location"])}
             >
-              <SelectTrigger className="h-11 rounded-2xl border-white/50 bg-white/70 shadow-sm focus:ring-[hsl(var(--brand))]/30">
+              <SelectTrigger className="h-11 rounded-[5px] border-white/50 bg-white/70 shadow-sm focus:ring-[hsl(var(--brand))]/30">
                 <SelectValue placeholder="Any location" />
               </SelectTrigger>
               <SelectContent>
@@ -110,7 +110,7 @@ export function HeroSearch({
               value={String(beds)}
               onValueChange={(v) => setBeds(v === "any" ? "any" : Number(v))}
             >
-              <SelectTrigger className="h-11 rounded-2xl border-white/50 bg-white/70 shadow-sm focus:ring-[hsl(var(--brand))]/30">
+              <SelectTrigger className="h-11 rounded-[5px] border-white/50 bg-white/70 shadow-sm focus:ring-[hsl(var(--brand))]/30">
                 <SelectValue placeholder="Beds" />
               </SelectTrigger>
               <SelectContent>
@@ -129,18 +129,18 @@ export function HeroSearch({
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className="h-11 w-full justify-between rounded-2xl border-white/50 bg-white/70 text-foreground shadow-sm hover:bg-white hover:text-foreground"
+                  className="h-11 w-full justify-between rounded-[5px] border-white/50 bg-white/70 text-foreground shadow-sm hover:bg-white hover:text-foreground"
                 >
                   <span className="inline-flex items-center gap-2 text-sm">
                     <SlidersHorizontal className="h-4 w-4" />
                     Price
                   </span>
-                  <Badge className="rounded-full bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))] hover:bg-[hsl(var(--brand))]/10 hover:text-[hsl(var(--brand-ink))]">
+                  <Badge className="rounded-[5px] bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))] hover:bg-[hsl(var(--brand))]/10 hover:text-[hsl(var(--brand-ink))]">
                     ≤ {Math.round(maxPrice / 1000000)}M
                   </Badge>
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-[280px] rounded-2xl">
+              <PopoverContent className="w-[280px] rounded-[5px]">
                 <div className="text-sm font-semibold">Max budget (AED)</div>
                 <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
                   <span>1M</span>
@@ -164,11 +164,13 @@ export function HeroSearch({
           <div className="inline-flex items-center gap-2 text-xs text-muted-foreground">
             <BedDouble className="h-4 w-4" />
             <span>
-              Filters: {location === "any" ? "All" : location} · {beds === "any" ? "Any beds" : `${beds}+ beds`} · ≤ {Math.round(maxPrice / 1000000)}M
+              Filters: {location === "any" ? "All" : location} ·{" "}
+              {beds === "any" ? "Any beds" : `${beds}+ beds`} · ≤{" "}
+              {Math.round(maxPrice / 1000000)}M
             </span>
           </div>
           <Button
-            className="h-11 rounded-2xl bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
+            className="h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
             onClick={() => onSearch({ query, location, beds, maxPrice })}
           >
             Explore listings

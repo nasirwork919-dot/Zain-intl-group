@@ -42,23 +42,23 @@ export function HeroSearchBar({
                   operation: v as HeroBarFilters["operation"],
                 });
               }}
-              className="justify-start rounded-full bg-white/12 p-1 ring-1 ring-white/20 backdrop-blur"
+              className="justify-start rounded-[5px] bg-white/12 p-1 ring-1 ring-white/20 backdrop-blur"
             >
               <ToggleGroupItem
                 value="buy"
-                className="rounded-full px-4 text-white data-[state=on]:bg-white data-[state=on]:text-[hsl(var(--brand-ink))]"
+                className="rounded-[5px] px-4 text-white data-[state=on]:bg-white data-[state=on]:text-[hsl(var(--brand-ink))]"
               >
                 Buy
               </ToggleGroupItem>
               <ToggleGroupItem
                 value="rent"
-                className="rounded-full px-4 text-white data-[state=on]:bg-white data-[state=on]:text-[hsl(var(--brand-ink))]"
+                className="rounded-[5px] px-4 text-white data-[state=on]:bg-white data-[state=on]:text-[hsl(var(--brand-ink))]"
               >
                 Rent
               </ToggleGroupItem>
               <ToggleGroupItem
                 value="list"
-                className="rounded-full px-4 text-white data-[state=on]:bg-white data-[state=on]:text-[hsl(var(--brand-ink))]"
+                className="rounded-[5px] px-4 text-white data-[state=on]:bg-white data-[state=on]:text-[hsl(var(--brand-ink))]"
               >
                 List
               </ToggleGroupItem>
@@ -77,7 +77,7 @@ export function HeroSearchBar({
               })
             }
           >
-            <SelectTrigger className="mt-2 h-12 rounded-full border-white/20 bg-white/12 text-white ring-1 ring-white/15 backdrop-blur focus:ring-2 focus:ring-white/25">
+            <SelectTrigger className="mt-2 h-12 rounded-[5px] border-white/20 bg-white/12 text-white ring-1 ring-white/15 backdrop-blur focus:ring-2 focus:ring-white/25">
               <SelectValue placeholder="Choose" />
             </SelectTrigger>
             <SelectContent>
@@ -101,7 +101,7 @@ export function HeroSearchBar({
               value={value.query}
               onChange={(e) => onChange({ ...value, query: e.target.value })}
               placeholder="Search by area or community"
-              className="hero-find-input relative z-0 h-12 w-full rounded-full border-white/20 bg-white/12 pl-11 text-white placeholder:text-white/60 ring-1 ring-white/15 backdrop-blur focus-visible:ring-2 focus-visible:ring-white/25"
+              className="hero-find-input relative z-0 h-12 w-full rounded-[5px] border-white/20 bg-white/12 pl-11 text-white placeholder:text-white/60 ring-1 ring-white/15 backdrop-blur focus-visible:ring-2 focus-visible:ring-white/25"
               onKeyDown={(e) => {
                 if (e.key === "Enter") onSubmit();
               }}
@@ -118,7 +118,7 @@ export function HeroSearchBar({
           <div className="sr-only">Quick Search</div>
           <Button
             onClick={onSubmit}
-            className="h-12 w-full rounded-full bg-white text-[hsl(var(--brand-ink))] hover:bg-white/90"
+            className="h-12 w-full rounded-[5px] bg-white text-[hsl(var(--brand-ink))] hover:bg-white/90"
           >
             <Search className="mr-2 h-4 w-4" />
             Quick Search
