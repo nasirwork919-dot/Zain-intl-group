@@ -100,14 +100,16 @@ const Index = () => {
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0">
             <img
-              src="https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=2400&q=80"
+              src="https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=3840&q=95"
               alt="Dubai skyline"
               className="h-full w-full object-cover"
-              loading="lazy"
+              loading="eager"
             />
           </div>
-          <div className="absolute inset-0 bg-black/45" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/30 to-black/10" />
+
+          {/* Lighter overlays so the image stays clear */}
+          <div className="absolute inset-0 bg-black/25" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/20 to-black/5" />
         </div>
 
         <div className="relative mx-auto max-w-6xl px-4 pb-12 pt-10 sm:pb-16 lg:pt-16">
@@ -138,7 +140,7 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Primary hero search (PrimaDom-like) */}
+          {/* Primary hero search */}
           <div className="mx-auto mt-10 max-w-5xl">
             <HeroSearchBar
               value={heroBar}
@@ -156,7 +158,7 @@ const Index = () => {
             />
           </div>
 
-          {/* Secondary advanced filters (optional) */}
+          {/* Secondary advanced filters */}
           <div className="mx-auto mt-5 max-w-5xl">
             <HeroSearch
               onSearch={(f) => {
@@ -215,12 +217,10 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Reference-style stats strip */}
       <ExperienceStatsStrip className="-mt-2" />
 
       <ScrollingTextSeparator label="A handpicked edit" />
 
-      {/* Curated opportunities */}
       <CuratedOpportunities
         onOpenProperty={openProperty}
         onViewAll={() => {
@@ -244,7 +244,6 @@ const Index = () => {
         ]}
       />
 
-      {/* Projects */}
       <section id="projects" className="mx-auto max-w-6xl px-4 py-12">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -345,7 +344,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Explore Communities */}
       <div className="mx-auto max-w-6xl px-4">
         <div className="rounded-[5px] border border-white/40 bg-white/45 ring-1 ring-black/10">
           <ExploreCommunities
@@ -375,7 +373,6 @@ const Index = () => {
         ]}
       />
 
-      {/* Listings */}
       <section id="listings" className="mx-auto max-w-6xl px-4 pb-14">
         <div className="rounded-[5px] border border-white/40 bg-white/40 p-5 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.6)] ring-1 ring-black/10">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -430,7 +427,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* About */}
       <section id="about" className="mx-auto max-w-6xl px-4 pb-14">
         <div className="grid gap-4 md:grid-cols-12">
           <Card className="overflow-hidden rounded-[5px] border border-white/40 bg-white/65 shadow-[0_20px_60px_-45px_rgba(15,23,42,0.65)] ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55 md:col-span-7">
@@ -524,7 +520,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Contact */}
       <section id="contact" className="mx-auto max-w-6xl px-4 pb-16">
         <div className="grid gap-4 md:grid-cols-12 md:items-start">
           <div className="md:col-span-7">
