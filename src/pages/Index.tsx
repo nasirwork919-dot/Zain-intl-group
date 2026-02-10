@@ -261,7 +261,7 @@ const Index = () => {
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-12">
-          <Card className="rounded-3xl border-white/20 bg-white/65 p-5 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.55)] backdrop-blur supports-[backdrop-filter]:bg-white/55 md:col-span-5">
+          <Card className="rounded-3xl border-2 border-[hsl(var(--brand-ink))]/10 bg-white/65 p-5 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.55)] ring-1 ring-[hsl(var(--brand-ink))]/5 backdrop-blur supports-[backdrop-filter]:bg-white/55 transition hover:-translate-y-0.5 hover:border-[hsl(var(--brand))]/20 md:col-span-5">
             <div className="flex items-start gap-3">
               <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))]">
                 <Building2 className="h-5 w-5" />
@@ -327,7 +327,7 @@ const Index = () => {
             ].map((c) => (
               <Card
                 key={c.title}
-                className="rounded-3xl border-white/20 bg-white/65 p-5 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.55)] backdrop-blur supports-[backdrop-filter]:bg-white/55"
+                className="rounded-3xl border-2 border-[hsl(var(--brand-ink))]/10 bg-white/65 p-5 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.55)] ring-1 ring-[hsl(var(--brand-ink))]/5 backdrop-blur supports-[backdrop-filter]:bg-white/55 transition hover:-translate-y-0.5 hover:border-[hsl(var(--brand))]/20"
               >
                 <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[hsl(var(--brand-2))]/12 text-[hsl(var(--brand-ink))]">
                   <c.icon className="h-5 w-5" />
