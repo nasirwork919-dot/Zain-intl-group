@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { BuyMegaMenu } from "@/components/real-estate/BuyMegaMenu";
 import { toast } from "@/hooks/use-toast";
 import { TopBarPreferencesPopover } from "@/components/real-estate/TopBarPreferencesPopover";
+import { RentMegaMenu } from "@/components/real-estate/RentMegaMenu";
 
 function useActiveSection(ids: string[]) {
   const [active, setActive] = useState<string>(ids[0] ?? "");
@@ -49,7 +50,7 @@ type NavItem =
       type: "scroll";
       href: string;
       hasChevron?: boolean;
-      mega?: "buy";
+      mega?: "buy" | "rent";
     }
   | { label: string; type: "noop"; hasChevron?: boolean };
 
@@ -64,11 +65,17 @@ export function RealEstateHeader() {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [buyOpen, setBuyOpen] = useState(false);
+  const [rentOpen, setRentOpen] = useState(false);
 
   const scrollTo = (hash: string) => {
     const id = hash.replace("#", "");
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const closeMegas = () => {
+    setBuyOpen(false);
+    setRentOpen(false);
   };
 
   const navItems: NavItem[] = useMemo(
@@ -80,7 +87,13 @@ export function RealEstateHeader() {
         hasChevron: true,
         mega: "buy",
       },
-      { label: "Rent", type: "scroll", href: "#listings", hasChevron: true },
+      {
+        label: "Rent",
+        type: "scroll",
+        href: "#listings",
+        hasChevron: true,
+        mega: "rent",
+      },
       {
         label: "Communities",
         type: "scroll",
@@ -324,6 +337,9 @@ export function RealEstateHeader() {
                   : false;
 
               const isBuy = item.mega === "buy";
+              const isRent = item.mega === "rent";
+
+              const expanded = isBuy ? buyOpen : isRent ? rentOpen : undefined;
 
               return (
                 <button
@@ -332,29 +348,44 @@ export function RealEstateHeader() {
                   onClick={() => {
                     if (isBuy) {
                       setBuyOpen((v) => !v);
+                      setRentOpen(false);
                       return;
                     }
-                    setBuyOpen(false);
+                    if (isRent) {
+                      setRentOpen((v) => !v);
+                      setBuyOpen(false);
+                      return;
+                    }
+                    closeMegas();
                     if (item.type === "scroll") scrollTo(item.href);
                   }}
                   onMouseEnter={() => {
-                    if (isBuy) setBuyOpen(true);
+                    if (isBuy) {
+                      setBuyOpen(true);
+                      setRentOpen(false);
+                    }
+                    if (isRent) {
+                      setRentOpen(true);
+                      setBuyOpen(false);
+                    }
                   }}
                   className={cn(
                     "inline-flex items-center gap-1 text-sm font-semibold",
                     "text-[#111827] hover:text-[#111827]/80",
                     isActive &&
                       !isBuy &&
+                      !isRent &&
                       "underline underline-offset-8 decoration-black/30",
                   )}
-                  aria-expanded={isBuy ? buyOpen : undefined}
+                  aria-expanded={expanded}
                 >
                   <span>{item.label}</span>
                   {item.hasChevron ? (
                     <ChevronDown
                       className={cn(
                         "h-4 w-4 opacity-70 transition-transform",
-                        isBuy && buyOpen && "rotate-180",
+                        ((isBuy && buyOpen) || (isRent && rentOpen)) &&
+                          "rotate-180",
                       )}
                     />
                   ) : null}
@@ -408,12 +439,12 @@ export function RealEstateHeader() {
   return (
     <header
       className="fixed inset-x-0 top-0 z-50"
-      onMouseLeave={() => setBuyOpen(false)}
+      onMouseLeave={() => closeMegas()}
     >
       <TopBar />
       <MainBar />
 
-      {/* Desktop Buy mega menu */}
+      {/* Desktop mega menus */}
       <div className="hidden lg:block">
         <BuyMegaMenu
           open={buyOpen}
@@ -422,6 +453,18 @@ export function RealEstateHeader() {
             scrollTo("#listings");
             toast({
               title: `Buy · ${label}`,
+              description: "Showing listings — we can wire these to filters next.",
+            });
+          }}
+        />
+
+        <RentMegaMenu
+          open={rentOpen}
+          onClose={() => setRentOpen(false)}
+          onNavigate={(label) => {
+            scrollTo("#listings");
+            toast({
+              title: `Rent · ${label}`,
               description: "Showing listings — we can wire these to filters next.",
             });
           }}
