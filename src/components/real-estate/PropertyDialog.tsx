@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import { Bath, BedDouble, Check, MapPin, Ruler } from "lucide-react";
 
 import type { Property } from "@/components/real-estate/site-data";
@@ -10,6 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export function PropertyDialog({
   property,
@@ -22,19 +24,36 @@ export function PropertyDialog({
   onOpenChange: (open: boolean) => void;
   onRequest: (property: Property) => void;
 }) {
+  const images = useMemo(() => {
+    if (!property) return [];
+    return property.gallery?.length ? property.gallery : [property.coverImage];
+  }, [property]);
+
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  // reset image when property changes or dialog opens
   if (!property) return null;
 
+  const mainSrc = images[activeIdx] ?? images[0];
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        onOpenChange(v);
+        if (v) setActiveIdx(0);
+      }}
+    >
       <DialogContent className="max-w-3xl overflow-hidden rounded-3xl p-0">
         <div className="grid md:grid-cols-5">
           <div className="relative md:col-span-3">
             <img
-              src={property.gallery[0]}
+              src={mainSrc}
               alt={property.title}
               className="h-64 w-full object-cover md:h-full"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-black/0" />
+
             <div className="absolute bottom-4 left-4 right-4">
               <div className="flex items-end justify-between gap-3">
                 <div>
@@ -47,12 +66,40 @@ export function PropertyDialog({
                   </div>
                 </div>
                 <div className="rounded-2xl bg-white/90 px-3 py-2 text-right shadow-sm ring-1 ring-black/5">
-                  <div className="text-xs font-medium text-muted-foreground">From</div>
+                  <div className="text-xs font-medium text-muted-foreground">
+                    From
+                  </div>
                   <div className="text-base font-extrabold text-foreground">
                     {formatAED(property.price)}
                   </div>
                 </div>
               </div>
+
+              {images.length > 1 ? (
+                <div className="mt-4 grid grid-cols-5 gap-2">
+                  {images.slice(0, 5).map((src, i) => (
+                    <button
+                      key={src}
+                      type="button"
+                      onClick={() => setActiveIdx(i)}
+                      className={cn(
+                        "overflow-hidden rounded-2xl ring-1 transition",
+                        i === activeIdx
+                          ? "ring-white/80"
+                          : "ring-white/30 hover:ring-white/60",
+                      )}
+                      aria-label={`Select image ${i + 1}`}
+                    >
+                      <img
+                        src={src}
+                        alt=""
+                        className="h-14 w-full object-cover"
+                        loading="lazy"
+                      />
+                    </button>
+                  ))}
+                </div>
+              ) : null}
             </div>
           </div>
 
@@ -78,7 +125,8 @@ export function PropertyDialog({
                 <div className="rounded-2xl bg-muted/50 p-3">
                   <div className="text-xs text-muted-foreground">Area</div>
                   <div className="mt-1 inline-flex items-center gap-1 font-semibold">
-                    <Ruler className="h-4 w-4" /> {property.areaSqFt.toLocaleString()}
+                    <Ruler className="h-4 w-4" />{" "}
+                    {property.areaSqFt.toLocaleString()}
                   </div>
                 </div>
               </div>
@@ -117,16 +165,8 @@ export function PropertyDialog({
                 </Button>
               </div>
 
-              <div className="mt-4 grid grid-cols-3 gap-2">
-                {property.gallery.slice(0, 3).map((src) => (
-                  <img
-                    key={src}
-                    src={src}
-                    alt=""
-                    className="h-16 w-full rounded-2xl object-cover ring-1 ring-black/5"
-                    loading="lazy"
-                  />
-                ))}
+              <div className="mt-4 text-xs text-muted-foreground">
+                Tip: select thumbnails on the left to view other images.
               </div>
             </div>
           </div>

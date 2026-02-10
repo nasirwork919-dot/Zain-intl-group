@@ -14,7 +14,7 @@ export function CuratedOpportunityCard({
 }) {
   const images = useMemo(
     () => (property.gallery?.length ? property.gallery : [property.coverImage]),
-    [property.coverImage, property.gallery]
+    [property.coverImage, property.gallery],
   );
   const [idx, setIdx] = useState(0);
 
@@ -40,12 +40,17 @@ export function CuratedOpportunityCard({
       <div
         className={cn(
           "relative mt-4 overflow-hidden rounded-2xl ring-1 ring-black/10",
-          "bg-white"
+          "bg-white",
         )}
       >
-        <button
-          type="button"
+        {/* Image area: click opens, but slider controls MUST NOT open */}
+        <div
+          role="button"
+          tabIndex={0}
           onClick={onOpen}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") onOpen();
+          }}
           className="block w-full text-left"
           aria-label={`Open ${property.title}`}
         >
@@ -55,12 +60,13 @@ export function CuratedOpportunityCard({
             className="h-56 w-full object-cover transition duration-500 group-hover:scale-[1.02] sm:h-64"
             loading="lazy"
           />
-        </button>
+        </div>
 
         {images.length > 1 ? (
           <>
             <button
               type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation();
                 prev();
@@ -72,6 +78,7 @@ export function CuratedOpportunityCard({
             </button>
             <button
               type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation();
                 next();
@@ -81,6 +88,31 @@ export function CuratedOpportunityCard({
             >
               <ChevronRight className="h-5 w-5" />
             </button>
+
+            {/* Thumbnails */}
+            <div
+              className="absolute bottom-3 left-3 right-3 flex items-center justify-center gap-2"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {images.slice(0, 5).map((src, i) => {
+                const active = i === idx;
+                return (
+                  <button
+                    key={src}
+                    type="button"
+                    className={cn(
+                      "h-2.5 w-2.5 rounded-full ring-1 transition",
+                      active
+                        ? "bg-white ring-white/80"
+                        : "bg-white/45 ring-white/50 hover:bg-white/70",
+                    )}
+                    aria-label={`Select image ${i + 1}`}
+                    onClick={() => setIdx(i)}
+                  />
+                );
+              })}
+            </div>
           </>
         ) : null}
       </div>
