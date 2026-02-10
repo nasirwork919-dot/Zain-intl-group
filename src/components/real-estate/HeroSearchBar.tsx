@@ -37,7 +37,10 @@ export function HeroSearchBar({
               value={value.operation}
               onValueChange={(v) => {
                 if (!v) return;
-                onChange({ ...value, operation: v as HeroBarFilters["operation"] });
+                onChange({
+                  ...value,
+                  operation: v as HeroBarFilters["operation"],
+                });
               }}
               className="justify-start rounded-full bg-white/12 p-1 ring-1 ring-white/20 backdrop-blur"
             >
@@ -91,14 +94,14 @@ export function HeroSearchBar({
           </div>
           <div className="relative mt-2">
             <Search
-              className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white opacity-100"
-              style={{ filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.65))" }}
+              className="pointer-events-none absolute left-4 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-white opacity-100"
+              style={{ filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.7))" }}
             />
             <Input
               value={value.query}
               onChange={(e) => onChange({ ...value, query: e.target.value })}
               placeholder="Search by area or community"
-              className="hero-find-input h-12 w-full rounded-full border-white/20 bg-white/12 pl-11 text-white placeholder:text-white/60 ring-1 ring-white/15 backdrop-blur focus-visible:ring-2 focus-visible:ring-white/25"
+              className="hero-find-input relative z-0 h-12 w-full rounded-full border-white/20 bg-white/12 pl-11 text-white placeholder:text-white/60 ring-1 ring-white/15 backdrop-blur focus-visible:ring-2 focus-visible:ring-white/25"
               onKeyDown={(e) => {
                 if (e.key === "Enter") onSubmit();
               }}
