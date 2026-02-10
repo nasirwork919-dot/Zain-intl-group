@@ -39,11 +39,11 @@ export const featuredProperties: Property[] = [
     areaSqFt: 1410,
     tag: "Hot Deal",
     coverImage:
-      "https://images.unsplash.com/photo-1505691723518-36a5ac3b2a16?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1800&q=80",
     gallery: [
-      "https://images.unsplash.com/photo-1505691723518-36a5ac3b2a16?auto=format&fit=crop&w=1600&q=80",
-      "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1600&q=80",
-      "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1800&q=80",
+      "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=1800&q=80",
+      "https://images.unsplash.com/photo-1560448075-bb4bfc7300d0?auto=format&fit=crop&w=1800&q=80",
     ],
     description:
       "A bright, modern home with a resort-grade amenity deck and direct access to waterfront dining. Designed for effortless city living with high ceilings and full-height glazing.",
