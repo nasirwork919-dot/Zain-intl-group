@@ -23,6 +23,7 @@ import { PropertyCard } from "@/components/real-estate/PropertyCard";
 import { PropertyDialog } from "@/components/real-estate/PropertyDialog";
 import { LeadCapture } from "@/components/real-estate/LeadCapture";
 import { CuratedOpportunities } from "@/components/real-estate/CuratedOpportunities";
+import { SectionSeparator } from "@/components/real-estate/SectionSeparator";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -198,8 +199,12 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Curated opportunities (new) */}
+      <SectionSeparator label="A handpicked edit" />
+
+      {/* Curated opportunities */}
       <CuratedOpportunities onOpenProperty={openProperty} />
+
+      <SectionSeparator label="Signature projects" />
 
       {/* Projects */}
       <section id="projects" className="mx-auto max-w-6xl px-4 py-12">
@@ -301,6 +306,8 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      <SectionSeparator label="Featured listings" />
 
       {/* Listings */}
       <section id="listings" className="mx-auto max-w-6xl px-4 pb-14">
