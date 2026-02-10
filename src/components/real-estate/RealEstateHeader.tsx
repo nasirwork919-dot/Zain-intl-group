@@ -10,6 +10,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { BuyMegaMenu } from "@/components/real-estate/BuyMegaMenu";
+import { toast } from "@/hooks/use-toast";
 
 function useActiveSection(ids: string[]) {
   const [active, setActive] = useState<string>(ids[0] ?? "");
@@ -41,7 +43,13 @@ function useActiveSection(ids: string[]) {
 }
 
 type NavItem =
-  | { label: string; type: "scroll"; href: string; hasChevron?: boolean }
+  | {
+      label: string;
+      type: "scroll";
+      href: string;
+      hasChevron?: boolean;
+      mega?: "buy";
+    }
   | { label: string; type: "noop"; hasChevron?: boolean };
 
 export function RealEstateHeader() {
@@ -54,6 +62,7 @@ export function RealEstateHeader() {
   ]);
 
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [buyOpen, setBuyOpen] = useState(false);
 
   const scrollTo = (hash: string) => {
     const id = hash.replace("#", "");
@@ -63,7 +72,13 @@ export function RealEstateHeader() {
 
   const navItems: NavItem[] = useMemo(
     () => [
-      { label: "Buy", type: "scroll", href: "#listings", hasChevron: true },
+      {
+        label: "Buy",
+        type: "scroll",
+        href: "#listings",
+        hasChevron: true,
+        mega: "buy",
+      },
       { label: "Rent", type: "scroll", href: "#listings", hasChevron: true },
       {
         label: "Communities",
@@ -78,11 +93,7 @@ export function RealEstateHeader() {
         hasChevron: true,
       },
       { label: "Market Trends", type: "scroll", href: "#about" },
-      {
-        label: "Featured Projects",
-        type: "scroll",
-        href: "#projects",
-      },
+      { label: "Featured Projects", type: "scroll", href: "#projects" },
       { label: "Services", type: "scroll", href: "#contact", hasChevron: true },
       { label: "More", type: "scroll", href: "#about", hasChevron: true },
     ],
@@ -142,18 +153,18 @@ export function RealEstateHeader() {
     <div className="w-full bg-[#1f2937] text-white">
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex h-14 items-center justify-between gap-4">
-          {/* Small screens: keep pills on the left like before */}
+          {/* Small screens: keep pills on the left */}
           <div className="flex items-center gap-3 lg:hidden">
             <UtilityPill>Your Voice Matters</UtilityPill>
             <UtilityPill>List Your Property</UtilityPill>
           </div>
 
-          {/* Desktop: pills move next to EN/AR/AED on the right */}
+          {/* Desktop spacer */}
           <div className="hidden lg:flex" />
 
           <div className="flex items-center gap-3">
             <div className="hidden items-center gap-4 text-xs font-semibold text-white/90 sm:flex">
-              {/* Desktop placement of pills beside language/currency */}
+              {/* Desktop placement: pills move next to EN/AR/AED */}
               <div className="hidden items-center gap-3 lg:flex">
                 <UtilityPill>Your Voice Matters</UtilityPill>
                 <UtilityPill>List Your Property</UtilityPill>
@@ -288,6 +299,7 @@ export function RealEstateHeader() {
     <div className="w-full bg-white">
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex h-[76px] items-center justify-between gap-4">
+          {/* Keep YOUR business name */}
           <button
             type="button"
             onClick={() => scrollTo("#top")}
@@ -295,21 +307,20 @@ export function RealEstateHeader() {
             aria-label="Go to top"
           >
             <div className="flex items-center gap-3">
-              <div className="relative grid h-11 w-11 place-items-center rounded-xl">
-                <span className="text-[34px] font-black leading-none text-[#111827]">
-                  D
-                </span>
-                <span className="absolute right-0 top-1.5 h-2.5 w-2.5 rounded-full bg-[#4b5563]" />
+              <div className="relative grid h-11 w-11 place-items-center rounded-xl bg-[#111827] text-white ring-1 ring-black/10">
+                <span className="text-[22px] font-black leading-none">Z</span>
+                <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-[hsl(var(--brand))]" />
               </div>
+
               <div className="leading-tight">
                 <div className="text-sm font-black tracking-tight text-[#111827]">
-                  D&B
+                  Zain
                 </div>
                 <div className="-mt-0.5 text-sm font-black tracking-tight text-[#111827]">
-                  PROPERTIES
+                  International Group
                 </div>
                 <div className="mt-0.5 text-[10px] font-semibold tracking-[0.22em] text-[#6b7280]">
-                  DUBAI AND BEYOND
+                  REAL ESTATE · DUBAI
                 </div>
               </div>
             </div>
@@ -322,22 +333,40 @@ export function RealEstateHeader() {
                   ? activeId === item.href.replace("#", "")
                   : false;
 
+              const isBuy = item.mega === "buy";
+
               return (
                 <button
                   key={item.label}
                   type="button"
                   onClick={() => {
+                    if (isBuy) {
+                      setBuyOpen((v) => !v);
+                      return;
+                    }
+                    setBuyOpen(false);
                     if (item.type === "scroll") scrollTo(item.href);
+                  }}
+                  onMouseEnter={() => {
+                    if (isBuy) setBuyOpen(true);
                   }}
                   className={cn(
                     "inline-flex items-center gap-1 text-sm font-semibold",
                     "text-[#111827] hover:text-[#111827]/80",
-                    isActive && "underline underline-offset-8 decoration-black/30",
+                    isActive &&
+                      !isBuy &&
+                      "underline underline-offset-8 decoration-black/30",
                   )}
+                  aria-expanded={isBuy ? buyOpen : undefined}
                 >
                   <span>{item.label}</span>
                   {item.hasChevron ? (
-                    <ChevronDown className="h-4 w-4 opacity-70" />
+                    <ChevronDown
+                      className={cn(
+                        "h-4 w-4 opacity-70 transition-transform",
+                        isBuy && buyOpen && "rotate-180",
+                      )}
+                    />
                   ) : null}
                 </button>
               );
@@ -353,6 +382,12 @@ export function RealEstateHeader() {
               "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35",
             )}
             aria-label="Calculator"
+            onClick={() =>
+              toast({
+                title: "Calculator",
+                description: "We can add a mortgage calculator next.",
+              })
+            }
           >
             <Calculator className="h-5 w-5" />
           </button>
@@ -366,6 +401,12 @@ export function RealEstateHeader() {
               "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35",
             )}
             aria-label="Calculator"
+            onClick={() =>
+              toast({
+                title: "Calculator",
+                description: "We can add a mortgage calculator next.",
+              })
+            }
           >
             <Calculator className="h-5 w-5" />
           </button>
@@ -375,9 +416,28 @@ export function RealEstateHeader() {
   );
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50">
+    <header
+      className="fixed inset-x-0 top-0 z-50"
+      onMouseLeave={() => setBuyOpen(false)}
+    >
       <TopBar />
       <MainBar />
+
+      {/* Desktop Buy mega menu */}
+      <div className="hidden lg:block">
+        <BuyMegaMenu
+          open={buyOpen}
+          onClose={() => setBuyOpen(false)}
+          onNavigate={(label) => {
+            // For now we just jump to listings and show a toast; later we can wire these to real filters.
+            scrollTo("#listings");
+            toast({
+              title: `Buy · ${label}`,
+              description: "Showing listings — we can wire these to filters next.",
+            });
+          }}
+        />
+      </div>
     </header>
   );
 }
