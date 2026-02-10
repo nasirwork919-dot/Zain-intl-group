@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Menu, Phone, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Calculator, ChevronDown, Menu, Phone, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +9,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { navLinks } from "@/components/real-estate/site-data";
+import { cn } from "@/lib/utils";
 
 function useActiveSection(ids: string[]) {
   const [active, setActive] = useState<string>(ids[0] ?? "");
@@ -41,6 +40,10 @@ function useActiveSection(ids: string[]) {
   return active;
 }
 
+type NavItem =
+  | { label: string; type: "scroll"; href: string; hasChevron?: boolean }
+  | { label: string; type: "noop"; hasChevron?: boolean };
+
 export function RealEstateHeader() {
   const active = useActiveSection([
     "top",
@@ -58,110 +61,208 @@ export function RealEstateHeader() {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const Nav = ({ onNavigate }: { onNavigate?: () => void }) => (
-    <nav className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-6">
-      {navLinks.map((l) => {
-        const isActive = active === l.href.replace("#", "");
-        return (
-          <button
-            key={l.href}
-            onClick={() => {
-              scrollTo(l.href);
-              onNavigate?.();
-            }}
-            className={
-              "group inline-flex items-center justify-between rounded-[5px] px-3 py-2 text-sm font-medium transition-colors sm:justify-start" +
-              (isActive
-                ? " bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))]"
-                : " text-muted-foreground hover:bg-white/60 hover:text-foreground")
-            }
-          >
-            <span>{l.label}</span>
-            <span className="ml-3 inline-flex h-6 w-6 items-center justify-center rounded-[5px] bg-white/70 text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/5 sm:hidden">
-              <Sparkles className="h-3.5 w-3.5" />
-            </span>
-          </button>
-        );
-      })}
-    </nav>
+  const navItems: NavItem[] = useMemo(
+    () => [
+      { label: "Buy", type: "scroll", href: "#listings", hasChevron: true },
+      { label: "Rent", type: "scroll", href: "#listings", hasChevron: true },
+      {
+        label: "Communities",
+        type: "scroll",
+        href: "#projects",
+        hasChevron: true,
+      },
+      {
+        label: "Developers",
+        type: "scroll",
+        href: "#projects",
+        hasChevron: true,
+      },
+      { label: "Market Trends", type: "scroll", href: "#about" },
+      {
+        label: "Featured Projects",
+        type: "scroll",
+        href: "#projects",
+      },
+      { label: "Services", type: "scroll", href: "#contact", hasChevron: true },
+      { label: "More", type: "scroll", href: "#about", hasChevron: true },
+    ],
+    [],
   );
 
-  return (
-    <header className="fixed inset-x-0 top-0 z-50">
-      <div className="mx-auto max-w-6xl px-4">
-        <div className="mt-3 rounded-2xl border border-white/30 bg-white/60 backdrop-blur supports-[backdrop-filter]:bg-white/50 shadow-[0_10px_30px_-20px_rgba(15,23,42,0.35)]">
-          <div className="flex items-center justify-between px-3 py-2 sm:px-4">
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 rounded-[5px] px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[hsl(var(--brand))]/40"
-              onClick={(e) => {
-                e.preventDefault();
-                scrollTo("#top");
-              }}
-            >
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-[5px] bg-[hsl(var(--brand))] text-white shadow-sm">
-                <span className="text-sm font-extrabold tracking-tight">
-                  ZI
-                </span>
-              </span>
-              <span className="leading-tight">
-                <span className="block text-sm font-semibold tracking-tight text-foreground">
-                  Zain International Group
-                </span>
-                <span className="block text-xs text-muted-foreground">
-                  Dubai Real Estate
-                </span>
-              </span>
-            </Link>
+  const activeId = active;
 
-            <div className="hidden items-center gap-2 sm:flex">
-              <Nav />
+  const UtilityPill = ({
+    children,
+    onClick,
+    className,
+  }: {
+    children: React.ReactNode;
+    onClick?: () => void;
+    className?: string;
+  }) => (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "inline-flex items-center rounded-full px-4 py-1.5 text-xs font-semibold",
+        "bg-white text-[#111827]",
+        "shadow-sm ring-1 ring-black/10",
+        "hover:bg-white/95",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
+        className,
+      )}
+    >
+      {children}
+    </button>
+  );
+
+  const PhonePill = ({
+    label,
+    onClick,
+  }: {
+    label: string;
+    onClick?: () => void;
+  }) => (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold",
+        "bg-white text-[#111827] ring-1 ring-black/10",
+        "hover:bg-white/95",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
+      )}
+    >
+      <Phone className="h-4 w-4" />
+      {label}
+    </button>
+  );
+
+  const TopBar = () => (
+    <div className="w-full bg-[#1f2937] text-white">
+      <div className="mx-auto max-w-6xl px-4">
+        <div className="flex h-12 items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <UtilityPill>Your Voice Matters</UtilityPill>
+            <UtilityPill>List Your Property</UtilityPill>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="hidden items-center gap-3 text-xs font-semibold text-white/90 sm:flex">
+              <button
+                type="button"
+                className="hover:text-white"
+                aria-label="Switch to English"
+              >
+                EN
+              </button>
+              <button
+                type="button"
+                className="hover:text-white/95"
+                aria-label="Switch to Arabic"
+              >
+                AR
+              </button>
+
+              <button
+                type="button"
+                className="inline-flex items-center gap-1 hover:text-white"
+                aria-label="Currency"
+              >
+                AED
+                <ChevronDown className="h-4 w-4 opacity-90" />
+              </button>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Button
-                variant="secondary"
-                className="hidden rounded-[5px] bg-white/70 hover:bg-white sm:inline-flex"
+            <div className="hidden items-center gap-2 md:flex">
+              <PhonePill label="Free Property Valuation" />
+              <PhonePill
+                label="Contact Us"
                 onClick={() => scrollTo("#contact")}
+              />
+              <button
+                type="button"
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold",
+                  "bg-white text-[#111827] ring-1 ring-black/10",
+                  "hover:bg-white/95",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
+                )}
               >
-                <Phone className="mr-2 h-4 w-4" />
-                Request a call
-              </Button>
+                <User className="h-4 w-4" />
+                Login
+              </button>
+            </div>
 
+            {/* Mobile: just show menu trigger */}
+            <div className="md:hidden">
               <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
                 <SheetTrigger asChild>
                   <Button
                     variant="outline"
-                    className="rounded-[5px] bg-white/60 hover:bg-white sm:hidden"
+                    className="h-9 rounded-full bg-white/10 text-white ring-1 ring-white/15 hover:bg-white/15 hover:text-white"
                     aria-label="Open menu"
                   >
                     <Menu className="h-4 w-4" />
                   </Button>
                 </SheetTrigger>
+
                 <SheetContent side="right" className="w-[320px]">
                   <SheetHeader>
-                    <SheetTitle className="text-left">Explore</SheetTitle>
+                    <SheetTitle className="text-left">Menu</SheetTitle>
                   </SheetHeader>
-                  <div className="mt-4">
-                    <Nav
-                      onNavigate={() => {
-                        setMobileOpen(false);
-                      }}
-                    />
-                    <div className="mt-5 rounded-[5px] bg-muted/50 p-4">
-                      <div className="text-sm font-semibold">Talk to an agent</div>
-                      <div className="mt-1 text-sm text-muted-foreground">
-                        Get a curated shortlist in minutes.
-                      </div>
-                      <Button
-                        className="mt-3 w-full rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/90"
+
+                  <div className="mt-4 grid gap-2">
+                    {navItems.map((item) => (
+                      <button
+                        key={item.label}
+                        type="button"
                         onClick={() => {
-                          scrollTo("#contact");
+                          if (item.type === "scroll") scrollTo(item.href);
                           setMobileOpen(false);
                         }}
+                        className={cn(
+                          "flex items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-semibold",
+                          "bg-muted/40 ring-1 ring-black/5 hover:bg-muted/55",
+                        )}
                       >
-                        Request a call
-                      </Button>
+                        <span>{item.label}</span>
+                        {item.hasChevron ? (
+                          <ChevronDown className="h-4 w-4 opacity-70" />
+                        ) : null}
+                      </button>
+                    ))}
+
+                    <div className="mt-3 grid gap-2 rounded-2xl bg-muted/35 p-3 ring-1 ring-black/5">
+                      <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
+                        <span>Language</span>
+                        <span className="text-foreground">EN · AR</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
+                        <span>Currency</span>
+                        <span className="text-foreground">AED</span>
+                      </div>
+
+                      <div className="mt-2 grid gap-2">
+                        <PhonePill label="Free Property Valuation" />
+                        <PhonePill
+                          label="Contact Us"
+                          onClick={() => {
+                            scrollTo("#contact");
+                            setMobileOpen(false);
+                          }}
+                        />
+                        <button
+                          type="button"
+                          className={cn(
+                            "inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-semibold",
+                            "bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92",
+                          )}
+                        >
+                          <User className="h-4 w-4" />
+                          Login
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </SheetContent>
@@ -170,6 +271,107 @@ export function RealEstateHeader() {
           </div>
         </div>
       </div>
+    </div>
+  );
+
+  const MainBar = () => (
+    <div className="w-full bg-white">
+      <div className="mx-auto max-w-6xl px-4">
+        <div className="flex h-16 items-center justify-between gap-3">
+          {/* Logo block (stylized to match screenshot layout) */}
+          <button
+            type="button"
+            onClick={() => scrollTo("#top")}
+            className="flex items-center gap-3 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35 rounded-xl px-1 py-1"
+            aria-label="Go to top"
+          >
+            <div className="flex items-center gap-3">
+              <div className="relative grid h-10 w-10 place-items-center rounded-xl">
+                <span className="text-[32px] font-black leading-none text-[#111827]">
+                  D
+                </span>
+                <span className="absolute right-0 top-1.5 h-2.5 w-2.5 rounded-full bg-[#4b5563]" />
+              </div>
+              <div className="leading-tight">
+                <div className="text-sm font-black tracking-tight text-[#111827]">
+                  D&B
+                </div>
+                <div className="-mt-0.5 text-sm font-black tracking-tight text-[#111827]">
+                  PROPERTIES
+                </div>
+                <div className="mt-0.5 text-[10px] font-semibold tracking-[0.22em] text-[#6b7280]">
+                  DUBAI AND BEYOND
+                </div>
+              </div>
+            </div>
+          </button>
+
+          {/* Center nav (desktop/tablet) */}
+          <nav className="hidden flex-1 items-center justify-center gap-6 lg:flex">
+            {navItems.map((item) => {
+              const isActive =
+                item.type === "scroll"
+                  ? activeId === item.href.replace("#", "")
+                  : false;
+
+              return (
+                <button
+                  key={item.label}
+                  type="button"
+                  onClick={() => {
+                    if (item.type === "scroll") scrollTo(item.href);
+                  }}
+                  className={cn(
+                    "inline-flex items-center gap-1 text-sm font-semibold",
+                    "text-[#111827] hover:text-[#111827]/80",
+                    isActive && "underline underline-offset-8 decoration-black/30",
+                  )}
+                >
+                  <span>{item.label}</span>
+                  {item.hasChevron ? (
+                    <ChevronDown className="h-4 w-4 opacity-70" />
+                  ) : null}
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Right icon button */}
+          <button
+            type="button"
+            className={cn(
+              "hidden lg:inline-flex",
+              "h-10 w-10 items-center justify-center rounded-xl",
+              "bg-[#111827] text-white shadow-sm hover:bg-[#111827]/90",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35",
+            )}
+            aria-label="Calculator"
+          >
+            <Calculator className="h-5 w-5" />
+          </button>
+
+          {/* In-between sizes: show centered nav but compact icon */}
+          <button
+            type="button"
+            className={cn(
+              "lg:hidden hidden sm:inline-flex",
+              "h-10 w-10 items-center justify-center rounded-xl",
+              "bg-[#111827] text-white shadow-sm hover:bg-[#111827]/90",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35",
+            )}
+            aria-label="Calculator"
+          >
+            <Calculator className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <header className="fixed inset-x-0 top-0 z-50">
+      <TopBar />
+      <MainBar />
     </header>
   );
 }
