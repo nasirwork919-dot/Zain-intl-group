@@ -9,6 +9,10 @@ import {
 } from "lucide-react";
 
 import { RealEstateHeader } from "@/components/real-estate/RealEstateHeader";
+import {
+  type HeroBarFilters,
+  HeroSearchBar,
+} from "@/components/real-estate/HeroSearchBar";
 import { HeroSearch, type SearchFilters } from "@/components/real-estate/HeroSearch";
 import {
   featuredProperties,
@@ -30,6 +34,12 @@ const Index = () => {
     location: "any",
     beds: "any",
     maxPrice: 20000000,
+  });
+
+  const [heroBar, setHeroBar] = useState<HeroBarFilters>({
+    operation: "buy",
+    propertyType: "apartment",
+    query: "",
   });
 
   const [activeProperty, setActiveProperty] = useState<Property | null>(null);
@@ -68,130 +78,121 @@ const Index = () => {
       <RealEstateHeader />
 
       {/* Hero */}
-      <section className="relative overflow-hidden pt-24">
+      <section className="relative overflow-hidden pt-20">
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-[-10%] top-[-12%] h-[380px] w-[380px] rounded-full bg-[hsl(var(--brand))]/20 blur-3xl" />
-          <div className="absolute right-[-12%] top-[12%] h-[420px] w-[420px] rounded-full bg-[hsl(var(--brand-2))]/22 blur-3xl" />
-          <div className="absolute bottom-[-18%] left-[20%] h-[520px] w-[520px] rounded-full bg-[hsl(var(--brand-ink))]/10 blur-3xl" />
+          <div className="absolute inset-0">
+            <img
+              src="https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=2400&q=80"
+              alt="Dubai skyline"
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+          </div>
+          <div className="absolute inset-0 bg-black/45" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/30 to-black/10" />
         </div>
 
-        <div className="mx-auto max-w-6xl px-4 pb-10 sm:pb-14">
-          <div className="grid gap-8 md:grid-cols-12 md:items-end">
-            <div className="md:col-span-6">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-[hsl(var(--brand-ink))] ring-1 ring-black/5">
-                <Star className="h-4 w-4" />
-                Curated Dubai projects · handpicked listings
-              </div>
-
-              <h1 className="mt-4 text-4xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-5xl">
-                Premium real estate,
-                <span className="block text-[hsl(var(--brand-ink))]">
-                  designed for decisive buyers.
-                </span>
-              </h1>
-
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-foreground/75 sm:text-lg">
-                Discover high-demand communities, compare payment plans, and
-                request a tailored shortlist — all in one sleek experience.
-              </p>
-
-              <div className="mt-6 grid grid-cols-3 gap-3">
-                {featuredStats.map((s) => (
-                  <Card
-                    key={s.label}
-                    className="rounded-3xl border-white/20 bg-white/60 p-4 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.45)] backdrop-blur supports-[backdrop-filter]:bg-white/55"
-                  >
-                    <div className="text-2xl font-extrabold tracking-tight text-foreground">
-                      {s.value}
-                    </div>
-                    <div className="mt-1 text-xs font-medium text-muted-foreground">
-                      {s.label}
-                    </div>
-                  </Card>
-                ))}
-              </div>
-
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Button
-                  className="h-11 rounded-2xl bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
-                  onClick={() =>
-                    document
-                      .getElementById("listings")
-                      ?.scrollIntoView({ behavior: "smooth" })
-                  }
-                >
-                  Browse listings
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-                <Button
-                  variant="secondary"
-                  className="h-11 rounded-2xl bg-white/70 hover:bg-white"
-                  onClick={() =>
-                    document
-                      .getElementById("contact")
-                      ?.scrollIntoView({ behavior: "smooth" })
-                  }
-                >
-                  Speak to an agent
-                </Button>
-              </div>
+        <div className="relative mx-auto max-w-6xl px-4 pb-12 pt-10 sm:pb-16 lg:pt-16">
+          <div className="mx-auto max-w-3xl text-center text-white">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold tracking-wide text-white ring-1 ring-white/20 backdrop-blur">
+              <Star className="h-4 w-4 text-white/90" />
+              WE GUIDE INVESTORS AND HOMEBUYERS
             </div>
 
-            <div className="md:col-span-6">
-              <div className="relative overflow-hidden rounded-[2rem] border border-white/25 bg-white/40 p-3 shadow-[0_25px_70px_-45px_rgba(15,23,42,0.7)]">
-                <div className="relative overflow-hidden rounded-[1.7rem]">
-                  <img
-                    src="https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1600&q=80"
-                    alt="Dubai skyline"
-                    className="h-[280px] w-full object-cover sm:h-[360px]"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-black/0" />
+            <h1 className="mt-6 font-extrabold tracking-tight">
+              <span className="block text-5xl leading-[0.95] sm:text-6xl lg:text-7xl">
+                PRIMADOM
+              </span>
+              <span className="mt-2 block text-3xl font-semibold italic text-white/90 sm:text-4xl lg:text-5xl">
+                Real Estate
+              </span>
+            </h1>
 
-                  <div className="absolute bottom-4 left-4 right-4 grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-2xl bg-white/85 p-3 ring-1 ring-black/5">
-                      <div className="text-xs font-medium text-muted-foreground">
-                        Avg. ROI
-                      </div>
-                      <div className="mt-1 text-lg font-extrabold text-foreground">
-                        7–10%
-                      </div>
-                    </div>
-                    <div className="rounded-2xl bg-white/85 p-3 ring-1 ring-black/5">
-                      <div className="text-xs font-medium text-muted-foreground">
-                        Payment plans
-                      </div>
-                      <div className="mt-1 text-lg font-extrabold text-foreground">
-                        60/40
-                      </div>
-                    </div>
-                    <div className="rounded-2xl bg-white/85 p-3 ring-1 ring-black/5">
-                      <div className="text-xs font-medium text-muted-foreground">
-                        Handover
-                      </div>
-                      <div className="mt-1 text-lg font-extrabold text-foreground">
-                        2026+
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-3">
-                  <HeroSearch
-                    onSearch={(f) => {
-                      setFilters(f);
-                      document
-                        .getElementById("listings")
-                        ?.scrollIntoView({ behavior: "smooth" });
-                      toast({
-                        title: "Filters applied",
-                        description: "Scroll to see matching listings below.",
-                      });
-                    }}
-                  />
-                </div>
-              </div>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-sm text-white/80">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 ring-1 ring-white/15 backdrop-blur">
+                <span className="text-white">4.5</span>
+                <span className="text-white/70">Google</span>
+              </span>
+              <span className="text-white/70">·</span>
+              <span className="text-white/80">
+                Join 300+ people who trust us with confidence
+              </span>
             </div>
+          </div>
+
+          {/* Primary hero search (PrimaDom-like) */}
+          <div className="mx-auto mt-10 max-w-5xl">
+            <HeroSearchBar
+              value={heroBar}
+              onChange={setHeroBar}
+              onSubmit={() => {
+                setFilters((prev) => ({ ...prev, query: heroBar.query }));
+                document
+                  .getElementById("listings")
+                  ?.scrollIntoView({ behavior: "smooth" });
+                toast({
+                  title: "Quick search applied",
+                  description: `Operation: ${heroBar.operation.toUpperCase()} · Type: ${heroBar.propertyType}`,
+                });
+              }}
+            />
+          </div>
+
+          {/* Secondary advanced filters (optional) */}
+          <div className="mx-auto mt-5 max-w-5xl">
+            <HeroSearch
+              onSearch={(f) => {
+                setFilters(f);
+                document
+                  .getElementById("listings")
+                  ?.scrollIntoView({ behavior: "smooth" });
+                toast({
+                  title: "Filters applied",
+                  description: "Scroll to see matching listings below.",
+                });
+              }}
+            />
+          </div>
+
+          <div className="mx-auto mt-6 flex max-w-4xl flex-col items-center justify-center gap-3 sm:flex-row">
+            <Button
+              className="h-11 rounded-full bg-white text-[hsl(var(--brand-ink))] hover:bg-white/90"
+              onClick={() =>
+                document
+                  .getElementById("listings")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+            >
+              Browse listings
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+            <Button
+              variant="secondary"
+              className="h-11 rounded-full bg-white/10 text-white ring-1 ring-white/20 hover:bg-white/15"
+              onClick={() =>
+                document
+                  .getElementById("contact")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+            >
+              Speak to an agent
+            </Button>
+          </div>
+
+          <div className="mx-auto mt-10 grid max-w-4xl grid-cols-3 gap-3">
+            {featuredStats.map((s) => (
+              <Card
+                key={s.label}
+                className="rounded-3xl border-white/15 bg-white/10 p-4 text-white shadow-[0_18px_50px_-40px_rgba(0,0,0,0.55)] backdrop-blur supports-[backdrop-filter]:bg-white/10"
+              >
+                <div className="text-2xl font-extrabold tracking-tight">
+                  {s.value}
+                </div>
+                <div className="mt-1 text-xs font-medium text-white/70">
+                  {s.label}
+                </div>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
@@ -256,26 +257,28 @@ const Index = () => {
           </Card>
 
           <div className="grid gap-4 md:col-span-7 md:grid-cols-2">
-            {[{
-              icon: ShieldCheck,
-              title: "Trusted guidance",
-              desc: "Market insight, not pressure — with clear next steps.",
-            },
-            {
-              icon: Globe,
-              title: "Global buyer-ready",
-              desc: "Remote viewings, documentation, and closing support.",
-            },
-            {
-              icon: Star,
-              title: "Luxury focus",
-              desc: "Premium finishes, waterfront living, and landmark addresses.",
-            },
-            {
-              icon: CheckCircle2,
-              title: "Fast matching",
-              desc: "Your requirements → curated options within minutes.",
-            }].map((c) => (
+            {[
+              {
+                icon: ShieldCheck,
+                title: "Trusted guidance",
+                desc: "Market insight, not pressure — with clear next steps.",
+              },
+              {
+                icon: Globe,
+                title: "Global buyer-ready",
+                desc: "Remote viewings, documentation, and closing support.",
+              },
+              {
+                icon: Star,
+                title: "Luxury focus",
+                desc: "Premium finishes, waterfront living, and landmark addresses.",
+              },
+              {
+                icon: CheckCircle2,
+                title: "Fast matching",
+                desc: "Your requirements → curated options within minutes.",
+              },
+            ].map((c) => (
               <Card
                 key={c.title}
                 className="rounded-3xl border-white/20 bg-white/65 p-5 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.55)] backdrop-blur supports-[backdrop-filter]:bg-white/55"
@@ -286,7 +289,9 @@ const Index = () => {
                 <div className="mt-3 text-base font-extrabold tracking-tight">
                   {c.title}
                 </div>
-                <div className="mt-1 text-sm text-muted-foreground">{c.desc}</div>
+                <div className="mt-1 text-sm text-muted-foreground">
+                  {c.desc}
+                </div>
               </Card>
             ))}
           </div>
@@ -310,7 +315,11 @@ const Index = () => {
               </p>
             </div>
             <div className="rounded-2xl bg-white/70 px-4 py-2 text-sm text-muted-foreground ring-1 ring-black/5">
-              Showing <span className="font-semibold text-foreground">{results.length}</span> of {featuredProperties.length}
+              Showing{" "}
+              <span className="font-semibold text-foreground">
+                {results.length}
+              </span>{" "}
+              of {featuredProperties.length}
             </div>
           </div>
 
@@ -414,7 +423,12 @@ const Index = () => {
             <div className="p-6">
               <div className="text-sm font-semibold">What you’ll get</div>
               <ul className="mt-3 grid gap-2 text-sm text-muted-foreground">
-                {["Project comparisons", "Payment plan breakdowns", "ROI & rental insights", "Priority access"].map((t) => (
+                {[
+                  "Project comparisons",
+                  "Payment plan breakdowns",
+                  "ROI & rental insights",
+                  "Priority access",
+                ].map((t) => (
                   <li key={t} className="inline-flex items-center gap-2">
                     <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))]">
                       <CheckCircle2 className="h-4 w-4" />
@@ -467,18 +481,20 @@ const Index = () => {
             <Separator className="my-5" />
 
             <div className="grid gap-3">
-              {[{
-                label: "WhatsApp",
-                value: "+971 55 123 4567",
-              },
-              {
-                label: "Email",
-                value: "hello@primadom.ae",
-              },
-              {
-                label: "Office",
-                value: "Dubai, United Arab Emirates",
-              }].map((i) => (
+              {[
+                {
+                  label: "WhatsApp",
+                  value: "+971 55 123 4567",
+                },
+                {
+                  label: "Email",
+                  value: "hello@primadom.ae",
+                },
+                {
+                  label: "Office",
+                  value: "Dubai, United Arab Emirates",
+                },
+              ].map((i) => (
                 <div
                   key={i.label}
                   className="rounded-3xl bg-white/70 p-4 ring-1 ring-black/5"
