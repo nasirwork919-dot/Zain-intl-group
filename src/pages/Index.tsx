@@ -23,7 +23,7 @@ import { PropertyCard } from "@/components/real-estate/PropertyCard";
 import { PropertyDialog } from "@/components/real-estate/PropertyDialog";
 import { LeadCapture } from "@/components/real-estate/LeadCapture";
 import { CuratedOpportunities } from "@/components/real-estate/CuratedOpportunities";
-import { SectionSeparator } from "@/components/real-estate/SectionSeparator";
+import { ScrollingTextSeparator } from "@/components/real-estate/ScrollingTextSeparator";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -199,12 +199,22 @@ const Index = () => {
         </div>
       </section>
 
-      <SectionSeparator label="A handpicked edit" />
+      <ScrollingTextSeparator label="A handpicked edit" />
 
       {/* Curated opportunities */}
       <CuratedOpportunities onOpenProperty={openProperty} />
 
-      <SectionSeparator label="Signature projects" />
+      <ScrollingTextSeparator
+        label="Signature projects"
+        items={[
+          "Off-plan specialists",
+          "Payment plans",
+          "Prime communities",
+          "Developer launches",
+          "Handover ready",
+          "Investor-friendly",
+        ]}
+      />
 
       {/* Projects */}
       <section id="projects" className="mx-auto max-w-6xl px-4 py-12">
@@ -307,7 +317,17 @@ const Index = () => {
         </div>
       </section>
 
-      <SectionSeparator label="Featured listings" />
+      <ScrollingTextSeparator
+        label="Featured listings"
+        items={[
+          "Ready inventory",
+          "Waterfront views",
+          "Investor picks",
+          "Family villas",
+          "Penthouse living",
+          "Marina lifestyle",
+        ]}
+      />
 
       {/* Listings */}
       <section id="listings" className="mx-auto max-w-6xl px-4 pb-14">
