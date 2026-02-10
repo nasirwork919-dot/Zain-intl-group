@@ -29,6 +29,7 @@ import { CuratedOpportunities } from "@/components/real-estate/CuratedOpportunit
 import { ScrollingTextSeparator } from "@/components/real-estate/ScrollingTextSeparator";
 import { ExperienceStatsStrip } from "@/components/real-estate/ExperienceStatsStrip";
 import { ExploreCommunities } from "@/components/real-estate/ExploreCommunities";
+import { ScrollUpButton } from "@/components/ScrollUpButton";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -624,6 +625,8 @@ const Index = () => {
           });
         }}
       />
+
+      <ScrollUpButton />
     </div>
   );
 };
