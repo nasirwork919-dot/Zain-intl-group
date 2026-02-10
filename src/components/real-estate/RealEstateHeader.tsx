@@ -104,7 +104,7 @@ export function RealEstateHeader() {
       type="button"
       onClick={onClick}
       className={cn(
-        "inline-flex items-center rounded-full px-4 py-1.5 text-xs font-semibold",
+        "inline-flex items-center rounded-full px-4 py-2 text-xs font-semibold leading-none",
         "bg-white text-[#111827]",
         "shadow-sm ring-1 ring-black/10",
         "hover:bg-white/95",
@@ -127,7 +127,7 @@ export function RealEstateHeader() {
       type="button"
       onClick={onClick}
       className={cn(
-        "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold",
+        "inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold leading-none",
         "bg-white text-[#111827] ring-1 ring-black/10",
         "hover:bg-white/95",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
@@ -140,15 +140,15 @@ export function RealEstateHeader() {
 
   const TopBar = () => (
     <div className="w-full bg-[#1f2937] text-white">
-      <div className="mx-auto max-w-6xl px-4">
-        <div className="flex h-12 items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
+      <div className="mx-auto max-w-7xl px-4">
+        <div className="flex h-14 items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
             <UtilityPill>Your Voice Matters</UtilityPill>
             <UtilityPill>List Your Property</UtilityPill>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="hidden items-center gap-3 text-xs font-semibold text-white/90 sm:flex">
+          <div className="flex items-center gap-3">
+            <div className="hidden items-center gap-4 text-xs font-semibold text-white/90 sm:flex">
               <button
                 type="button"
                 className="hover:text-white"
@@ -174,7 +174,7 @@ export function RealEstateHeader() {
               </button>
             </div>
 
-            <div className="hidden items-center gap-2 md:flex">
+            <div className="hidden items-center gap-3 md:flex">
               <PhonePill label="Free Property Valuation" />
               <PhonePill
                 label="Contact Us"
@@ -183,7 +183,7 @@ export function RealEstateHeader() {
               <button
                 type="button"
                 className={cn(
-                  "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold",
+                  "inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold leading-none",
                   "bg-white text-[#111827] ring-1 ring-black/10",
                   "hover:bg-white/95",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
@@ -194,13 +194,13 @@ export function RealEstateHeader() {
               </button>
             </div>
 
-            {/* Mobile: just show menu trigger */}
+            {/* Mobile */}
             <div className="md:hidden">
               <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
                 <SheetTrigger asChild>
                   <Button
                     variant="outline"
-                    className="h-9 rounded-full bg-white/10 text-white ring-1 ring-white/15 hover:bg-white/15 hover:text-white"
+                    className="h-10 rounded-full border-white/20 bg-white/10 px-4 text-white ring-1 ring-white/15 hover:bg-white/15 hover:text-white"
                     aria-label="Open menu"
                   >
                     <Menu className="h-4 w-4" />
@@ -276,18 +276,17 @@ export function RealEstateHeader() {
 
   const MainBar = () => (
     <div className="w-full bg-white">
-      <div className="mx-auto max-w-6xl px-4">
-        <div className="flex h-16 items-center justify-between gap-3">
-          {/* Logo block (stylized to match screenshot layout) */}
+      <div className="mx-auto max-w-7xl px-4">
+        <div className="flex h-[76px] items-center justify-between gap-4">
           <button
             type="button"
             onClick={() => scrollTo("#top")}
-            className="flex items-center gap-3 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35 rounded-xl px-1 py-1"
+            className="flex items-center gap-3 rounded-xl px-1 py-1 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35"
             aria-label="Go to top"
           >
             <div className="flex items-center gap-3">
-              <div className="relative grid h-10 w-10 place-items-center rounded-xl">
-                <span className="text-[32px] font-black leading-none text-[#111827]">
+              <div className="relative grid h-11 w-11 place-items-center rounded-xl">
+                <span className="text-[34px] font-black leading-none text-[#111827]">
                   D
                 </span>
                 <span className="absolute right-0 top-1.5 h-2.5 w-2.5 rounded-full bg-[#4b5563]" />
@@ -306,8 +305,7 @@ export function RealEstateHeader() {
             </div>
           </button>
 
-          {/* Center nav (desktop/tablet) */}
-          <nav className="hidden flex-1 items-center justify-center gap-6 lg:flex">
+          <nav className="hidden flex-1 items-center justify-center gap-8 lg:flex">
             {navItems.map((item) => {
               const isActive =
                 item.type === "scroll"
@@ -336,12 +334,11 @@ export function RealEstateHeader() {
             })}
           </nav>
 
-          {/* Right icon button */}
           <button
             type="button"
             className={cn(
               "hidden lg:inline-flex",
-              "h-10 w-10 items-center justify-center rounded-xl",
+              "h-11 w-11 items-center justify-center rounded-xl",
               "bg-[#111827] text-white shadow-sm hover:bg-[#111827]/90",
               "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35",
             )}
@@ -350,12 +347,11 @@ export function RealEstateHeader() {
             <Calculator className="h-5 w-5" />
           </button>
 
-          {/* In-between sizes: show centered nav but compact icon */}
           <button
             type="button"
             className={cn(
               "lg:hidden hidden sm:inline-flex",
-              "h-10 w-10 items-center justify-center rounded-xl",
+              "h-11 w-11 items-center justify-center rounded-xl",
               "bg-[#111827] text-white shadow-sm hover:bg-[#111827]/90",
               "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35",
             )}
