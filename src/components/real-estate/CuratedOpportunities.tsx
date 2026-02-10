@@ -14,8 +14,10 @@ function paginate<T>(items: T[], page: number, perPage: number) {
 
 export function CuratedOpportunities({
   onOpenProperty,
+  onViewAll,
 }: {
   onOpenProperty: (p: Property) => void;
+  onViewAll?: () => void;
 }) {
   const perPage = 3;
   const items = featuredProperties;
@@ -70,7 +72,7 @@ export function CuratedOpportunities({
                 "inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition",
                 canPrev
                   ? "text-[hsl(var(--brand-ink))] hover:bg-white/70"
-                  : "cursor-not-allowed text-muted-foreground/60"
+                  : "cursor-not-allowed text-muted-foreground/60",
               )}
             >
               <ChevronLeft className="h-4 w-4" />
@@ -84,7 +86,7 @@ export function CuratedOpportunities({
                 "inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition",
                 canNext
                   ? "text-[hsl(var(--brand-ink))] hover:bg-white/70"
-                  : "cursor-not-allowed text-muted-foreground/60"
+                  : "cursor-not-allowed text-muted-foreground/60",
               )}
             >
               NEXT
@@ -97,6 +99,7 @@ export function CuratedOpportunities({
         <Button
           className="h-12 rounded-2xl bg-[hsl(var(--brand))] px-7 text-white hover:bg-[hsl(var(--brand))]/90"
           onClick={() => {
+            onViewAll?.();
             document
               .getElementById("listings")
               ?.scrollIntoView({ behavior: "smooth", block: "start" });

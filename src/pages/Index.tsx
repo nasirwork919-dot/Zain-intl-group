@@ -80,6 +80,16 @@ const Index = () => {
     setDialogOpen(true);
   };
 
+  const resetListingFilters = () => {
+    setFilters({
+      query: "",
+      location: "any",
+      beds: "any",
+      maxPrice: 20000000,
+    });
+    setHeroBar((prev) => ({ ...prev, query: "" }));
+  };
+
   return (
     <div id="top" className="min-h-screen bg-[hsl(var(--page))]">
       <RealEstateHeader />
@@ -210,7 +220,16 @@ const Index = () => {
       <ScrollingTextSeparator label="A handpicked edit" />
 
       {/* Curated opportunities */}
-      <CuratedOpportunities onOpenProperty={openProperty} />
+      <CuratedOpportunities
+        onOpenProperty={openProperty}
+        onViewAll={() => {
+          resetListingFilters();
+          toast({
+            title: "Showing all listings",
+            description: "Filters cleared — here are all featured properties.",
+          });
+        }}
+      />
 
       <ScrollingTextSeparator
         label="Signature projects"
@@ -397,14 +416,7 @@ const Index = () => {
               </div>
               <Button
                 className="mt-4 h-11 rounded-2xl bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
-                onClick={() =>
-                  setFilters({
-                    query: "",
-                    location: "any",
-                    beds: "any",
-                    maxPrice: 20000000,
-                  })
-                }
+                onClick={() => resetListingFilters()}
               >
                 Reset filters
               </Button>
