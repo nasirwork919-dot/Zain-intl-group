@@ -90,7 +90,7 @@ export function HeroSearchBar({
             Find Properties
           </div>
           <div className="relative mt-2">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70" />
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white" />
             <Input
               value={value.query}
               onChange={(e) => onChange({ ...value, query: e.target.value })}
