@@ -31,7 +31,7 @@ export function CuratedOpportunities({
 
   return (
     <section className="mx-auto max-w-6xl px-4 pb-16">
-      <div className="text-center">
+      <div className="px-0 text-center">
         <h2 className="font-serif text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
           Curated{" "}
           <span className="text-[hsl(var(--brand))]">Opportunities</span>
@@ -50,17 +50,19 @@ export function CuratedOpportunities({
 
       <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         {/* Pager (left) */}
-        <div className="flex items-center gap-4">
-          <div className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">{page + 1}</span>/
-            {pageCount}
-          </div>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">{page + 1}</span>/
+              {pageCount}
+            </div>
 
-          <div className="h-1.5 w-44 overflow-hidden rounded-full bg-muted/60 sm:w-64">
-            <div
-              className="h-full rounded-full bg-[hsl(var(--brand))]"
-              style={{ width: `${((page + 1) / pageCount) * 100}%` }}
-            />
+            <div className="h-1.5 w-44 overflow-hidden rounded-full bg-muted/60 sm:w-64">
+              <div
+                className="h-full rounded-full bg-[hsl(var(--brand))]"
+                style={{ width: `${((page + 1) / pageCount) * 100}%` }}
+              />
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -69,11 +71,13 @@ export function CuratedOpportunities({
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={!canPrev}
               className={cn(
-                "inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition",
+                "inline-flex w-full items-center justify-center gap-2 rounded-[5px] px-3 py-2 text-sm font-semibold transition sm:w-auto sm:rounded-full sm:px-3 sm:py-2 sm:text-sm sm:font-medium",
+                "ring-1 ring-black/10 sm:ring-0",
                 canPrev
-                  ? "text-[hsl(var(--brand-ink))] hover:bg-white/70"
-                  : "cursor-not-allowed text-muted-foreground/60",
+                  ? "bg-white/75 text-[hsl(var(--brand-ink))] hover:bg-white sm:bg-transparent sm:hover:bg-white/70"
+                  : "cursor-not-allowed bg-white/45 text-muted-foreground/60 sm:bg-transparent",
               )}
+              aria-label="Previous page"
             >
               <ChevronLeft className="h-4 w-4" />
               PREV
@@ -83,11 +87,13 @@ export function CuratedOpportunities({
               onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
               disabled={!canNext}
               className={cn(
-                "inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition",
+                "inline-flex w-full items-center justify-center gap-2 rounded-[5px] px-3 py-2 text-sm font-semibold transition sm:w-auto sm:rounded-full sm:px-3 sm:py-2 sm:text-sm sm:font-medium",
+                "ring-1 ring-black/10 sm:ring-0",
                 canNext
-                  ? "text-[hsl(var(--brand-ink))] hover:bg-white/70"
-                  : "cursor-not-allowed text-muted-foreground/60",
+                  ? "bg-white/75 text-[hsl(var(--brand-ink))] hover:bg-white sm:bg-transparent sm:hover:bg-white/70"
+                  : "cursor-not-allowed bg-white/45 text-muted-foreground/60 sm:bg-transparent",
               )}
+              aria-label="Next page"
             >
               NEXT
               <ChevronRight className="h-4 w-4" />
