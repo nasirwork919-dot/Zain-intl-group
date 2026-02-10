@@ -43,7 +43,7 @@ export const featuredProperties: Property[] = [
     gallery: [
       "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1800&q=80",
       "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=1800&q=80",
-      "https://images.unsplash.com/photo-1560448075-bb4bfc7300d0?auto=format&fit=crop&w=1800&q=80",
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1800&q=80",
     ],
     description:
       "A bright, modern home with a resort-grade amenity deck and direct access to waterfront dining. Designed for effortless city living with high ceilings and full-height glazing.",
@@ -70,7 +70,7 @@ export const featuredProperties: Property[] = [
     gallery: [
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1600&q=80",
       "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=1600&q=80",
-      "https://images.unsplash.com/photo-1560448075-bb4bfc7300d0?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1600&q=80",
     ],
     description:
       "A statement residence above the city: expansive terraces, curated finishes, and panoramic skyline views. Perfect for entertaining with a chef’s kitchen and private lift lobby.",
@@ -96,7 +96,7 @@ export const featuredProperties: Property[] = [
       "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1600&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1600&q=80",
-      "https://images.unsplash.com/photo-1560184897-502a8b3b5f2f?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=1600&q=80",
       "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1600&q=80",
     ],
     description:
