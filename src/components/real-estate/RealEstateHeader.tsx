@@ -14,6 +14,7 @@ import { BuyMegaMenu } from "@/components/real-estate/BuyMegaMenu";
 import { toast } from "@/hooks/use-toast";
 import { TopBarPreferencesPopover } from "@/components/real-estate/TopBarPreferencesPopover";
 import { RentMegaMenu } from "@/components/real-estate/RentMegaMenu";
+import { CommunitiesMegaMenu } from "@/components/real-estate/CommunitiesMegaMenu";
 
 function useActiveSection(ids: string[]) {
   const [active, setActive] = useState<string>(ids[0] ?? "");
@@ -50,7 +51,7 @@ type NavItem =
       type: "scroll";
       href: string;
       hasChevron?: boolean;
-      mega?: "buy" | "rent";
+      mega?: "buy" | "rent" | "communities";
     }
   | { label: string; type: "noop"; hasChevron?: boolean };
 
@@ -66,6 +67,7 @@ export function RealEstateHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [buyOpen, setBuyOpen] = useState(false);
   const [rentOpen, setRentOpen] = useState(false);
+  const [communitiesOpen, setCommunitiesOpen] = useState(false);
 
   const scrollTo = (hash: string) => {
     const id = hash.replace("#", "");
@@ -76,6 +78,7 @@ export function RealEstateHeader() {
   const closeMegas = () => {
     setBuyOpen(false);
     setRentOpen(false);
+    setCommunitiesOpen(false);
   };
 
   const navItems: NavItem[] = useMemo(
@@ -99,6 +102,7 @@ export function RealEstateHeader() {
         type: "scroll",
         href: "#projects",
         hasChevron: true,
+        mega: "communities",
       },
       {
         label: "Developers",
@@ -338,8 +342,15 @@ export function RealEstateHeader() {
 
               const isBuy = item.mega === "buy";
               const isRent = item.mega === "rent";
+              const isCommunities = item.mega === "communities";
 
-              const expanded = isBuy ? buyOpen : isRent ? rentOpen : undefined;
+              const expanded = isBuy
+                ? buyOpen
+                : isRent
+                  ? rentOpen
+                  : isCommunities
+                    ? communitiesOpen
+                    : undefined;
 
               return (
                 <button
@@ -349,11 +360,19 @@ export function RealEstateHeader() {
                     if (isBuy) {
                       setBuyOpen((v) => !v);
                       setRentOpen(false);
+                      setCommunitiesOpen(false);
                       return;
                     }
                     if (isRent) {
                       setRentOpen((v) => !v);
                       setBuyOpen(false);
+                      setCommunitiesOpen(false);
+                      return;
+                    }
+                    if (isCommunities) {
+                      setCommunitiesOpen((v) => !v);
+                      setBuyOpen(false);
+                      setRentOpen(false);
                       return;
                     }
                     closeMegas();
@@ -363,10 +382,17 @@ export function RealEstateHeader() {
                     if (isBuy) {
                       setBuyOpen(true);
                       setRentOpen(false);
+                      setCommunitiesOpen(false);
                     }
                     if (isRent) {
                       setRentOpen(true);
                       setBuyOpen(false);
+                      setCommunitiesOpen(false);
+                    }
+                    if (isCommunities) {
+                      setCommunitiesOpen(true);
+                      setBuyOpen(false);
+                      setRentOpen(false);
                     }
                   }}
                   className={cn(
@@ -375,6 +401,7 @@ export function RealEstateHeader() {
                     isActive &&
                       !isBuy &&
                       !isRent &&
+                      !isCommunities &&
                       "underline underline-offset-8 decoration-black/30",
                   )}
                   aria-expanded={expanded}
@@ -384,7 +411,9 @@ export function RealEstateHeader() {
                     <ChevronDown
                       className={cn(
                         "h-4 w-4 opacity-70 transition-transform",
-                        ((isBuy && buyOpen) || (isRent && rentOpen)) &&
+                        ((isBuy && buyOpen) ||
+                          (isRent && rentOpen) ||
+                          (isCommunities && communitiesOpen)) &&
                           "rotate-180",
                       )}
                     />
@@ -466,6 +495,19 @@ export function RealEstateHeader() {
             toast({
               title: `Rent · ${label}`,
               description: "Showing listings — we can wire these to filters next.",
+            });
+          }}
+        />
+
+        <CommunitiesMegaMenu
+          open={communitiesOpen}
+          onClose={() => setCommunitiesOpen(false)}
+          onNavigate={(label) => {
+            scrollTo("#projects");
+            toast({
+              title: `Community · ${label}`,
+              description:
+                "Opened communities section — we can wire this to filters next.",
             });
           }}
         />
