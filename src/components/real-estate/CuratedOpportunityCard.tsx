@@ -4,6 +4,7 @@ import { Bath, BedDouble, ChevronLeft, ChevronRight, Ruler } from "lucide-react"
 import type { Property } from "@/components/real-estate/site-data";
 import { formatAED } from "@/components/real-estate/format";
 import { cn } from "@/lib/utils";
+import { SmartImage } from "@/components/real-estate/SmartImage";
 
 export function CuratedOpportunityCard({
   property,
@@ -43,7 +44,6 @@ export function CuratedOpportunityCard({
           "bg-white",
         )}
       >
-        {/* Image area: click opens, but slider controls MUST NOT open */}
         <div
           role="button"
           tabIndex={0}
@@ -54,7 +54,7 @@ export function CuratedOpportunityCard({
           className="block w-full text-left"
           aria-label={`Open ${property.title}`}
         >
-          <img
+          <SmartImage
             src={images[idx]}
             alt={property.title}
             className="h-56 w-full object-cover transition duration-500 group-hover:scale-[1.02] sm:h-64"
@@ -89,7 +89,6 @@ export function CuratedOpportunityCard({
               <ChevronRight className="h-5 w-5" />
             </button>
 
-            {/* Thumbnails */}
             <div
               className="absolute bottom-3 left-3 right-3 flex items-center justify-center gap-2"
               onPointerDown={(e) => e.stopPropagation()}
@@ -99,7 +98,7 @@ export function CuratedOpportunityCard({
                 const active = i === idx;
                 return (
                   <button
-                    key={src}
+                    key={`${src}-${i}`}
                     type="button"
                     className={cn(
                       "h-2.5 w-2.5 rounded-full ring-1 transition",

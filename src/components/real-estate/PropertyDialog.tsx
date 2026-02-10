@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { SmartImage } from "@/components/real-estate/SmartImage";
 
 export function PropertyDialog({
   property,
@@ -31,10 +32,9 @@ export function PropertyDialog({
 
   const [activeIdx, setActiveIdx] = useState(0);
 
-  // reset image when property changes or dialog opens
   if (!property) return null;
 
-  const mainSrc = images[activeIdx] ?? images[0];
+  const mainSrc = images[activeIdx] ?? images[0] ?? "/placeholder.svg";
 
   return (
     <Dialog
@@ -47,10 +47,11 @@ export function PropertyDialog({
       <DialogContent className="max-w-3xl overflow-hidden rounded-3xl p-0">
         <div className="grid md:grid-cols-5">
           <div className="relative md:col-span-3">
-            <img
+            <SmartImage
               src={mainSrc}
               alt={property.title}
               className="h-64 w-full object-cover md:h-full"
+              loading="eager"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-black/0" />
 
@@ -79,7 +80,7 @@ export function PropertyDialog({
                 <div className="mt-4 grid grid-cols-5 gap-2">
                   {images.slice(0, 5).map((src, i) => (
                     <button
-                      key={src}
+                      key={`${src}-${i}`}
                       type="button"
                       onClick={() => setActiveIdx(i)}
                       className={cn(
@@ -90,7 +91,7 @@ export function PropertyDialog({
                       )}
                       aria-label={`Select image ${i + 1}`}
                     >
-                      <img
+                      <SmartImage
                         src={src}
                         alt=""
                         className="h-14 w-full object-cover"

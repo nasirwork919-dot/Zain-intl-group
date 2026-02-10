@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { Property } from "@/components/real-estate/site-data";
 import { formatAED } from "@/components/real-estate/format";
+import { SmartImage } from "@/components/real-estate/SmartImage";
 
 export function PropertyCard({
   property,
@@ -27,11 +28,11 @@ export function PropertyCard({
       className={cn(
         "group overflow-hidden rounded-3xl border-white/20 bg-white/70 shadow-[0_18px_50px_-34px_rgba(15,23,42,0.55)] backdrop-blur supports-[backdrop-filter]:bg-white/55 transition hover:-translate-y-0.5 hover:bg-white/80",
         onClick && "cursor-pointer",
-        featured && "ring-1 ring-[hsl(var(--brand))]/25"
+        featured && "ring-1 ring-[hsl(var(--brand))]/25",
       )}
     >
       <div className="relative">
-        <img
+        <SmartImage
           src={property.coverImage}
           alt={property.title}
           className="h-52 w-full object-cover transition duration-500 group-hover:scale-[1.03]"
@@ -57,7 +58,9 @@ export function PropertyCard({
               </div>
             </div>
             <div className="rounded-2xl bg-white/85 px-3 py-2 text-right shadow-sm ring-1 ring-black/5">
-              <div className="text-xs font-medium text-muted-foreground">From</div>
+              <div className="text-xs font-medium text-muted-foreground">
+                From
+              </div>
               <div className="text-sm font-bold text-foreground">
                 {formatAED(property.price)}
               </div>
