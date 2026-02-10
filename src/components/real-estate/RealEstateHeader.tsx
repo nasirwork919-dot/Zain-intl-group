@@ -12,6 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import { BuyMegaMenu } from "@/components/real-estate/BuyMegaMenu";
 import { toast } from "@/hooks/use-toast";
+import { TopBarPreferencesPopover } from "@/components/real-estate/TopBarPreferencesPopover";
 
 function useActiveSection(ids: string[]) {
   const [active, setActive] = useState<string>(ids[0] ?? "");
@@ -174,6 +175,12 @@ export function RealEstateHeader() {
                 type="button"
                 className="hover:text-white"
                 aria-label="Switch to English"
+                onClick={() =>
+                  toast({
+                    title: "Language",
+                    description: "We can wire EN/AR to real translations next.",
+                  })
+                }
               >
                 EN
               </button>
@@ -181,18 +188,17 @@ export function RealEstateHeader() {
                 type="button"
                 className="hover:text-white/95"
                 aria-label="Switch to Arabic"
+                onClick={() =>
+                  toast({
+                    title: "Language",
+                    description: "We can wire EN/AR to real translations next.",
+                  })
+                }
               >
                 AR
               </button>
 
-              <button
-                type="button"
-                className="inline-flex items-center gap-1 hover:text-white"
-                aria-label="Currency"
-              >
-                AED
-                <ChevronDown className="h-4 w-4 opacity-90" />
-              </button>
+              <TopBarPreferencesPopover />
             </div>
 
             <div className="hidden items-center gap-3 md:flex">
@@ -429,7 +435,6 @@ export function RealEstateHeader() {
           open={buyOpen}
           onClose={() => setBuyOpen(false)}
           onNavigate={(label) => {
-            // For now we just jump to listings and show a toast; later we can wire these to real filters.
             scrollTo("#listings");
             toast({
               title: `Buy · ${label}`,
