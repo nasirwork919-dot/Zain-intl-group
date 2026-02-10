@@ -50,6 +50,8 @@ export function RealEstateHeader() {
     "contact",
   ]);
 
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const scrollTo = (hash: string) => {
     const id = hash.replace("#", "");
     const el = document.getElementById(id);
@@ -126,7 +128,7 @@ export function RealEstateHeader() {
                 Request a call
               </Button>
 
-              <Sheet>
+              <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
                 <SheetTrigger asChild>
                   <Button
                     variant="outline"
@@ -141,7 +143,11 @@ export function RealEstateHeader() {
                     <SheetTitle className="text-left">Explore</SheetTitle>
                   </SheetHeader>
                   <div className="mt-4">
-                    <Nav onNavigate={() => {}} />
+                    <Nav
+                      onNavigate={() => {
+                        setMobileOpen(false);
+                      }}
+                    />
                     <div className="mt-5 rounded-[5px] bg-muted/50 p-4">
                       <div className="text-sm font-semibold">Talk to an agent</div>
                       <div className="mt-1 text-sm text-muted-foreground">
@@ -149,7 +155,10 @@ export function RealEstateHeader() {
                       </div>
                       <Button
                         className="mt-3 w-full rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/90"
-                        onClick={() => scrollTo("#contact")}
+                        onClick={() => {
+                          scrollTo("#contact");
+                          setMobileOpen(false);
+                        }}
                       >
                         Request a call
                       </Button>
