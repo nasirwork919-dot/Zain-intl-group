@@ -118,8 +118,8 @@ const Index = () => {
             </div>
 
             <h1 className="mt-6 font-extrabold tracking-tight">
-              <span className="block text-5xl leading-[0.95] sm:text-6xl lg:text-7xl">
-                PRIMADOM
+              <span className="block text-4xl leading-[0.98] sm:text-5xl lg:text-6xl">
+                ZAIN INTERNATIONAL GROUP
               </span>
               <span className="mt-2 block text-3xl font-semibold italic text-white/90 sm:text-4xl lg:text-5xl">
                 Real Estate
@@ -436,7 +436,7 @@ const Index = () => {
           <Card className="overflow-hidden rounded-[5px] border border-white/40 bg-white/65 shadow-[0_20px_60px_-45px_rgba(15,23,42,0.65)] ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55 md:col-span-7">
             <div className="p-6 sm:p-7">
               <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">
-                About PrimaDom
+                About Zain International Group
               </div>
               <h2 className="mt-2 text-3xl font-extrabold tracking-tight">
                 A calmer way to buy in Dubai
@@ -602,10 +602,12 @@ const Index = () => {
       <footer className="border-t border-white/30 bg-white/40">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-sm font-semibold tracking-tight">
-            PrimaDom <span className="text-muted-foreground">· Dubai</span>
+            Zain International Group{" "}
+            <span className="text-muted-foreground">· Dubai</span>
           </div>
           <div className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} PrimaDom. All rights reserved.
+            © {new Date().getFullYear()} Zain International Group. All rights
+            reserved.
           </div>
         </div>
       </footer>

@@ -26,10 +26,12 @@ function useActiveSection(ids: string[]) {
       (entries) => {
         const visible = entries
           .filter((e) => e.isIntersecting)
-          .sort((a, b) => (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0))[0];
+          .sort(
+            (a, b) => (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0),
+          )[0];
         if (visible?.target?.id) setActive(visible.target.id);
       },
-      { rootMargin: "-30% 0px -60% 0px", threshold: [0.1, 0.25, 0.5] }
+      { rootMargin: "-30% 0px -60% 0px", threshold: [0.1, 0.25, 0.5] },
     );
 
     sections.forEach((s) => obs.observe(s));
@@ -96,11 +98,13 @@ export function RealEstateHeader() {
               }}
             >
               <span className="inline-flex h-9 w-9 items-center justify-center rounded-[5px] bg-[hsl(var(--brand))] text-white shadow-sm">
-                <span className="text-sm font-extrabold tracking-tight">PD</span>
+                <span className="text-sm font-extrabold tracking-tight">
+                  ZI
+                </span>
               </span>
               <span className="leading-tight">
                 <span className="block text-sm font-semibold tracking-tight text-foreground">
-                  PrimaDom
+                  Zain International Group
                 </span>
                 <span className="block text-xs text-muted-foreground">
                   Dubai Real Estate
