@@ -109,6 +109,142 @@ export const featuredProperties: Property[] = [
       "24/7 security",
     ],
   },
+
+  {
+    id: "p4",
+    title: "Business Bay Canal-view Loft",
+    location: "Business Bay",
+    price: 1890000,
+    currency: "AED",
+    beds: 1,
+    baths: 2,
+    areaSqFt: 980,
+    tag: "Investor Pick",
+    coverImage:
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1800&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1800&q=80",
+      "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=1800&q=80",
+      "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1800&q=80",
+    ],
+    description:
+      "A double-height loft with canal views and a walkable, central address. Ideal for short-term yields with premium building amenities and easy Downtown access.",
+    amenities: [
+      "Canal promenade",
+      "Rooftop pool",
+      "Co-working lounge",
+      "Concierge",
+      "Gym",
+    ],
+  },
+  {
+    id: "p5",
+    title: "JVC Modern Townhouse Cluster",
+    location: "Jumeirah Village Circle",
+    price: 2480000,
+    currency: "AED",
+    beds: 3,
+    baths: 4,
+    areaSqFt: 2250,
+    tag: "Family",
+    coverImage:
+      "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1800&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1800&q=80",
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1800&q=80",
+      "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=1800&q=80",
+    ],
+    description:
+      "A quiet townhouse pocket with generous living space, upgraded finishes, and easy access to parks, schools, and neighborhood retail — made for day-to-day comfort.",
+    amenities: [
+      "Community pool",
+      "Kids play area",
+      "Private patio",
+      "Covered parking",
+      "Security",
+    ],
+  },
+  {
+    id: "p6",
+    title: "Marina Waterfront 3BR Residence",
+    location: "Dubai Marina",
+    price: 5450000,
+    currency: "AED",
+    beds: 3,
+    baths: 4,
+    areaSqFt: 2350,
+    tag: "Waterfront",
+    coverImage:
+      "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=1800&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=1800&q=80",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1800&q=80",
+      "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1800&q=80",
+    ],
+    description:
+      "A spacious waterfront home with full-height glazing, sunrise views, and a prime address steps from marina dining and beach access — perfect for lifestyle buyers.",
+    amenities: [
+      "Private beach access",
+      "Infinity pool",
+      "Valet parking",
+      "Gym & sauna",
+      "Concierge",
+    ],
+  },
+  {
+    id: "p7",
+    title: "Downtown 2BR with Burj Views",
+    location: "Downtown Dubai",
+    price: 3920000,
+    currency: "AED",
+    beds: 2,
+    baths: 2,
+    areaSqFt: 1320,
+    tag: "Prime",
+    coverImage:
+      "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1800&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1800&q=80",
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1800&q=80",
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1800&q=80",
+    ],
+    description:
+      "A bright, efficient 2BR with iconic skyline framing and effortless access to Dubai Mall, the Boulevard, and top-tier dining — a high-demand rental pocket.",
+    amenities: [
+      "Burj views",
+      "Direct mall access",
+      "Residents’ pool",
+      "Gym",
+      "24/7 security",
+    ],
+  },
+  {
+    id: "p8",
+    title: "Dubai Hills Golf-side Villa",
+    location: "Dubai Hills Estate",
+    price: 9850000,
+    currency: "AED",
+    beds: 5,
+    baths: 6,
+    areaSqFt: 6100,
+    tag: "Luxury",
+    coverImage:
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1800&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1800&q=80",
+      "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1800&q=80",
+      "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=1800&q=80",
+    ],
+    description:
+      "A golf-side villa with generous entertaining space, shaded terraces, and serene green views — designed for long-term family living with premium community amenities.",
+    amenities: [
+      "Golf view",
+      "Private garden",
+      "Maid’s room",
+      "Clubhouse access",
+      "Gated community",
+    ],
+  },
 ];
 
 export const locations = [
