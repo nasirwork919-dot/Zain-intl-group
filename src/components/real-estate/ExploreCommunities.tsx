@@ -46,10 +46,12 @@ function CommunityTile({
   image,
   className,
   onSearch,
+  roundedClassName,
 }: {
   title: string;
   image: string;
   className?: string;
+  roundedClassName?: string;
   onSearch: () => void;
 }) {
   return (
@@ -57,9 +59,12 @@ function CommunityTile({
       type="button"
       onClick={onSearch}
       className={cn(
-        "group relative w-full overflow-hidden rounded-[2rem] text-left ring-1 ring-black/10",
+        "group relative w-full overflow-hidden text-left",
+        "ring-1 ring-black/10",
         "bg-white shadow-[0_22px_70px_-55px_rgba(15,23,42,0.7)]",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35",
+        // smaller radius (user requested)
+        roundedClassName ?? "rounded-2xl",
         className,
       )}
       aria-label={`Search in ${title}`}
@@ -101,6 +106,14 @@ export function ExploreCommunities({
   const rightTop = communities.find((c) => c.layout === "rightTop")!;
   const rightBottom = communities.find((c) => c.layout === "rightBottom")!;
 
+  // Outer container radius (smaller than before) to make the whole set feel combined.
+  const outer = "rounded-2xl";
+  const clip = "overflow-hidden";
+
+  // Inner tiles should have NO radius so there are no “gaps” between tiles.
+  // Only the outer corners get rounding via the wrapper.
+  const innerRounded = "rounded-none";
+
   return (
     <section className={cn("mx-auto max-w-6xl px-4 pb-10 sm:pb-14", className)}>
       <div className="text-center">
@@ -114,38 +127,58 @@ export function ExploreCommunities({
         </p>
       </div>
 
-      {/* Desktop mosaic */}
-      <div className="mt-8 hidden gap-4 lg:grid lg:grid-cols-12">
-        <CommunityTile
-          title={left.title}
-          image={left.image}
-          onSearch={() => onSearchCommunity(left.locationFilter)}
-          className="lg:col-span-4 lg:h-[460px]"
-        />
-        <CommunityTile
-          title={middle.title}
-          image={middle.image}
-          onSearch={() => onSearchCommunity(middle.locationFilter)}
-          className="lg:col-span-4 lg:h-[460px]"
-        />
-        <div className="lg:col-span-4 lg:grid lg:h-[460px] lg:grid-rows-2 lg:gap-4">
-          <CommunityTile
-            title={rightTop.title}
-            image={rightTop.image}
-            onSearch={() => onSearchCommunity(rightTop.locationFilter)}
-            className="h-full"
-          />
-          <CommunityTile
-            title={rightBottom.title}
-            image={rightBottom.image}
-            onSearch={() => onSearchCommunity(rightBottom.locationFilter)}
-            className="h-full"
-          />
+      {/* Desktop mosaic: NO GAP, combined into a single clipped container */}
+      <div
+        className={cn(
+          "mt-8 hidden lg:block",
+          outer,
+          clip,
+          "ring-1 ring-black/10",
+          "bg-white shadow-[0_30px_90px_-75px_rgba(15,23,42,0.9)]",
+        )}
+      >
+        <div className="grid grid-cols-12">
+          <div className="col-span-4">
+            <CommunityTile
+              title={left.title}
+              image={left.image}
+              onSearch={() => onSearchCommunity(left.locationFilter)}
+              roundedClassName={innerRounded}
+              className="h-[460px] ring-0 shadow-none"
+            />
+          </div>
+
+          <div className="col-span-4">
+            <CommunityTile
+              title={middle.title}
+              image={middle.image}
+              onSearch={() => onSearchCommunity(middle.locationFilter)}
+              roundedClassName={innerRounded}
+              className="h-[460px] ring-0 shadow-none"
+            />
+          </div>
+
+          <div className="col-span-4 grid h-[460px] grid-rows-2">
+            <CommunityTile
+              title={rightTop.title}
+              image={rightTop.image}
+              onSearch={() => onSearchCommunity(rightTop.locationFilter)}
+              roundedClassName={innerRounded}
+              className="h-full ring-0 shadow-none"
+            />
+            <CommunityTile
+              title={rightBottom.title}
+              image={rightBottom.image}
+              onSearch={() => onSearchCommunity(rightBottom.locationFilter)}
+              roundedClassName={innerRounded}
+              className="h-full ring-0 shadow-none"
+            />
+          </div>
         </div>
       </div>
 
-      {/* Mobile/tablet: stacked cards */}
-      <div className="mt-8 grid gap-4 lg:hidden">
+      {/* Mobile/tablet: stacked cards (still responsive, smaller radius) */}
+      <div className="mt-8 grid gap-3 sm:gap-4 lg:hidden">
         {communities.map((c) => (
           <CommunityTile
             key={c.title}
@@ -153,6 +186,7 @@ export function ExploreCommunities({
             image={c.image}
             onSearch={() => onSearchCommunity(c.locationFilter)}
             className="h-[220px] sm:h-[260px]"
+            roundedClassName="rounded-2xl"
           />
         ))}
       </div>
