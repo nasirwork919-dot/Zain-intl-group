@@ -26,7 +26,7 @@ export function PropertyCard({
         if (e.key === "Enter" || e.key === " ") onClick();
       }}
       className={cn(
-        "group overflow-hidden rounded-2xl border-white/20 bg-white/70 shadow-[0_18px_50px_-34px_rgba(15,23,42,0.55)] backdrop-blur supports-[backdrop-filter]:bg-white/55 transition hover:-translate-y-0.5 hover:bg-white/80",
+        "group overflow-hidden rounded-[5px] border-white/20 bg-white/70 shadow-[0_18px_50px_-34px_rgba(15,23,42,0.55)] backdrop-blur supports-[backdrop-filter]:bg-white/55 transition hover:-translate-y-0.5 hover:bg-white/80",
         onClick && "cursor-pointer",
         featured && "ring-1 ring-[hsl(var(--brand))]/25",
       )}
@@ -41,7 +41,7 @@ export function PropertyCard({
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/0 to-black/0" />
         <div className="absolute left-4 top-4 flex items-center gap-2">
           {property.tag ? (
-            <Badge className="rounded-lg bg-white/85 text-foreground hover:bg-white">
+            <Badge className="rounded-[5px] bg-white/85 text-foreground hover:bg-white">
               <Sparkles className="mr-1 h-3.5 w-3.5 text-[hsl(var(--brand-ink))]" />
               {property.tag}
             </Badge>
@@ -57,7 +57,7 @@ export function PropertyCard({
                 {property.title}
               </div>
             </div>
-            <div className="rounded-xl bg-white/85 px-3 py-2 text-right shadow-sm ring-1 ring-black/5">
+            <div className="rounded-[6px] bg-white/85 px-3 py-2 text-right shadow-sm ring-1 ring-black/5">
               <div className="text-xs font-medium text-muted-foreground">
                 From
               </div>
@@ -71,15 +71,15 @@ export function PropertyCard({
 
       <div className="p-4">
         <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-          <span className="inline-flex items-center gap-1 rounded-lg bg-muted/50 px-2.5 py-1">
+          <span className="inline-flex items-center gap-1 rounded-[6px] bg-muted/50 px-2.5 py-1">
             <BedDouble className="h-4 w-4" />
             {property.beds} Beds
           </span>
-          <span className="inline-flex items-center gap-1 rounded-lg bg-muted/50 px-2.5 py-1">
+          <span className="inline-flex items-center gap-1 rounded-[6px] bg-muted/50 px-2.5 py-1">
             <Bath className="h-4 w-4" />
             {property.baths} Baths
           </span>
-          <span className="inline-flex items-center gap-1 rounded-lg bg-muted/50 px-2.5 py-1">
+          <span className="inline-flex items-center gap-1 rounded-[6px] bg-muted/50 px-2.5 py-1">
             <Ruler className="h-4 w-4" />
             {property.areaSqFt.toLocaleString()} sqft
           </span>
@@ -93,7 +93,7 @@ export function PropertyCard({
           {property.amenities.slice(0, 3).map((a) => (
             <span
               key={a}
-              className="rounded-lg bg-white px-3 py-1 text-xs font-medium text-foreground ring-1 ring-black/5"
+              className="rounded-[6px] bg-white px-3 py-1 text-xs font-medium text-foreground ring-1 ring-black/5"
             >
               {a}
             </span>
