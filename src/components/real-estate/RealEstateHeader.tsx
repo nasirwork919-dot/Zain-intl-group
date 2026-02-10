@@ -142,13 +142,23 @@ export function RealEstateHeader() {
     <div className="w-full bg-[#1f2937] text-white">
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex h-14 items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+          {/* Small screens: keep pills on the left like before */}
+          <div className="flex items-center gap-3 lg:hidden">
             <UtilityPill>Your Voice Matters</UtilityPill>
             <UtilityPill>List Your Property</UtilityPill>
           </div>
 
+          {/* Desktop: pills move next to EN/AR/AED on the right */}
+          <div className="hidden lg:flex" />
+
           <div className="flex items-center gap-3">
             <div className="hidden items-center gap-4 text-xs font-semibold text-white/90 sm:flex">
+              {/* Desktop placement of pills beside language/currency */}
+              <div className="hidden items-center gap-3 lg:flex">
+                <UtilityPill>Your Voice Matters</UtilityPill>
+                <UtilityPill>List Your Property</UtilityPill>
+              </div>
+
               <button
                 type="button"
                 className="hover:text-white"
