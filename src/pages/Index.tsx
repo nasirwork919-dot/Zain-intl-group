@@ -261,9 +261,9 @@ const Index = () => {
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-12">
-          <Card className="rounded-3xl border-2 border-[hsl(var(--brand-ink))]/10 bg-white/65 p-5 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.55)] ring-1 ring-[hsl(var(--brand-ink))]/5 backdrop-blur supports-[backdrop-filter]:bg-white/55 transition hover:-translate-y-0.5 hover:border-[hsl(var(--brand))]/20 md:col-span-5">
+          <Card className="rounded-[5px] border-2 border-[hsl(var(--brand-ink))]/12 bg-white/65 p-5 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.55)] ring-1 ring-[hsl(var(--brand-ink))]/6 backdrop-blur supports-[backdrop-filter]:bg-white/55 transition hover:-translate-y-0.5 hover:border-[hsl(var(--brand))]/26 md:col-span-5">
             <div className="flex items-start gap-3">
-              <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))]">
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-[8px] bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))]">
                 <Building2 className="h-5 w-5" />
               </div>
               <div>
@@ -290,7 +290,7 @@ const Index = () => {
               ))}
             </ul>
             <Button
-              className="mt-5 h-11 w-full rounded-2xl bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
+              className="mt-5 h-11 w-full rounded-[6px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
               onClick={() =>
                 document
                   .getElementById("contact")
@@ -327,9 +327,9 @@ const Index = () => {
             ].map((c) => (
               <Card
                 key={c.title}
-                className="rounded-3xl border-2 border-[hsl(var(--brand-ink))]/10 bg-white/65 p-5 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.55)] ring-1 ring-[hsl(var(--brand-ink))]/5 backdrop-blur supports-[backdrop-filter]:bg-white/55 transition hover:-translate-y-0.5 hover:border-[hsl(var(--brand))]/20"
+                className="rounded-[5px] border-2 border-[hsl(var(--brand-ink))]/12 bg-white/65 p-5 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.55)] ring-1 ring-[hsl(var(--brand-ink))]/6 backdrop-blur supports-[backdrop-filter]:bg-white/55 transition hover:-translate-y-0.5 hover:border-[hsl(var(--brand))]/26"
               >
-                <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[hsl(var(--brand-2))]/12 text-[hsl(var(--brand-ink))]">
+                <div className="inline-flex h-11 w-11 items-center justify-center rounded-[8px] bg-[hsl(var(--brand-2))]/12 text-[hsl(var(--brand-ink))]">
                   <c.icon className="h-5 w-5" />
                 </div>
                 <div className="mt-3 text-base font-extrabold tracking-tight">
