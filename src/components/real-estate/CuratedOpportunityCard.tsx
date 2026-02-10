@@ -40,7 +40,7 @@ export function CuratedOpportunityCard({
 
       <div
         className={cn(
-          "relative mt-4 overflow-hidden rounded-2xl ring-1 ring-black/10",
+          "relative mt-4 overflow-hidden rounded-[5px] ring-1 ring-black/10",
           "bg-white",
         )}
       >
@@ -71,7 +71,7 @@ export function CuratedOpportunityCard({
                 e.stopPropagation();
                 prev();
               }}
-              className="absolute left-3 top-1/2 -translate-y-1/2 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 transition hover:bg-white"
+              className="absolute left-3 top-1/2 -translate-y-1/2 inline-flex h-10 w-10 items-center justify-center rounded-[6px] bg-white/90 text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 transition hover:bg-white"
               aria-label="Previous image"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -83,7 +83,7 @@ export function CuratedOpportunityCard({
                 e.stopPropagation();
                 next();
               }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 transition hover:bg-white"
+              className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex h-10 w-10 items-center justify-center rounded-[6px] bg-white/90 text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 transition hover:bg-white"
               aria-label="Next image"
             >
               <ChevronRight className="h-5 w-5" />
@@ -101,7 +101,7 @@ export function CuratedOpportunityCard({
                     key={`${src}-${i}`}
                     type="button"
                     className={cn(
-                      "h-2.5 w-2.5 rounded-full ring-1 transition",
+                      "h-2.5 w-2.5 rounded-[5px] ring-1 transition",
                       active
                         ? "bg-white ring-white/80"
                         : "bg-white/45 ring-white/50 hover:bg-white/70",
