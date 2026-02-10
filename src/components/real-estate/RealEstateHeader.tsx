@@ -171,34 +171,18 @@ export function RealEstateHeader() {
                 <UtilityPill>List Your Property</UtilityPill>
               </div>
 
-              <button
-                type="button"
-                className="hover:text-white"
-                aria-label="Switch to English"
-                onClick={() =>
-                  toast({
-                    title: "Language",
-                    description: "We can wire EN/AR to real translations next.",
-                  })
+              <TopBarPreferencesPopover
+                trigger={
+                  <div className="inline-flex items-center gap-4">
+                    <span className="hover:text-white">EN</span>
+                    <span className="hover:text-white/95">AR</span>
+                    <span className="inline-flex items-center gap-1 hover:text-white">
+                      AED
+                      <ChevronDown className="h-4 w-4 opacity-90" />
+                    </span>
+                  </div>
                 }
-              >
-                EN
-              </button>
-              <button
-                type="button"
-                className="hover:text-white/95"
-                aria-label="Switch to Arabic"
-                onClick={() =>
-                  toast({
-                    title: "Language",
-                    description: "We can wire EN/AR to real translations next.",
-                  })
-                }
-              >
-                AR
-              </button>
-
-              <TopBarPreferencesPopover />
+              />
             </div>
 
             <div className="hidden items-center gap-3 md:flex">
