@@ -63,7 +63,6 @@ function CommunityTile({
         "ring-1 ring-black/10",
         "bg-white shadow-[0_22px_70px_-55px_rgba(15,23,42,0.7)]",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35",
-        // smaller radius (user requested)
         roundedClassName ?? "rounded-2xl",
         className,
       )}
@@ -76,11 +75,10 @@ function CommunityTile({
         loading="lazy"
       />
 
-      {/* overlays */}
       <div className="pointer-events-none absolute inset-0 bg-black/10" />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/0" />
 
-      <div className="absolute bottom-5 left-5 right-5">
+      <div className="absolute bottom-6 left-6 right-6">
         <div className="text-xs font-semibold tracking-[0.18em] text-white/90 drop-shadow">
           {title}
         </div>
@@ -106,16 +104,15 @@ export function ExploreCommunities({
   const rightTop = communities.find((c) => c.layout === "rightTop")!;
   const rightBottom = communities.find((c) => c.layout === "rightBottom")!;
 
-  // Outer container radius (smaller than before) to make the whole set feel combined.
   const outer = "rounded-2xl";
   const clip = "overflow-hidden";
-
-  // Inner tiles should have NO radius so there are no “gaps” between tiles.
-  // Only the outer corners get rounding via the wrapper.
   const innerRounded = "rounded-none";
 
+  // Slightly larger than before
+  const desktopHeight = 540;
+
   return (
-    <section className={cn("mx-auto max-w-6xl px-4 pb-10 sm:pb-14", className)}>
+    <section className={cn("mx-auto max-w-6xl px-4 pb-12 sm:pb-16", className)}>
       <div className="text-center">
         <h2 className="font-serif text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
           Explore{" "}
@@ -127,10 +124,10 @@ export function ExploreCommunities({
         </p>
       </div>
 
-      {/* Desktop mosaic: NO GAP, combined into a single clipped container */}
+      {/* Desktop mosaic: no gap, combined */}
       <div
         className={cn(
-          "mt-8 hidden lg:block",
+          "mt-9 hidden lg:block",
           outer,
           clip,
           "ring-1 ring-black/10",
@@ -144,7 +141,8 @@ export function ExploreCommunities({
               image={left.image}
               onSearch={() => onSearchCommunity(left.locationFilter)}
               roundedClassName={innerRounded}
-              className="h-[460px] ring-0 shadow-none"
+              className="ring-0 shadow-none"
+              // height via wrapper for consistent rows
             />
           </div>
 
@@ -154,30 +152,39 @@ export function ExploreCommunities({
               image={middle.image}
               onSearch={() => onSearchCommunity(middle.locationFilter)}
               roundedClassName={innerRounded}
-              className="h-[460px] ring-0 shadow-none"
+              className="ring-0 shadow-none"
             />
           </div>
 
-          <div className="col-span-4 grid h-[460px] grid-rows-2">
+          <div className="col-span-4 grid grid-rows-2">
             <CommunityTile
               title={rightTop.title}
               image={rightTop.image}
               onSearch={() => onSearchCommunity(rightTop.locationFilter)}
               roundedClassName={innerRounded}
-              className="h-full ring-0 shadow-none"
+              className="ring-0 shadow-none"
             />
             <CommunityTile
               title={rightBottom.title}
               image={rightBottom.image}
               onSearch={() => onSearchCommunity(rightBottom.locationFilter)}
               roundedClassName={innerRounded}
-              className="h-full ring-0 shadow-none"
+              className="ring-0 shadow-none"
             />
           </div>
         </div>
+
+        {/* Set a consistent overall height for the combined mosaic */}
+        <style>{`
+          @media (min-width: 1024px){
+            .explore-mosaic{ height: ${desktopHeight}px; }
+            .explore-mosaic > div{ height: 100%; }
+            .explore-mosaic [data-tile]{ height: 100%; }
+          }
+        `}</style>
       </div>
 
-      {/* Mobile/tablet: stacked cards (still responsive, smaller radius) */}
+      {/* Mobile/tablet: slightly taller stacked cards */}
       <div className="mt-8 grid gap-3 sm:gap-4 lg:hidden">
         {communities.map((c) => (
           <CommunityTile
@@ -185,11 +192,14 @@ export function ExploreCommunities({
             title={c.title}
             image={c.image}
             onSearch={() => onSearchCommunity(c.locationFilter)}
-            className="h-[220px] sm:h-[260px]"
+            className="h-[250px] sm:h-[300px]"
             roundedClassName="rounded-2xl"
           />
         ))}
       </div>
+
+      {/* Hidden helper to apply height styling on desktop */}
+      <div className="explore-mosaic hidden" aria-hidden="true" />
     </section>
   );
 }
