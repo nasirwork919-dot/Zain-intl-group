@@ -46,31 +46,19 @@ export function FeaturedListingsMobileSlider({
         ))}
       </div>
 
-      <div className="mt-5 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">{page + 1}</span>/
-            {pageCount}
-          </div>
-
-          <div className="h-1.5 w-40 overflow-hidden rounded-full bg-muted/60">
-            <div
-              className="h-full rounded-full bg-[hsl(var(--brand))]"
-              style={{ width: `${((page + 1) / pageCount) * 100}%` }}
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
+      {/* Controls UNDER the card (stacked, like a mini "pager") */}
+      <div className="mt-5 grid gap-3">
+        <div className="flex items-center justify-between gap-3">
           <button
             type="button"
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={!canPrev}
             className={cn(
-              "inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition",
+              "inline-flex w-full items-center justify-center gap-2 rounded-[5px] px-3 py-2 text-sm font-semibold transition",
+              "ring-1 ring-black/10",
               canPrev
-                ? "text-[hsl(var(--brand-ink))] hover:bg-white/70"
-                : "cursor-not-allowed text-muted-foreground/60",
+                ? "bg-white/75 text-[hsl(var(--brand-ink))] hover:bg-white"
+                : "cursor-not-allowed bg-white/45 text-muted-foreground/60",
             )}
             aria-label="Previous property"
           >
@@ -83,16 +71,31 @@ export function FeaturedListingsMobileSlider({
             onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
             disabled={!canNext}
             className={cn(
-              "inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition",
+              "inline-flex w-full items-center justify-center gap-2 rounded-[5px] px-3 py-2 text-sm font-semibold transition",
+              "ring-1 ring-black/10",
               canNext
-                ? "text-[hsl(var(--brand-ink))] hover:bg-white/70"
-                : "cursor-not-allowed text-muted-foreground/60",
+                ? "bg-white/75 text-[hsl(var(--brand-ink))] hover:bg-white"
+                : "cursor-not-allowed bg-white/45 text-muted-foreground/60",
             )}
             aria-label="Next property"
           >
             NEXT
             <ChevronRight className="h-4 w-4" />
           </button>
+        </div>
+
+        <div className="flex items-center justify-between gap-3">
+          <div className="text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">{page + 1}</span>/
+            {pageCount}
+          </div>
+
+          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted/60">
+            <div
+              className="h-full rounded-full bg-[hsl(var(--brand))]"
+              style={{ width: `${((page + 1) / pageCount) * 100}%` }}
+            />
+          </div>
         </div>
       </div>
     </div>
