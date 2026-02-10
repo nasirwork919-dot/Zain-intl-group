@@ -139,41 +139,45 @@ const Index = () => {
 
           {/* Primary hero search (PrimaDom-like) */}
           <div className="mx-auto mt-10 max-w-5xl">
-            <HeroSearchBar
-              value={heroBar}
-              onChange={setHeroBar}
-              onSubmit={() => {
-                setFilters((prev) => ({ ...prev, query: heroBar.query }));
-                document
-                  .getElementById("listings")
-                  ?.scrollIntoView({ behavior: "smooth" });
-                toast({
-                  title: "Quick search applied",
-                  description: `Operation: ${heroBar.operation.toUpperCase()} · Type: ${heroBar.propertyType}`,
-                });
-              }}
-            />
+            <div className="rounded-[5px] border border-white/18 bg-white/5 p-3 ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/5">
+              <HeroSearchBar
+                value={heroBar}
+                onChange={setHeroBar}
+                onSubmit={() => {
+                  setFilters((prev) => ({ ...prev, query: heroBar.query }));
+                  document
+                    .getElementById("listings")
+                    ?.scrollIntoView({ behavior: "smooth" });
+                  toast({
+                    title: "Quick search applied",
+                    description: `Operation: ${heroBar.operation.toUpperCase()} · Type: ${heroBar.propertyType}`,
+                  });
+                }}
+              />
+            </div>
           </div>
 
           {/* Secondary advanced filters (optional) */}
           <div className="mx-auto mt-5 max-w-5xl">
-            <HeroSearch
-              onSearch={(f) => {
-                setFilters(f);
-                document
-                  .getElementById("listings")
-                  ?.scrollIntoView({ behavior: "smooth" });
-                toast({
-                  title: "Filters applied",
-                  description: "Scroll to see matching listings below.",
-                });
-              }}
-            />
+            <div className="rounded-[5px] border border-white/18 bg-white/5 p-3 ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/5">
+              <HeroSearch
+                onSearch={(f) => {
+                  setFilters(f);
+                  document
+                    .getElementById("listings")
+                    ?.scrollIntoView({ behavior: "smooth" });
+                  toast({
+                    title: "Filters applied",
+                    description: "Scroll to see matching listings below.",
+                  });
+                }}
+              />
+            </div>
           </div>
 
           <div className="mx-auto mt-6 flex max-w-4xl flex-col items-center justify-center gap-3 sm:flex-row">
             <Button
-              className="h-11 rounded-full bg-white text-[hsl(var(--brand-ink))] hover:bg-white/90"
+              className="h-11 rounded-[5px] bg-white text-[hsl(var(--brand-ink))] hover:bg-white/90"
               onClick={() =>
                 document
                   .getElementById("listings")
@@ -185,7 +189,7 @@ const Index = () => {
             </Button>
             <Button
               variant="secondary"
-              className="h-11 rounded-full bg-white/10 text-white ring-1 ring-white/20 hover:bg-white/15"
+              className="h-11 rounded-[5px] bg-white/10 text-white ring-1 ring-white/20 hover:bg-white/15"
               onClick={() =>
                 document
                   .getElementById("contact")
@@ -200,7 +204,7 @@ const Index = () => {
             {featuredStats.map((s) => (
               <Card
                 key={s.label}
-                className="rounded-3xl border-white/15 bg-white/10 p-4 text-white shadow-[0_18px_50px_-40px_rgba(0,0,0,0.55)] backdrop-blur supports-[backdrop-filter]:bg-white/10"
+                className="rounded-[5px] border border-white/18 bg-white/10 p-4 text-white shadow-[0_18px_50px_-40px_rgba(0,0,0,0.55)] ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/10"
               >
                 <div className="text-2xl font-extrabold tracking-tight">
                   {s.value}
@@ -263,7 +267,7 @@ const Index = () => {
         <div className="mt-6 grid gap-4 md:grid-cols-12">
           <Card className="rounded-[5px] border-2 border-[hsl(var(--brand-ink))]/12 bg-white/65 p-5 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.55)] ring-1 ring-[hsl(var(--brand-ink))]/6 backdrop-blur supports-[backdrop-filter]:bg-white/55 transition hover:-translate-y-0.5 hover:border-[hsl(var(--brand))]/26 md:col-span-5">
             <div className="flex items-start gap-3">
-              <div className="inline-flex h-11 w-11 items-center justify-center rounded-[8px] bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))]">
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-[5px] bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))] ring-1 ring-black/5">
                 <Building2 className="h-5 w-5" />
               </div>
               <div>
@@ -290,7 +294,7 @@ const Index = () => {
               ))}
             </ul>
             <Button
-              className="mt-5 h-11 w-full rounded-[6px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
+              className="mt-5 h-11 w-full rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
               onClick={() =>
                 document
                   .getElementById("contact")
@@ -329,7 +333,7 @@ const Index = () => {
                 key={c.title}
                 className="rounded-[5px] border-2 border-[hsl(var(--brand-ink))]/12 bg-white/65 p-5 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.55)] ring-1 ring-[hsl(var(--brand-ink))]/6 backdrop-blur supports-[backdrop-filter]:bg-white/55 transition hover:-translate-y-0.5 hover:border-[hsl(var(--brand))]/26"
               >
-                <div className="inline-flex h-11 w-11 items-center justify-center rounded-[8px] bg-[hsl(var(--brand-2))]/12 text-[hsl(var(--brand-ink))]">
+                <div className="inline-flex h-11 w-11 items-center justify-center rounded-[5px] bg-[hsl(var(--brand-2))]/12 text-[hsl(var(--brand-ink))] ring-1 ring-black/5">
                   <c.icon className="h-5 w-5" />
                 </div>
                 <div className="mt-3 text-base font-extrabold tracking-tight">
@@ -344,19 +348,23 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Explore Communities (new) */}
-      <ExploreCommunities
-        onSearchCommunity={(location) => {
-          setFilters((prev) => ({ ...prev, location: location as any }));
-          document
-            .getElementById("listings")
-            ?.scrollIntoView({ behavior: "smooth", block: "start" });
-          toast({
-            title: "Community selected",
-            description: `Showing listings in ${location}.`,
-          });
-        }}
-      />
+      {/* Explore Communities */}
+      <div className="mx-auto max-w-6xl px-4">
+        <div className="rounded-[5px] border border-white/40 bg-white/45 ring-1 ring-black/10">
+          <ExploreCommunities
+            onSearchCommunity={(location) => {
+              setFilters((prev) => ({ ...prev, location: location as any }));
+              document
+                .getElementById("listings")
+                ?.scrollIntoView({ behavior: "smooth", block: "start" });
+              toast({
+                title: "Community selected",
+                description: `Showing listings in ${location}.`,
+              });
+            }}
+          />
+        </div>
+      </div>
 
       <ScrollingTextSeparator
         label="Featured listings"
@@ -372,7 +380,7 @@ const Index = () => {
 
       {/* Listings */}
       <section id="listings" className="mx-auto max-w-6xl px-4 pb-14">
-        <div className="rounded-[2rem] border border-white/25 bg-white/40 p-5 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.6)]">
+        <div className="rounded-[5px] border border-white/40 bg-white/40 p-5 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.6)] ring-1 ring-black/10">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">
@@ -386,7 +394,7 @@ const Index = () => {
                 details.
               </p>
             </div>
-            <div className="rounded-2xl bg-white/70 px-4 py-2 text-sm text-muted-foreground ring-1 ring-black/5">
+            <div className="rounded-[5px] border border-black/5 bg-white/70 px-4 py-2 text-sm text-muted-foreground ring-1 ring-black/10">
               Showing{" "}
               <span className="font-semibold text-foreground">
                 {results.length}
@@ -407,7 +415,7 @@ const Index = () => {
           </div>
 
           {results.length === 0 ? (
-            <div className="mt-10 rounded-3xl bg-white/70 p-6 text-center ring-1 ring-black/5">
+            <div className="mt-10 rounded-[5px] border border-black/5 bg-white/70 p-6 text-center ring-1 ring-black/10">
               <div className="text-lg font-extrabold tracking-tight">
                 No matches yet
               </div>
@@ -415,7 +423,7 @@ const Index = () => {
                 Try a broader budget or clear the keyword.
               </div>
               <Button
-                className="mt-4 h-11 rounded-2xl bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
+                className="mt-4 h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
                 onClick={() => resetListingFilters()}
               >
                 Reset filters
@@ -428,7 +436,7 @@ const Index = () => {
       {/* About */}
       <section id="about" className="mx-auto max-w-6xl px-4 pb-14">
         <div className="grid gap-4 md:grid-cols-12">
-          <Card className="overflow-hidden rounded-[2rem] border-white/20 bg-white/65 shadow-[0_20px_60px_-45px_rgba(15,23,42,0.65)] backdrop-blur supports-[backdrop-filter]:bg-white/55 md:col-span-7">
+          <Card className="overflow-hidden rounded-[5px] border border-white/40 bg-white/65 shadow-[0_20px_60px_-45px_rgba(15,23,42,0.65)] ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55 md:col-span-7">
             <div className="p-6 sm:p-7">
               <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">
                 About PrimaDom
@@ -464,7 +472,7 @@ const Index = () => {
                 ].map((i) => (
                   <div
                     key={i.title}
-                    className="rounded-3xl bg-white/70 p-4 ring-1 ring-black/5"
+                    className="rounded-[5px] border border-black/5 bg-white/70 p-4 ring-1 ring-black/10"
                   >
                     <div className="text-sm font-extrabold tracking-tight">
                       {i.title}
@@ -478,7 +486,7 @@ const Index = () => {
             </div>
           </Card>
 
-          <Card className="overflow-hidden rounded-[2rem] border-white/20 bg-white/65 shadow-[0_20px_60px_-45px_rgba(15,23,42,0.65)] backdrop-blur supports-[backdrop-filter]:bg-white/55 md:col-span-5">
+          <Card className="overflow-hidden rounded-[5px] border border-white/40 bg-white/65 shadow-[0_20px_60px_-45px_rgba(15,23,42,0.65)] ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55 md:col-span-5">
             <img
               src="https://images.unsplash.com/photo-1496564203457-11bb12075d90?auto=format&fit=crop&w=1600&q=80"
               alt="Modern living room"
@@ -495,7 +503,7 @@ const Index = () => {
                   "Priority access",
                 ].map((t) => (
                   <li key={t} className="inline-flex items-center gap-2">
-                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))]">
+                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-[5px] bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))] ring-1 ring-black/5">
                       <CheckCircle2 className="h-4 w-4" />
                     </span>
                     <span>{t}</span>
@@ -505,7 +513,7 @@ const Index = () => {
 
               <Button
                 variant="secondary"
-                className="mt-5 h-11 w-full rounded-2xl bg-white/70 hover:bg-white"
+                className="mt-5 h-11 w-full rounded-[5px] bg-white/70 hover:bg-white"
                 onClick={() =>
                   document
                     .getElementById("contact")
@@ -532,7 +540,7 @@ const Index = () => {
             />
           </div>
 
-          <Card className="rounded-3xl border-white/20 bg-white/65 p-6 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.55)] backdrop-blur supports-[backdrop-filter]:bg-white/55 md:col-span-5">
+          <Card className="rounded-[5px] border border-white/40 bg-white/65 p-6 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.55)] ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55 md:col-span-5">
             <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">
               Contact
             </div>
@@ -562,7 +570,7 @@ const Index = () => {
               ].map((i) => (
                 <div
                   key={i.label}
-                  className="rounded-3xl bg-white/70 p-4 ring-1 ring-black/5"
+                  className="rounded-[5px] border border-black/5 bg-white/70 p-4 ring-1 ring-black/10"
                 >
                   <div className="text-xs font-medium text-muted-foreground">
                     {i.label}
@@ -575,7 +583,7 @@ const Index = () => {
             </div>
 
             <Button
-              className="mt-5 h-11 w-full rounded-2xl bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
+              className="mt-5 h-11 w-full rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
               onClick={() =>
                 toast({
                   title: "We’re online",
