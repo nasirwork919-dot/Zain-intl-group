@@ -15,6 +15,7 @@ import { toast } from "@/hooks/use-toast";
 import { TopBarPreferencesPopover } from "@/components/real-estate/TopBarPreferencesPopover";
 import { RentMegaMenu } from "@/components/real-estate/RentMegaMenu";
 import { CommunitiesMegaMenu } from "@/components/real-estate/CommunitiesMegaMenu";
+import { DevelopersMegaMenu } from "@/components/real-estate/DevelopersMegaMenu";
 
 function useActiveSection(ids: string[]) {
   const [active, setActive] = useState<string>(ids[0] ?? "");
@@ -51,7 +52,7 @@ type NavItem =
       type: "scroll";
       href: string;
       hasChevron?: boolean;
-      mega?: "buy" | "rent" | "communities";
+      mega?: "buy" | "rent" | "communities" | "developers";
     }
   | { label: string; type: "noop"; hasChevron?: boolean };
 
@@ -68,6 +69,7 @@ export function RealEstateHeader() {
   const [buyOpen, setBuyOpen] = useState(false);
   const [rentOpen, setRentOpen] = useState(false);
   const [communitiesOpen, setCommunitiesOpen] = useState(false);
+  const [developersOpen, setDevelopersOpen] = useState(false);
 
   const scrollTo = (hash: string) => {
     const id = hash.replace("#", "");
@@ -79,6 +81,7 @@ export function RealEstateHeader() {
     setBuyOpen(false);
     setRentOpen(false);
     setCommunitiesOpen(false);
+    setDevelopersOpen(false);
   };
 
   const navItems: NavItem[] = useMemo(
@@ -109,6 +112,7 @@ export function RealEstateHeader() {
         type: "scroll",
         href: "#projects",
         hasChevron: true,
+        mega: "developers",
       },
       { label: "Market Trends", type: "scroll", href: "#about" },
       { label: "Featured Projects", type: "scroll", href: "#projects" },
@@ -343,6 +347,7 @@ export function RealEstateHeader() {
               const isBuy = item.mega === "buy";
               const isRent = item.mega === "rent";
               const isCommunities = item.mega === "communities";
+              const isDevelopers = item.mega === "developers";
 
               const expanded = isBuy
                 ? buyOpen
@@ -350,7 +355,9 @@ export function RealEstateHeader() {
                   ? rentOpen
                   : isCommunities
                     ? communitiesOpen
-                    : undefined;
+                    : isDevelopers
+                      ? developersOpen
+                      : undefined;
 
               return (
                 <button
@@ -361,18 +368,28 @@ export function RealEstateHeader() {
                       setBuyOpen((v) => !v);
                       setRentOpen(false);
                       setCommunitiesOpen(false);
+                      setDevelopersOpen(false);
                       return;
                     }
                     if (isRent) {
                       setRentOpen((v) => !v);
                       setBuyOpen(false);
                       setCommunitiesOpen(false);
+                      setDevelopersOpen(false);
                       return;
                     }
                     if (isCommunities) {
                       setCommunitiesOpen((v) => !v);
                       setBuyOpen(false);
                       setRentOpen(false);
+                      setDevelopersOpen(false);
+                      return;
+                    }
+                    if (isDevelopers) {
+                      setDevelopersOpen((v) => !v);
+                      setBuyOpen(false);
+                      setRentOpen(false);
+                      setCommunitiesOpen(false);
                       return;
                     }
                     closeMegas();
@@ -383,16 +400,25 @@ export function RealEstateHeader() {
                       setBuyOpen(true);
                       setRentOpen(false);
                       setCommunitiesOpen(false);
+                      setDevelopersOpen(false);
                     }
                     if (isRent) {
                       setRentOpen(true);
                       setBuyOpen(false);
                       setCommunitiesOpen(false);
+                      setDevelopersOpen(false);
                     }
                     if (isCommunities) {
                       setCommunitiesOpen(true);
                       setBuyOpen(false);
                       setRentOpen(false);
+                      setDevelopersOpen(false);
+                    }
+                    if (isDevelopers) {
+                      setDevelopersOpen(true);
+                      setBuyOpen(false);
+                      setRentOpen(false);
+                      setCommunitiesOpen(false);
                     }
                   }}
                   className={cn(
@@ -402,6 +428,7 @@ export function RealEstateHeader() {
                       !isBuy &&
                       !isRent &&
                       !isCommunities &&
+                      !isDevelopers &&
                       "underline underline-offset-8 decoration-black/30",
                   )}
                   aria-expanded={expanded}
@@ -413,7 +440,8 @@ export function RealEstateHeader() {
                         "h-4 w-4 opacity-70 transition-transform",
                         ((isBuy && buyOpen) ||
                           (isRent && rentOpen) ||
-                          (isCommunities && communitiesOpen)) &&
+                          (isCommunities && communitiesOpen) ||
+                          (isDevelopers && developersOpen)) &&
                           "rotate-180",
                       )}
                     />
@@ -508,6 +536,19 @@ export function RealEstateHeader() {
               title: `Community · ${label}`,
               description:
                 "Opened communities section — we can wire this to filters next.",
+            });
+          }}
+        />
+
+        <DevelopersMegaMenu
+          open={developersOpen}
+          onClose={() => setDevelopersOpen(false)}
+          onNavigate={(label) => {
+            scrollTo("#projects");
+            toast({
+              title: `Developer · ${label}`,
+              description:
+                "Opened projects section — we can wire this to a developer filter next.",
             });
           }}
         />
