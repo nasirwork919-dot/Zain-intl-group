@@ -22,6 +22,7 @@ import {
 import { PropertyCard } from "@/components/real-estate/PropertyCard";
 import { PropertyDialog } from "@/components/real-estate/PropertyDialog";
 import { LeadCapture } from "@/components/real-estate/LeadCapture";
+import { CuratedOpportunities } from "@/components/real-estate/CuratedOpportunities";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -196,6 +197,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Curated opportunities (new) */}
+      <CuratedOpportunities onOpenProperty={openProperty} />
 
       {/* Projects */}
       <section id="projects" className="mx-auto max-w-6xl px-4 py-12">
