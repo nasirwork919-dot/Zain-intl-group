@@ -139,40 +139,36 @@ const Index = () => {
 
           {/* Primary hero search (PrimaDom-like) */}
           <div className="mx-auto mt-10 max-w-5xl">
-            <div className="rounded-[5px] border border-white/18 bg-white/5 p-3 ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/5">
-              <HeroSearchBar
-                value={heroBar}
-                onChange={setHeroBar}
-                onSubmit={() => {
-                  setFilters((prev) => ({ ...prev, query: heroBar.query }));
-                  document
-                    .getElementById("listings")
-                    ?.scrollIntoView({ behavior: "smooth" });
-                  toast({
-                    title: "Quick search applied",
-                    description: `Operation: ${heroBar.operation.toUpperCase()} · Type: ${heroBar.propertyType}`,
-                  });
-                }}
-              />
-            </div>
+            <HeroSearchBar
+              value={heroBar}
+              onChange={setHeroBar}
+              onSubmit={() => {
+                setFilters((prev) => ({ ...prev, query: heroBar.query }));
+                document
+                  .getElementById("listings")
+                  ?.scrollIntoView({ behavior: "smooth" });
+                toast({
+                  title: "Quick search applied",
+                  description: `Operation: ${heroBar.operation.toUpperCase()} · Type: ${heroBar.propertyType}`,
+                });
+              }}
+            />
           </div>
 
           {/* Secondary advanced filters (optional) */}
           <div className="mx-auto mt-5 max-w-5xl">
-            <div className="rounded-[5px] border border-white/18 bg-white/5 p-3 ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/5">
-              <HeroSearch
-                onSearch={(f) => {
-                  setFilters(f);
-                  document
-                    .getElementById("listings")
-                    ?.scrollIntoView({ behavior: "smooth" });
-                  toast({
-                    title: "Filters applied",
-                    description: "Scroll to see matching listings below.",
-                  });
-                }}
-              />
-            </div>
+            <HeroSearch
+              onSearch={(f) => {
+                setFilters(f);
+                document
+                  .getElementById("listings")
+                  ?.scrollIntoView({ behavior: "smooth" });
+                toast({
+                  title: "Filters applied",
+                  description: "Scroll to see matching listings below.",
+                });
+              }}
+            />
           </div>
 
           <div className="mx-auto mt-6 flex max-w-4xl flex-col items-center justify-center gap-3 sm:flex-row">
