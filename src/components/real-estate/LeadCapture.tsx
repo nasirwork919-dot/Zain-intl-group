@@ -22,7 +22,7 @@ export function LeadCapture({
   }, [name, phone, email]);
 
   return (
-    <Card className="rounded-3xl border-white/20 bg-white/70 p-5 shadow-[0_18px_50px_-34px_rgba(15,23,42,0.55)] backdrop-blur supports-[backdrop-filter]:bg-white/55">
+    <Card className="rounded-[5px] border-white/20 bg-white/70 p-5 shadow-[0_18px_50px_-34px_rgba(15,23,42,0.55)] backdrop-blur supports-[backdrop-filter]:bg-white/55">
       <div className="flex items-center justify-between gap-4">
         <div>
           <div className="text-lg font-extrabold tracking-tight">Talk to an agent</div>
@@ -30,7 +30,7 @@ export function LeadCapture({
             Get pricing, payment plans, and a tailored shortlist.
           </div>
         </div>
-        <div className="hidden rounded-2xl bg-[hsl(var(--brand))]/10 px-3 py-2 text-xs font-semibold text-[hsl(var(--brand-ink))] md:block">
+        <div className="hidden rounded-[5px] bg-[hsl(var(--brand))]/10 px-3 py-2 text-xs font-semibold text-[hsl(var(--brand-ink))] md:block">
           Avg response: 5 mins
         </div>
       </div>
@@ -42,7 +42,7 @@ export function LeadCapture({
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="Phone (WhatsApp)"
-            className="h-11 rounded-2xl border-white/50 bg-white/70 pl-9 shadow-sm focus-visible:ring-[hsl(var(--brand))]/30"
+            className="h-11 rounded-[5px] border-white/50 bg-white/70 pl-9 shadow-sm focus-visible:ring-[hsl(var(--brand))]/30"
           />
         </div>
         <div className="relative">
@@ -51,7 +51,7 @@ export function LeadCapture({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
-            className="h-11 rounded-2xl border-white/50 bg-white/70 pl-9 shadow-sm focus-visible:ring-[hsl(var(--brand))]/30"
+            className="h-11 rounded-[5px] border-white/50 bg-white/70 pl-9 shadow-sm focus-visible:ring-[hsl(var(--brand))]/30"
           />
         </div>
       </div>
@@ -61,7 +61,7 @@ export function LeadCapture({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Your name"
-          className="h-11 rounded-2xl border-white/50 bg-white/70 shadow-sm focus-visible:ring-[hsl(var(--brand))]/30"
+          className="h-11 rounded-[5px] border-white/50 bg-white/70 shadow-sm focus-visible:ring-[hsl(var(--brand))]/30"
         />
       </div>
 
@@ -70,7 +70,7 @@ export function LeadCapture({
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="What are you looking for? e.g. 2BR in Dubai Marina, budget 3M"
-          className="min-h-[110px] rounded-2xl border-white/50 bg-white/70 shadow-sm focus-visible:ring-[hsl(var(--brand))]/30"
+          className="min-h-[110px] rounded-[5px] border-white/50 bg-white/70 shadow-sm focus-visible:ring-[hsl(var(--brand))]/30"
         />
       </div>
 
@@ -80,7 +80,7 @@ export function LeadCapture({
         </div>
         <Button
           disabled={!canSubmit}
-          className="h-11 rounded-2xl bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92 disabled:opacity-50"
+          className="h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92 disabled:opacity-50"
           onClick={() => {
             toast({
               title: "Request sent",

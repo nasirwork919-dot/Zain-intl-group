@@ -111,7 +111,7 @@ const Index = () => {
 
         <div className="relative mx-auto max-w-6xl px-4 pb-12 pt-10 sm:pb-16 lg:pt-16">
           <div className="mx-auto max-w-3xl text-center text-white">
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold tracking-wide text-white ring-1 ring-white/20 backdrop-blur">
+            <div className="inline-flex items-center gap-2 rounded-[5px] bg-white/10 px-4 py-2 text-xs font-semibold tracking-wide text-white ring-1 ring-white/20 backdrop-blur">
               <Star className="h-4 w-4 text-white/90" />
               WE GUIDE INVESTORS AND HOMEBUYERS
             </div>
@@ -126,7 +126,7 @@ const Index = () => {
             </h1>
 
             <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-sm text-white/80">
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 ring-1 ring-white/15 backdrop-blur">
+              <span className="inline-flex items-center gap-2 rounded-[5px] bg-white/10 px-3 py-1 ring-1 ring-white/15 backdrop-blur">
                 <span className="text-white">4.5</span>
                 <span className="text-white/70">Google</span>
               </span>

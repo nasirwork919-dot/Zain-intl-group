@@ -97,7 +97,7 @@ export function CuratedOpportunities({
 
         {/* View All (right) */}
         <Button
-          className="h-12 rounded-2xl bg-[hsl(var(--brand))] px-7 text-white hover:bg-[hsl(var(--brand))]/90"
+          className="h-12 rounded-[5px] bg-[hsl(var(--brand))] px-7 text-white hover:bg-[hsl(var(--brand))]/90"
           onClick={() => {
             onViewAll?.();
             document
