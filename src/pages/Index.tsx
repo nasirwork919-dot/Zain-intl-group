@@ -30,6 +30,7 @@ import { ScrollingTextSeparator } from "@/components/real-estate/ScrollingTextSe
 import { ExperienceStatsStrip } from "@/components/real-estate/ExperienceStatsStrip";
 import { ExploreCommunities } from "@/components/real-estate/ExploreCommunities";
 import { ScrollUpButton } from "@/components/ScrollUpButton";
+import { FeaturedListingsMobileSlider } from "@/components/real-estate/FeaturedListingsMobileSlider";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -397,7 +398,16 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {/* Mobile: slider (one card at a time) */}
+          <div className="mt-6">
+            <FeaturedListingsMobileSlider
+              properties={results}
+              onOpenProperty={openProperty}
+            />
+          </div>
+
+          {/* Desktop/tablet: grid */}
+          <div className="mt-6 hidden gap-4 md:grid md:grid-cols-3">
             {results.map((p, idx) => (
               <PropertyCard
                 key={p.id}
