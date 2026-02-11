@@ -117,16 +117,16 @@ const Index = () => {
             ))}
           </div>
 
-          {/* subtle wash so text stays crisp */}
-          <div className="absolute inset-0 bg-white/75" />
+          {/* no white wash; keep readability with a subtle dark veil */}
+          <div className="absolute inset-0 bg-[#0b1220]/35" />
         </div>
 
         <div className="relative mx-auto max-w-6xl px-4 pb-10 pt-10 sm:pb-14 lg:pt-16">
           <div className="mx-auto max-w-4xl text-center">
-            <div className="text-xs font-semibold tracking-[0.14em] text-[hsl(var(--brand-ink))]/70">
+            <div className="text-xs font-semibold tracking-[0.14em] text-white/85">
               At the Heart of Every Home is You
             </div>
-            <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-[hsl(var(--brand-ink))] sm:text-5xl lg:text-6xl">
+            <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
               Let’s Find Your Perfect Haven Together
             </h1>
 
@@ -444,16 +444,19 @@ const Index = () => {
             <div className="p-6">
               <div className="text-sm font-semibold">What you’ll get</div>
               <ul className="mt-3 grid gap-2 text-sm text-muted-foreground">
-                {["Project comparisons", "Payment plan breakdowns", "ROI & rental insights", "Priority access"].map(
-                  (t) => (
-                    <li key={t} className="inline-flex items-center gap-2">
-                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-[5px] bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))] ring-1 ring-black/5">
-                        <CheckCircle2 className="h-4 w-4" />
-                      </span>
-                      <span>{t}</span>
-                    </li>
-                  ),
-                )}
+                {[
+                  "Project comparisons",
+                  "Payment plan breakdowns",
+                  "ROI & rental insights",
+                  "Priority access",
+                ].map((t) => (
+                  <li key={t} className="inline-flex items-center gap-2">
+                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-[5px] bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))] ring-1 ring-black/5">
+                      <CheckCircle2 className="h-4 w-4" />
+                    </span>
+                    <span>{t}</span>
+                  </li>
+                ))}
               </ul>
 
               <Button
