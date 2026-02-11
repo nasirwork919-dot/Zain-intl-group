@@ -18,7 +18,7 @@ import {
 
 type Unit = "sqft" | "sqm";
 type LanguageCode = "en" | "ar" | "zh" | "ru" | "de";
-type Currency = "AED" | "USD" | "USDT" | "BTC" | "ETH";
+type Currency = "AED" | "USD" | "GBP" | "EUR";
 
 const pillBase =
   "inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition";
@@ -44,12 +44,10 @@ function currencyLabel(code: Currency) {
       return "AED (Emirati Dirham)";
     case "USD":
       return "USD";
-    case "USDT":
-      return "USDT";
-    case "BTC":
-      return "BTC";
-    case "ETH":
-      return "ETH";
+    case "GBP":
+      return "GBP";
+    case "EUR":
+      return "EUR";
   }
 }
 
@@ -77,9 +75,8 @@ export function TopBarPreferencesPopover({
       [
         { code: "AED" as const, label: "AED (Emirati Dirham)" },
         { code: "USD" as const, label: "USD" },
-        { code: "USDT" as const, label: "USDT" },
-        { code: "BTC" as const, label: "BTC" },
-        { code: "ETH" as const, label: "ETH" },
+        { code: "GBP" as const, label: "GBP" },
+        { code: "EUR" as const, label: "EUR" },
       ] as const,
     [],
   );

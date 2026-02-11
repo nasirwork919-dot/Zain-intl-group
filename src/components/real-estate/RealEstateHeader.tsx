@@ -208,7 +208,7 @@ export function RealEstateHeader() {
         mega: "developers",
       },
       {
-        label: "Market Trends",
+        label: "Featured Projects",
         type: "scroll",
         href: "#about",
         hasChevron: true,
@@ -477,7 +477,7 @@ export function RealEstateHeader() {
                         </MobileMenuSection>
 
                         <MobileMenuSection
-                          title="Market Trends"
+                          title="Featured Projects"
                           open={mobileOpenSection === "marketTrends"}
                           onToggle={() =>
                             setMobileOpenSection((k) =>
@@ -499,7 +499,7 @@ export function RealEstateHeader() {
                                   scrollTo("#about");
                                   setMobileOpen(false);
                                   toast({
-                                    title: `Market Trends · ${label}`,
+                                    title: `Featured Projects · ${label}`,
                                     description:
                                       "We can create these pages/sections next.",
                                   });
@@ -613,9 +613,8 @@ export function RealEstateHeader() {
                                 <SelectContent className="rounded-[5px]">
                                   <SelectItem value="AED">AED</SelectItem>
                                   <SelectItem value="USD">USD</SelectItem>
-                                  <SelectItem value="USDT">USDT</SelectItem>
-                                  <SelectItem value="BTC">BTC</SelectItem>
-                                  <SelectItem value="ETH">ETH</SelectItem>
+                                  <SelectItem value="GBP">GBP</SelectItem>
+                                  <SelectItem value="EUR">EUR</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
@@ -1002,7 +1001,7 @@ export function RealEstateHeader() {
           onClose={() => setMarketTrendsOpen(false)}
           onNavigate={(label) => {
             toast({
-              title: `Market Trends · ${label}`,
+              title: `Featured Projects · ${label}`,
               description: "We can build these pages/sections next.",
             });
           }}
