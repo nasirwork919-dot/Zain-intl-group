@@ -75,14 +75,19 @@ export function HeroFiltersDropdown({
 
       <PopoverContent
         side="bottom"
-        align="start"
+        // center alignment + width clamp prevents the popover from rendering off-screen on mobile
+        align="center"
         sideOffset={12}
-        avoidCollisions={false}
-        collisionPadding={16}
+        avoidCollisions={true}
+        collisionPadding={12}
         portalled={false}
         className={cn(
-          "w-full",
-          "max-h-[76vh] overflow-auto overscroll-contain",
+          // Mobile: clamp to viewport with safe margins (prevents overflow)
+          "w-[min(720px,calc(100vw-1.5rem))]",
+          // Desktop: behave like before (full width of anchor up to max)
+          "sm:w-full",
+          "max-h-[76vh] overflow-y-auto overflow-x-hidden overscroll-contain",
+          "box-border",
           "rounded-[5px] border border-white/80 bg-white p-4 sm:p-5",
           "shadow-[0_26px_70px_-50px_rgba(15,23,42,0.75)] ring-1 ring-black/10",
         )}
