@@ -114,7 +114,7 @@ export function HeroSearchBar({
           <HeroFiltersDropdown open={filtersOpen} onOpenChange={setFiltersOpen}>
             <div className="grid gap-3">
               {/* MOBILE: Property type on its own row */}
-              <div className={pillShell}>
+              <div className={cn(pillShell, "lg:hidden")}>
                 <Select
                   value={value.propertyType}
                   onValueChange={(v) =>
@@ -135,15 +135,56 @@ export function HeroSearchBar({
                 </Select>
               </div>
 
-              {/* MOBILE: Input row with circular buttons */}
+              {/* MOBILE row: input + circular buttons */}
+              <div className={cn("grid grid-cols-[1fr_auto_auto] items-center gap-3 lg:hidden")}>
+                <div className={pillShell}>
+                  <Input
+                    value={value.query}
+                    onChange={(e) => onChange({ ...value, query: e.target.value })}
+                    placeholder="Community or Building..."
+                    className={cn(fieldClass, "w-full")}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") onSubmit();
+                    }}
+                  />
+                </div>
+
+                <Button
+                  onClick={onSubmit}
+                  className={cn(
+                    circleBtn,
+                    "bg-[#1b2b8f] text-white hover:bg-[#1b2b8f]/92",
+                  )}
+                  aria-label="Search"
+                >
+                  <Search className="h-5 w-5" />
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={cn(circleBtn, "bg-white text-[#1b2b8f] hover:bg-white")}
+                  aria-label="Filters"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setFiltersOpen((v) => !v);
+                  }}
+                >
+                  <SlidersHorizontal className="h-5 w-5" />
+                </Button>
+              </div>
+
+              {/* DESKTOP row: ONE white container, with inner grey input pill and buttons on right */}
               <div
                 className={cn(
-                  "grid grid-cols-[1fr_auto_auto] items-center gap-3",
-                  "lg:grid-cols-[260px_1fr_auto_auto] lg:gap-2 lg:rounded-[999px] lg:bg-white/85 lg:px-2 lg:py-2 lg:shadow-[0_16px_50px_-40px_rgba(15,23,42,0.65)] lg:ring-1 lg:ring-black/10 lg:backdrop-blur supports-[backdrop-filter]:lg:bg-white/75",
+                  "hidden lg:flex lg:items-center lg:gap-3",
+                  "rounded-[999px] bg-white/85 px-3 py-3",
+                  "shadow-[0_16px_50px_-40px_rgba(15,23,42,0.65)] ring-1 ring-black/10",
+                  "backdrop-blur supports-[backdrop-filter]:bg-white/75",
                 )}
               >
-                {/* DESKTOP: property type joins the row (hidden on mobile) */}
-                <div className="hidden lg:block">
+                <div className="min-w-[260px]">
                   <Select
                     value={value.propertyType}
                     onValueChange={(v) =>
@@ -155,9 +196,9 @@ export function HeroSearchBar({
                   >
                     <SelectTrigger
                       className={cn(
-                        "h-14 rounded-full border-transparent bg-white/0 px-6",
+                        "h-14 rounded-full border-transparent bg-white px-6",
                         "text-sm text-[hsl(var(--brand-ink))]",
-                        "ring-0 shadow-none",
+                        "ring-1 ring-black/5 shadow-none",
                         "focus:ring-0",
                       )}
                     >
@@ -171,21 +212,18 @@ export function HeroSearchBar({
                   </Select>
                 </div>
 
-                {/* Query input: mobile uses its own pill; desktop becomes part of the big pill row */}
-                <div
-                  className={cn(
-                    pillShell,
-                    "lg:rounded-full lg:bg-transparent lg:shadow-none lg:ring-0 lg:backdrop-blur-0",
-                  )}
-                >
+                <div className="flex-1">
                   <Input
                     value={value.query}
                     onChange={(e) => onChange({ ...value, query: e.target.value })}
                     placeholder="Community or Building..."
                     className={cn(
-                      fieldClass,
-                      "w-full",
-                      "lg:bg-muted/35 lg:py-0",
+                      "h-14 w-full rounded-full border-transparent",
+                      "bg-muted/35 px-7",
+                      "text-sm text-[hsl(var(--brand-ink))]",
+                      "placeholder:text-[hsl(var(--brand-ink))]/45",
+                      "ring-1 ring-black/5",
+                      "focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
                     )}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") onSubmit();
@@ -198,7 +236,7 @@ export function HeroSearchBar({
                   className={cn(
                     circleBtn,
                     "bg-[#1b2b8f] text-white hover:bg-[#1b2b8f]/92",
-                    "lg:shadow-none lg:ring-0",
+                    "ring-0 shadow-none",
                   )}
                   aria-label="Search"
                 >
@@ -211,7 +249,7 @@ export function HeroSearchBar({
                   className={cn(
                     circleBtn,
                     "bg-white text-[#1b2b8f] hover:bg-white",
-                    "lg:shadow-none lg:ring-0",
+                    "ring-1 ring-black/10 shadow-none",
                   )}
                   aria-label="Filters"
                   onClick={(e) => {
