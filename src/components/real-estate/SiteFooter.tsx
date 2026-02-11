@@ -417,6 +417,19 @@ export function SiteFooter({
                   </button>
                 </div>
               </div>
+
+              {/* Creator credit (very bottom, after the legal row) */}
+              <div className="mt-4 text-center text-xs font-semibold text-[#0b1025]/60 sm:text-right">
+                Created by{" "}
+                <a
+                  href="https://marknova.io"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#0b1025]/80 underline underline-offset-4 decoration-black/20 transition hover:text-[#0b1025] hover:decoration-black/40"
+                >
+                  Mark Nova (marknova.io)
+                </a>
+              </div>
             </div>
           </div>
 
