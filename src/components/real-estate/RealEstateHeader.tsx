@@ -27,6 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 function useActiveSection(ids: string[]) {
   const [active, setActive] = useState<string>(ids[0] ?? "");
@@ -43,11 +44,11 @@ function useActiveSection(ids: string[]) {
         const visible = entries
           .filter((e) => e.isIntersecting)
           .sort(
-            (a, b) => (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0)
+            (a, b) => (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0),
           )[0];
         if (visible?.target?.id) setActive(visible.target.id);
       },
-      { rootMargin: "-30% 0px -60% 0px", threshold: [0.1, 0.25, 0.5] }
+      { rootMargin: "-30% 0px -60% 0px", threshold: [0.1, 0.25, 0.5] },
     );
 
     sections.forEach((s) => obs.observe(s));
@@ -102,7 +103,7 @@ function MobileMenuSection({
         onClick={onToggle}
         className={cn(
           "flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-semibold",
-          "hover:bg-muted/50 rounded-[5px]"
+          "hover:bg-muted/50 rounded-[5px]",
         )}
         aria-expanded={open}
       >
@@ -110,7 +111,7 @@ function MobileMenuSection({
         <ChevronDown
           className={cn(
             "h-4 w-4 opacity-70 transition-transform",
-            open && "rotate-180"
+            open && "rotate-180",
           )}
         />
       </button>
@@ -119,13 +120,7 @@ function MobileMenuSection({
   );
 }
 
-function MobileMenuItem({
-  label,
-  onClick,
-}: {
-  label: string;
-  onClick: () => void;
-}) {
+function MobileMenuItem({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button
       type="button"
@@ -133,7 +128,7 @@ function MobileMenuItem({
       className={cn(
         "flex w-full items-center justify-between rounded-[5px] px-3 py-3 text-left text-sm font-semibold",
         "bg-white/70 ring-1 ring-black/5 hover:bg-white",
-        "text-[#11124a]"
+        "text-[#11124a]",
       )}
     >
       <span>{label}</span>
@@ -160,9 +155,8 @@ export function RealEstateHeader() {
   const [servicesOpen, setServicesOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
 
-  const [mobileOpenSection, setMobileOpenSection] = useState<MobileSectionKey>(
-    null
-  );
+  const [mobileOpenSection, setMobileOpenSection] =
+    useState<MobileSectionKey>(null);
 
   const [mobileLanguage, setMobileLanguage] = useState("en");
   const [mobileCurrency, setMobileCurrency] = useState("AED");
@@ -240,7 +234,7 @@ export function RealEstateHeader() {
         mega: "more",
       },
     ],
-    []
+    [],
   );
 
   const activeId = active;
@@ -263,20 +257,14 @@ export function RealEstateHeader() {
         "shadow-sm ring-1 ring-black/10",
         "hover:bg-white/95",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
-        className
+        className,
       )}
     >
       {children}
     </button>
   );
 
-  const PhonePill = ({
-    label,
-    onClick,
-  }: {
-    label: string;
-    onClick?: () => void;
-  }) => (
+  const PhonePill = ({ label, onClick }: { label: string; onClick?: () => void }) => (
     <button
       type="button"
       onClick={onClick}
@@ -284,7 +272,7 @@ export function RealEstateHeader() {
         "inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold leading-none",
         "bg-white text-[#111827] ring-1 ring-black/10",
         "hover:bg-white/95",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
       )}
     >
       <Phone className="h-4 w-4" />
@@ -333,7 +321,7 @@ export function RealEstateHeader() {
                   "inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold leading-none",
                   "bg-white text-[#111827] ring-1 ring-black/10",
                   "hover:bg-white/95",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
                 )}
               >
                 <User className="h-4 w-4" />
@@ -393,7 +381,7 @@ export function RealEstateHeader() {
                                     });
                                   }}
                                 />
-                              )
+                              ),
                             )}
                           </div>
                         </MobileMenuSection>
@@ -421,7 +409,7 @@ export function RealEstateHeader() {
                                     });
                                   }}
                                 />
-                              )
+                              ),
                             )}
                           </div>
                         </MobileMenuSection>
@@ -431,7 +419,7 @@ export function RealEstateHeader() {
                           open={mobileOpenSection === "communities"}
                           onToggle={() =>
                             setMobileOpenSection((k) =>
-                              k === "communities" ? null : "communities"
+                              k === "communities" ? null : "communities",
                             )
                           }
                         >
@@ -468,7 +456,7 @@ export function RealEstateHeader() {
                           open={mobileOpenSection === "developers"}
                           onToggle={() =>
                             setMobileOpenSection((k) =>
-                              k === "developers" ? null : "developers"
+                              k === "developers" ? null : "developers",
                             )
                           }
                         >
@@ -488,7 +476,7 @@ export function RealEstateHeader() {
                                     });
                                   }}
                                 />
-                              )
+                              ),
                             )}
                           </div>
                         </MobileMenuSection>
@@ -498,7 +486,7 @@ export function RealEstateHeader() {
                           open={mobileOpenSection === "marketTrends"}
                           onToggle={() =>
                             setMobileOpenSection((k) =>
-                              k === "marketTrends" ? null : "marketTrends"
+                              k === "marketTrends" ? null : "marketTrends",
                             )
                           }
                         >
@@ -531,7 +519,7 @@ export function RealEstateHeader() {
                           open={mobileOpenSection === "services"}
                           onToggle={() =>
                             setMobileOpenSection((k) =>
-                              k === "services" ? null : "services"
+                              k === "services" ? null : "services",
                             )
                           }
                         >
@@ -586,7 +574,7 @@ export function RealEstateHeader() {
                                     });
                                   }}
                                 />
-                              )
+                              ),
                             )}
                           </div>
                         </MobileMenuSection>
@@ -678,9 +666,8 @@ export function RealEstateHeader() {
             aria-label="Go to top"
           >
             <div className="flex items-center gap-3">
-              <div className="relative grid h-11 w-11 place-items-center rounded-xl bg-[#111827] text-white ring-1 ring-black/10">
-                <span className="text-[22px] font-black leading-none">Z</span>
-                <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-[hsl(var(--brand))]" />
+              <div className="grid h-11 w-11 place-items-center overflow-hidden rounded-xl bg-white ring-1 ring-black/10">
+                <BrandLogo variant="mark" className="h-9 w-9" />
               </div>
 
               <div className="leading-tight">
@@ -894,7 +881,7 @@ export function RealEstateHeader() {
                       !isMarketTrends &&
                       !isServices &&
                       !isMore &&
-                      "underline underline-offset-8 decoration-black/30"
+                      "underline underline-offset-8 decoration-black/30",
                   )}
                   aria-expanded={expanded}
                 >
@@ -910,7 +897,7 @@ export function RealEstateHeader() {
                           (isMarketTrends && marketTrendsOpen) ||
                           (isServices && servicesOpen) ||
                           (isMore && moreOpen)) &&
-                          "rotate-180"
+                          "rotate-180",
                       )}
                     />
                   ) : null}
@@ -925,7 +912,7 @@ export function RealEstateHeader() {
               "hidden lg:inline-flex",
               "h-11 w-11 items-center justify-center rounded-xl",
               "bg-[#111827] text-white shadow-sm hover:bg-[#111827]/90",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35"
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35",
             )}
             aria-label="Calculator"
             onClick={() =>
@@ -944,7 +931,7 @@ export function RealEstateHeader() {
               "lg:hidden hidden sm:inline-flex",
               "h-11 w-11 items-center justify-center rounded-xl",
               "bg-[#111827] text-white shadow-sm hover:bg-[#111827]/90",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35"
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35",
             )}
             aria-label="Calculator"
             onClick={() =>
