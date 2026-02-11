@@ -388,69 +388,119 @@ export function SiteFooter({
                 </div>
               </div>
 
-              {/* Bottom row: arrow stays right; the text cluster is one centered single row */}
+              {/* Bottom row: full-width divider; centered cluster independent of arrow; wraps on tiny screens */}
               <div className="mt-12 border-t border-black/10 pt-6">
-                <div className="flex items-center justify-between gap-4">
-                  {/* Left placeholder matches arrow width so the center cluster is truly centered */}
-                  <div
-                    className="hidden h-12 w-12 shrink-0 sm:block"
-                    aria-hidden="true"
-                  />
+                <div className="relative flex items-center justify-end">
+                  {/* Truly centered cluster (desktop+). Independent of arrow width. */}
+                  <div className="absolute left-1/2 hidden -translate-x-1/2 sm:block">
+                    <div className="flex items-center justify-center gap-x-6 gap-y-2 text-center">
+                      <div className="text-xs font-semibold text-[#0b1025]/80 whitespace-nowrap">
+                        © {year} Zain International Group. All Rights Reserved
+                      </div>
 
-                  <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-center">
-                    <div className="text-xs font-semibold text-[#0b1025]/80">
-                      © {year} Zain International Group. All Rights Reserved
-                    </div>
+                      <span className="hidden h-4 w-px bg-black/10 sm:inline-block" />
 
-                    <span className="hidden h-4 w-px bg-black/10 sm:inline-block" />
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        toast({
-                          title: "Privacy Policy",
-                          description: "We can add a privacy policy page next.",
-                        })
-                      }
-                      className={bottomLinkClass}
-                    >
-                      Privacy Policy
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        toast({
-                          title: "Terms of Service",
-                          description: "We can add terms of service next.",
-                        })
-                      }
-                      className={bottomLinkClass}
-                    >
-                      Terms of Service
-                    </button>
-
-                    <span className="hidden h-4 w-px bg-black/10 sm:inline-block" />
-
-                    <div className="text-xs font-semibold text-[#0b1025]/60">
-                      Created by{" "}
-                      <a
-                        href="https://marknova.io"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#0b1025]/80 underline underline-offset-4 decoration-black/20 transition hover:text-[#0b1025] hover:decoration-black/40"
+                      <button
+                        type="button"
+                        onClick={() =>
+                          toast({
+                            title: "Privacy Policy",
+                            description:
+                              "We can add a privacy policy page next.",
+                          })
+                        }
+                        className={cn(bottomLinkClass, "whitespace-nowrap")}
                       >
-                        marknova
-                      </a>
+                        Privacy Policy
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          toast({
+                            title: "Terms of Service",
+                            description: "We can add terms of service next.",
+                          })
+                        }
+                        className={cn(bottomLinkClass, "whitespace-nowrap")}
+                      >
+                        Terms of Service
+                      </button>
+
+                      <span className="hidden h-4 w-px bg-black/10 sm:inline-block" />
+
+                      <div className="text-xs font-semibold text-[#0b1025]/60 whitespace-nowrap">
+                        Created by{" "}
+                        <a
+                          href="https://marknova.io"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#0b1025]/80 underline underline-offset-4 decoration-black/20 transition hover:text-[#0b1025] hover:decoration-black/40"
+                        >
+                          marknova
+                        </a>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Arrow stays at the far right (original placement) */}
+                  {/* Mobile: centered but allowed to wrap (Option A) */}
+                  <div className="mr-14 w-full text-center sm:hidden">
+                    <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+                      <div className="text-xs font-semibold text-[#0b1025]/80">
+                        © {year} Zain International Group. All Rights Reserved
+                      </div>
+
+                      <span className="h-4 w-px bg-black/10" />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          toast({
+                            title: "Privacy Policy",
+                            description:
+                              "We can add a privacy policy page next.",
+                          })
+                        }
+                        className={bottomLinkClass}
+                      >
+                        Privacy Policy
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          toast({
+                            title: "Terms of Service",
+                            description: "We can add terms of service next.",
+                          })
+                        }
+                        className={bottomLinkClass}
+                      >
+                        Terms of Service
+                      </button>
+
+                      <span className="h-4 w-px bg-black/10" />
+
+                      <div className="text-xs font-semibold text-[#0b1025]/60">
+                        Created by{" "}
+                        <a
+                          href="https://marknova.io"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#0b1025]/80 underline underline-offset-4 decoration-black/20 transition hover:text-[#0b1025] hover:decoration-black/40"
+                        >
+                          marknova
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Arrow stays at the far right */}
                   <button
                     type="button"
                     onClick={() => onNavigateSection("#top")}
                     className={cn(
-                      "inline-flex h-12 w-12 items-center justify-center rounded-[5px]",
+                      "absolute right-0 inline-flex h-12 w-12 items-center justify-center rounded-[5px]",
                       "bg-white text-[#0b1025] ring-1 ring-black/10",
                       "shadow-sm transition hover:bg-[#0b1025]/[0.03]",
                       "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
