@@ -12,7 +12,6 @@ import {
 import { cn } from "@/lib/utils";
 import { BuyMegaMenu } from "@/components/real-estate/BuyMegaMenu";
 import { toast } from "@/hooks/use-toast";
-import { TopBarPreferencesPopover } from "@/components/real-estate/TopBarPreferencesPopover";
 import { RentMegaMenu } from "@/components/real-estate/RentMegaMenu";
 import { CommunitiesMegaMenu } from "@/components/real-estate/CommunitiesMegaMenu";
 import { DevelopersMegaMenu } from "@/components/real-estate/DevelopersMegaMenu";
@@ -136,6 +135,8 @@ function MobileMenuItem({ label, onClick }: { label: string; onClick: () => void
   );
 }
 
+type CurrencyCode = "AED" | "EUR" | "GBP" | "USD";
+
 export function RealEstateHeader() {
   const active = useActiveSection([
     "top",
@@ -160,6 +161,7 @@ export function RealEstateHeader() {
 
   const [mobileLanguage, setMobileLanguage] = useState("en");
   const [mobileCurrency, setMobileCurrency] = useState("AED");
+  const [topCurrency, setTopCurrency] = useState<CurrencyCode>("AED");
 
   const scrollTo = (hash: string) => {
     const id = hash.replace("#", "");
@@ -275,6 +277,39 @@ export function RealEstateHeader() {
     </button>
   );
 
+  const TopCurrencyTabs = () => {
+    const codes: CurrencyCode[] = ["AED", "EUR", "GBP", "USD"];
+
+    const tabClass = (active: boolean) =>
+      cn(
+        "rounded-full px-3 py-1.5 text-xs font-semibold transition",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/35",
+        active ? "text-white" : "text-white/80 hover:text-white",
+      );
+
+    return (
+      <div className="inline-flex items-center gap-4">
+        {codes.map((code) => (
+          <button
+            key={code}
+            type="button"
+            onClick={() => {
+              setTopCurrency(code);
+              toast({
+                title: "Currency updated",
+                description: `Selected ${code}.`,
+              });
+            }}
+            className={tabClass(topCurrency === code)}
+            aria-pressed={topCurrency === code}
+          >
+            {code}
+          </button>
+        ))}
+      </div>
+    );
+  };
+
   const TopBar = () => (
     <div className="w-full bg-[#1f2937] text-white">
       <div className="mx-auto max-w-7xl px-4">
@@ -291,19 +326,7 @@ export function RealEstateHeader() {
                 <UtilityPill>List Your Property</UtilityPill>
               </div>
 
-              <TopBarPreferencesPopover
-                trigger={
-                  <div className="inline-flex items-center gap-4">
-                    <span className="hover:text-white">AED</span>
-                    <span className="hover:text-white/95">EUR</span>
-                    <span className="hover:text-white/95">GBP</span>
-                    <span className="inline-flex items-center gap-1 hover:text-white">
-                      USD
-                      <ChevronDown className="h-4 w-4 opacity-90" />
-                    </span>
-                  </div>
-                }
-              />
+              <TopCurrencyTabs />
             </div>
 
             <div className="hidden items-center gap-3 md:flex">
