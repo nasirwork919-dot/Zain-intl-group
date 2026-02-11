@@ -116,6 +116,10 @@ export function SiteFooter({
   const ctaBg =
     "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2600&q=80";
 
+  const sectionTitle = "text-sm font-extrabold tracking-tight text-white";
+  const subtle =
+    "text-sm font-semibold text-white/82 transition hover:text-white";
+
   return (
     <footer className={cn("w-full", className)}>
       {/* Full-width CTA background strip (no box/border) */}
@@ -189,12 +193,19 @@ export function SiteFooter({
       </section>
 
       {/* Deep blue body */}
-      <section className="bg-[#001a66]">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="grid gap-8 py-10 lg:grid-cols-12 lg:gap-10 lg:py-12">
+      <section className="relative overflow-hidden bg-[#001a66]">
+        {/* subtle texture / depth (no gradients; just soft lighting) */}
+        <div className="pointer-events-none absolute inset-0 opacity-100">
+          <div className="absolute -left-24 -top-32 h-[520px] w-[520px] rounded-full bg-white/6 blur-3xl" />
+          <div className="absolute -right-24 -bottom-40 h-[560px] w-[560px] rounded-full bg-black/15 blur-3xl" />
+          <div className="absolute inset-0 ring-1 ring-white/10" />
+        </div>
+
+        <div className="relative mx-auto max-w-7xl px-4">
+          <div className="grid gap-10 py-10 lg:grid-cols-12 lg:gap-10 lg:py-12">
             {/* Newsletter card */}
             <div className="lg:col-span-5">
-              <Card className="rounded-[28px] border-0 bg-white p-6 shadow-[0_26px_80px_-60px_rgba(0,0,0,0.7)] sm:p-8">
+              <Card className="rounded-[28px] border-0 bg-white p-6 shadow-[0_30px_90px_-70px_rgba(0,0,0,0.75)] sm:p-8">
                 <div className="text-2xl font-extrabold tracking-tight text-[#0b1025]">
                   Newsletter
                 </div>
@@ -237,6 +248,10 @@ export function SiteFooter({
                   >
                     Submit
                   </Button>
+
+                  <div className="pt-1 text-[11px] font-semibold text-[#0b1025]/55">
+                    No spam. Unsubscribe anytime.
+                  </div>
                 </div>
               </Card>
             </div>
@@ -246,18 +261,20 @@ export function SiteFooter({
               <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 {/* Quick Links */}
                 <div className="sm:col-span-2 lg:col-span-1">
-                  <div className="text-sm font-extrabold text-white">
-                    Quick Links
-                  </div>
+                  <div className={sectionTitle}>Quick Links</div>
 
-                  <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
+                  <div className="mt-5 grid gap-7 sm:grid-cols-2 lg:grid-cols-2">
                     <ul className="grid gap-3">
                       {quickLinks.slice(0, 4).map((l) => (
                         <li key={l.label}>
                           <button
                             type="button"
                             onClick={l.onClick}
-                            className="text-left text-sm font-semibold text-white/85 transition hover:text-white"
+                            className={cn(
+                              "w-full text-left",
+                              subtle,
+                              "rounded-[10px] px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/35",
+                            )}
                           >
                             {l.label}
                           </button>
@@ -271,23 +288,29 @@ export function SiteFooter({
                           <button
                             type="button"
                             onClick={l.onClick}
-                            className="text-left text-sm font-semibold text-white/85 transition hover:text-white"
+                            className={cn(
+                              "w-full text-left",
+                              subtle,
+                              "rounded-[10px] px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/35",
+                            )}
                           >
                             {l.label}
                           </button>
                         </li>
                       ))}
                       <li className="pt-2">
-                        <div className="text-sm font-extrabold text-white">
-                          Resources
-                        </div>
-                        <ul className="mt-3 grid gap-3">
+                        <div className={sectionTitle}>Resources</div>
+                        <ul className="mt-4 grid gap-3">
                           {resources.map((l) => (
                             <li key={l.label}>
                               <button
                                 type="button"
                                 onClick={l.onClick}
-                                className="text-left text-sm font-semibold text-white/85 transition hover:text-white"
+                                className={cn(
+                                  "w-full text-left",
+                                  subtle,
+                                  "rounded-[10px] px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/35",
+                                )}
                               >
                                 {l.label}
                               </button>
@@ -301,26 +324,42 @@ export function SiteFooter({
 
                 {/* Contact Us */}
                 <div>
-                  <div className="text-sm font-extrabold text-white">
-                    Contact Us
-                  </div>
-                  <div className="mt-4 grid gap-3 text-sm font-semibold text-white/85">
-                    <div className="leading-relaxed">
-                      Floor 13, Blue Bay Tower,
-                      <br />
-                      Business Bay, Dubai, UAE
-                    </div>
-                    <div>+971 800 32632</div>
-                    <div>inquiry@zaininternational.ae</div>
+                  <div className={sectionTitle}>Contact Us</div>
+
+                  <div className="mt-5 grid gap-3">
+                    {[
+                      {
+                        label: "Address",
+                        value: "Floor 13, Blue Bay Tower, Business Bay, Dubai, UAE",
+                      },
+                      { label: "Phone", value: "+971 800 32632" },
+                      {
+                        label: "Email",
+                        value: "inquiry@zaininternational.ae",
+                      },
+                    ].map((i) => (
+                      <div
+                        key={i.label}
+                        className={cn(
+                          "rounded-[16px] bg-white/6 p-4",
+                          "ring-1 ring-white/12",
+                        )}
+                      >
+                        <div className="text-[11px] font-semibold tracking-[0.18em] text-white/60">
+                          {i.label.toUpperCase()}
+                        </div>
+                        <div className="mt-2 text-sm font-semibold text-white/88">
+                          {i.value}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
                 {/* Social */}
                 <div>
-                  <div className="text-sm font-extrabold text-white">
-                    Social Media
-                  </div>
-                  <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <div className={sectionTitle}>Social Media</div>
+                  <div className="mt-5 flex flex-wrap items-center gap-3">
                     {social.map((s) => (
                       <button
                         key={s.label}
@@ -328,8 +367,8 @@ export function SiteFooter({
                         onClick={s.onClick}
                         className={cn(
                           "inline-flex h-10 w-10 items-center justify-center rounded-full",
-                          "bg-white/10 text-white ring-1 ring-white/20",
-                          "transition hover:bg-white/15",
+                          "bg-white/8 text-white ring-1 ring-white/16",
+                          "transition hover:bg-white/14",
                           "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
                         )}
                         aria-label={s.label}
@@ -338,10 +377,19 @@ export function SiteFooter({
                       </button>
                     ))}
                   </div>
+
+                  <div className="mt-6 rounded-[16px] bg-white/6 p-4 ring-1 ring-white/12">
+                    <div className="text-[11px] font-semibold tracking-[0.18em] text-white/60">
+                      AVAILABILITY
+                    </div>
+                    <div className="mt-2 text-sm font-semibold text-white/88">
+                      Online 24/7 for shortlists & viewings
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-10 h-px w-full bg-white/15" />
+              <div className="mt-10 h-px w-full bg-white/12" />
 
               <div className="flex flex-col gap-3 py-6 text-xs font-semibold text-white/80 sm:flex-row sm:items-center sm:justify-between">
                 <div>© {year} Zain International Group. All Rights Reserved</div>
@@ -355,7 +403,7 @@ export function SiteFooter({
                         description: "We can add a privacy policy page next.",
                       })
                     }
-                    className="hover:text-white"
+                    className="rounded-[10px] px-2 py-1 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
                   >
                     Privacy Policy
                   </button>
@@ -367,7 +415,7 @@ export function SiteFooter({
                         description: "We can add terms of service next.",
                       })
                     }
-                    className="hover:text-white"
+                    className="rounded-[10px] px-2 py-1 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
                   >
                     Terms of Service
                   </button>
