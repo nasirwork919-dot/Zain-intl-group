@@ -294,10 +294,11 @@ export function RealEstateHeader() {
               <TopBarPreferencesPopover
                 trigger={
                   <div className="inline-flex items-center gap-4">
-                    <span className="hover:text-white">EN</span>
-                    <span className="hover:text-white/95">AR</span>
+                    <span className="hover:text-white">AED</span>
+                    <span className="hover:text-white/95">EUR</span>
+                    <span className="hover:text-white/95">GBP</span>
                     <span className="inline-flex items-center gap-1 hover:text-white">
-                      AED
+                      USD
                       <ChevronDown className="h-4 w-4 opacity-90" />
                     </span>
                   </div>
