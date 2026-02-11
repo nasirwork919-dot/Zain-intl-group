@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight, Search } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { SmartImage } from "@/components/real-estate/SmartImage";
@@ -8,80 +8,146 @@ type Community = {
   title: string;
   image: string;
   locationFilter: string;
+  subtitle?: string;
 };
 
 const communities: Community[] = [
   {
-    title: "DUBAI HILLS ESTATE",
+    title: "Dubai Hills Estate",
+    subtitle: "Family-first green district",
     image:
       "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=2200&q=80",
     locationFilter: "Dubai Hills Estate",
   },
   {
-    title: "DUBAI MARINA",
+    title: "Dubai Marina",
+    subtitle: "Waterfront lifestyle & skyline",
     image:
       "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=2200&q=80",
     locationFilter: "Dubai Marina",
   },
   {
-    title: "DOWNTOWN DUBAI",
+    title: "Downtown Dubai",
+    subtitle: "Landmarks & prime access",
     image:
       "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2200&q=80",
     locationFilter: "Downtown Dubai",
   },
   {
-    title: "BUSINESS BAY",
+    title: "Business Bay",
+    subtitle: "Canal-side living",
     image:
       "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=2200&q=80",
     locationFilter: "Business Bay",
   },
   {
-    title: "JVC",
+    title: "Jumeirah Village Circle",
+    subtitle: "Value + community convenience",
     image:
       "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=2200&q=80",
     locationFilter: "Jumeirah Village Circle",
   },
 ];
 
-function CommunityCard({
+function CommunityLaunchStyleCard({
   community,
-  onSearch,
+  onOpen,
+  className,
 }: {
   community: Community;
-  onSearch: () => void;
+  onOpen: () => void;
+  className?: string;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onSearch}
+    <article
       className={cn(
-        "group relative h-full w-full overflow-hidden rounded-[5px] text-left",
-        "ring-1 ring-black/10 bg-white shadow-[0_22px_70px_-55px_rgba(15,23,42,0.7)]",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35",
+        "group relative h-full w-full overflow-hidden rounded-[28px]",
+        "ring-1 ring-white/10",
+        "bg-white/5",
+        "shadow-[0_26px_90px_-65px_rgba(0,0,0,0.7)]",
+        className,
       )}
-      aria-label={`Search in ${community.title}`}
     >
-      <SmartImage
-        src={community.image}
-        alt={community.title}
-        className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
-        loading="lazy"
+      <button
+        type="button"
+        onClick={onOpen}
+        className="absolute inset-0 z-[2] focus:outline-none"
+        aria-label={`Open ${community.title}`}
       />
 
-      <div className="pointer-events-none absolute inset-0 bg-black/10" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/0" />
+      <div className="relative z-[1] h-full w-full">
+        <SmartImage
+          src={community.image}
+          alt={community.title}
+          className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+          loading="lazy"
+        />
 
-      <div className="absolute bottom-4 left-4 right-4">
-        <div className="text-xs font-semibold tracking-[0.18em] text-white/90 drop-shadow">
-          {community.title}
-        </div>
+        <div className="pointer-events-none absolute inset-0 bg-black/15" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10" />
+      </div>
 
-        <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/20 backdrop-blur">
-          <Search className="h-4 w-4 text-white/90" />
-          <span>SEARCH</span>
+      {/* Top controls (match CuratedLaunchCard vibe) */}
+      <div className="pointer-events-none absolute left-0 right-0 top-0 z-[3] p-5">
+        <div className="flex items-start justify-between gap-4">
+          <div className="pointer-events-none inline-flex items-center gap-2">
+            <div className="grid h-10 w-10 place-items-center rounded-2xl bg-white/15 ring-1 ring-white/20 backdrop-blur">
+              <span className="text-lg font-black tracking-tight text-white">
+                Z
+              </span>
+            </div>
+            <div className="hidden sm:block">
+              <div className="text-xs font-extrabold tracking-[0.08em] text-white">
+                ZAIN INTERNATIONAL GROUP
+              </div>
+              <div className="text-[10px] font-semibold tracking-[0.22em] text-white/70">
+                REAL ESTATE · DUBAI
+              </div>
+            </div>
+          </div>
+
+          <div className="pointer-events-auto">
+            <button
+              type="button"
+              onClick={onOpen}
+              className={cn(
+                "inline-flex h-12 w-12 items-center justify-center rounded-2xl",
+                "bg-white/0 text-white",
+                "ring-1 ring-white/60",
+                "backdrop-blur",
+                "transition",
+                "hover:bg-white/10",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70",
+              )}
+              aria-label="Open"
+            >
+              <ArrowUpRight className="h-5 w-5" />
+            </button>
+          </div>
         </div>
       </div>
-    </button>
+
+      {/* Bottom overlay content */}
+      <div className="absolute bottom-0 left-0 right-0 z-[3] p-5">
+        <div className="max-w-[92%]">
+          <div className="font-serif text-2xl font-semibold tracking-tight text-white sm:text-[28px]">
+            {community.title}
+          </div>
+          {community.subtitle ? (
+            <div className="mt-1 text-sm font-medium text-white/80">
+              {community.subtitle}
+            </div>
+          ) : null}
+        </div>
+
+        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-[13px] font-semibold text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/5">
+          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))] ring-1 ring-black/5">
+            <Search className="h-4 w-4" />
+          </span>
+          <span className="whitespace-nowrap">Search listings</span>
+        </div>
+      </div>
+    </article>
   );
 }
 
@@ -155,7 +221,6 @@ export function ExploreCommunities({
       const max = node.scrollWidth - node.clientWidth;
       const x = node.scrollLeft;
 
-      // If we're near the end, loop back to start smoothly.
       if (x >= max - step * 0.5) {
         node.scrollTo({ left: 0, behavior: "smooth" });
         return;
@@ -258,13 +323,13 @@ export function ExploreCommunities({
               key={c.title}
               className={cn(
                 "flex-none snap-start",
-                "w-[76vw] max-w-[320px] sm:w-[340px] md:w-[380px] lg:w-[420px]",
+                "w-[82vw] max-w-[340px] sm:w-[360px] md:w-[420px] lg:w-[460px]",
               )}
             >
-              <div className="h-[232px] sm:h-[265px]">
-                <CommunityCard
+              <div className="h-[380px] sm:h-[440px]">
+                <CommunityLaunchStyleCard
                   community={c}
-                  onSearch={() => onSearchCommunity(c.locationFilter)}
+                  onOpen={() => onSearchCommunity(c.locationFilter)}
                 />
               </div>
             </div>
