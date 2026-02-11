@@ -139,48 +139,16 @@ export function SiteFooter({
                 </div>
               </div>
 
-              {/* Right: image INSIDE a box/card container */}
+              {/* Right: clean image (no box) */}
               <div className="relative z-[1]">
-                <div className="mx-auto w-full max-w-[560px]">
-                  <div
-                    className={cn(
-                      "relative overflow-hidden rounded-[28px]",
-                      "bg-white/10",
-                      "ring-1 ring-white/25",
-                      "shadow-[0_30px_90px_-70px_rgba(0,0,0,0.65)]",
-                    )}
-                  >
-                    <div className="absolute inset-0 pointer-events-none">
-                      {/* subtle frame/glow */}
-                      <div className="absolute inset-0 ring-1 ring-white/10" />
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent" />
-                    </div>
-
-                    <div className="p-3 sm:p-4">
-                      <div className="relative h-[240px] overflow-hidden rounded-[22px] md:h-[300px]">
-                        <img
-                          src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1400&q=80"
-                          alt="Agent"
-                          className="h-full w-full object-cover object-top"
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-l from-[#1d2250]/55 via-transparent to-transparent" />
-                      </div>
-
-                      {/* small bottom bar inside the box like a caption area */}
-                      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 px-1">
-                        <div className="text-xs font-semibold tracking-[0.18em] text-white/85">
-                          ZAIN INTERNATIONAL GROUP
-                        </div>
-                        <div className="text-xs font-semibold text-white/80">
-                          Response time: ~5 mins
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* a soft shadow underneath to mimic screenshot depth */}
-                  <div className="pointer-events-none mx-auto mt-2 h-6 w-[86%] rounded-full bg-black/15 blur-xl" />
+                <div className="relative mx-auto h-[240px] w-full max-w-[560px] overflow-hidden rounded-[28px] md:h-[300px]">
+                  <img
+                    src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1400&q=80"
+                    alt="Agent"
+                    className="h-full w-full object-cover object-top"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-l from-[#1d2250]/55 via-transparent to-transparent" />
                 </div>
               </div>
 
