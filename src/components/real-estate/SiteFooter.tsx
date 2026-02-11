@@ -118,79 +118,71 @@ export function SiteFooter({
 
   return (
     <footer className={cn("w-full", className)}>
-      {/* Top CTA strip (architectural background, cohesive with site) */}
-      <section className="relative overflow-visible">
-        <div className="border-t border-white/10 bg-[#8f9199]">
-          <div className="mx-auto max-w-7xl px-4 py-10 md:py-12">
-            <div
-              className={cn(
-                "relative overflow-hidden rounded-[28px]",
-                "ring-1 ring-black/10",
-                "shadow-[0_28px_90px_-70px_rgba(15,23,42,0.7)]",
-              )}
-            >
-              {/* Background image */}
-              <img
-                src={ctaBg}
-                alt=""
-                className="absolute inset-0 h-full w-full object-cover"
-                loading="lazy"
-              />
+      {/* Full-width CTA background strip (no box/border) */}
+      <section className="relative overflow-hidden border-t border-white/10">
+        {/* Background */}
+        <img
+          src={ctaBg}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+          loading="lazy"
+        />
 
-              {/* Overlays for contrast */}
-              <div className="absolute inset-0 bg-[#0b1220]/55" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0b1220]/70 via-[#0b1220]/45 to-transparent" />
+        {/* Contrast overlays */}
+        <div className="absolute inset-0 bg-[#0b1220]/60" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0b1220]/80 via-[#0b1220]/55 to-[#0b1220]/10" />
 
-              {/* Content */}
-              <div className="relative z-[2] grid gap-6 p-6 sm:p-8 md:grid-cols-12 md:items-center md:gap-8">
-                <div className="md:col-span-8">
-                  <div className="text-xs font-semibold tracking-[0.18em] text-white/80">
-                    ZAIN INTERNATIONAL GROUP
-                  </div>
-                  <h3 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-                    Our Expert Will Help You
-                  </h3>
-                  <p className="mt-2 max-w-xl text-sm font-medium text-white/85">
-                    Feel free to contact us at any time — we’re online 24/7 for
-                    shortlists, payment plans, and viewings.
-                  </p>
+        {/* Content */}
+        <div className="relative z-[2]">
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:py-14">
+            <div className="grid gap-8 md:grid-cols-12 md:items-center">
+              <div className="md:col-span-8">
+                <div className="text-xs font-semibold tracking-[0.18em] text-white/80">
+                  ZAIN INTERNATIONAL GROUP
                 </div>
+                <h3 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                  Our Expert Will Help You
+                </h3>
+                <p className="mt-2 max-w-xl text-sm font-medium text-white/85">
+                  Feel free to contact us at any time — we’re online 24/7 for
+                  shortlists, payment plans, and viewings.
+                </p>
 
-                <div className="md:col-span-4 md:flex md:justify-end">
-                  <div className="flex flex-col gap-3 sm:flex-row md:flex-col md:items-stretch">
-                    <Button
-                      onClick={onGetInTouch}
-                      className="h-11 rounded-full bg-white px-7 font-semibold text-[#111827] hover:bg-white/95"
-                    >
-                      Get In Touch
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "h-11 rounded-full",
-                        "border-white/25 bg-white/0 text-white",
-                        "ring-1 ring-white/15",
-                        "hover:bg-white/10 hover:text-white",
-                      )}
-                      onClick={() =>
-                        toast({
-                          title: "Quick shortlist",
-                          description:
-                            "Tell us your area + budget and we’ll send a curated list.",
-                        })
-                      }
-                    >
-                      Request shortlist
-                    </Button>
-                  </div>
+                <div className="mt-5 text-[11px] font-semibold text-white/75">
+                  Trusted guidance · Clear next steps · Premium communities
                 </div>
               </div>
-            </div>
 
-            <div className="pt-4 text-center text-[11px] font-semibold text-white/75">
-              Trusted guidance · Clear next steps · Premium communities
+              <div className="md:col-span-4 md:flex md:justify-end">
+                <div className="flex flex-col gap-3 sm:flex-row md:flex-col md:items-stretch">
+                  <Button
+                    onClick={onGetInTouch}
+                    className="h-11 rounded-full bg-white px-7 font-semibold text-[#111827] hover:bg-white/95"
+                  >
+                    Get In Touch
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "h-11 rounded-full",
+                      "border-white/25 bg-white/0 text-white",
+                      "ring-1 ring-white/15",
+                      "hover:bg-white/10 hover:text-white",
+                    )}
+                    onClick={() =>
+                      toast({
+                        title: "Quick shortlist",
+                        description:
+                          "Tell us your area + budget and we’ll send a curated list.",
+                      })
+                    }
+                  >
+                    Request shortlist
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
