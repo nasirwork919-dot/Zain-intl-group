@@ -135,44 +135,55 @@ export function HeroSearchBar({
                 </Select>
               </div>
 
-              {/* MOBILE row: input + circular buttons */}
-              <div className={cn("grid grid-cols-[1fr_auto_auto] items-center gap-3 lg:hidden")}>
-                <div className={pillShell}>
+              {/* MOBILE: merged pill (input + buttons attached) */}
+              <div className={cn(pillShell, "lg:hidden")}>
+                <div className="flex items-center gap-2 px-2 py-2">
                   <Input
                     value={value.query}
                     onChange={(e) => onChange({ ...value, query: e.target.value })}
                     placeholder="Community or Building..."
-                    className={cn(fieldClass, "w-full")}
+                    className={cn(
+                      "h-14 flex-1 rounded-full border-transparent bg-muted/35 px-6",
+                      "text-sm text-[hsl(var(--brand-ink))]",
+                      "placeholder:text-[hsl(var(--brand-ink))]/45",
+                      "ring-1 ring-black/5",
+                      "focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
+                    )}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") onSubmit();
                     }}
                   />
+
+                  <Button
+                    onClick={onSubmit}
+                    className={cn(
+                      circleBtn,
+                      "bg-[#1b2b8f] text-white hover:bg-[#1b2b8f]/92",
+                      "shrink-0",
+                    )}
+                    aria-label="Search"
+                  >
+                    <Search className="h-5 w-5" />
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className={cn(
+                      circleBtn,
+                      "bg-white text-[#1b2b8f] hover:bg-white",
+                      "shrink-0",
+                    )}
+                    aria-label="Filters"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setFiltersOpen((v) => !v);
+                    }}
+                  >
+                    <SlidersHorizontal className="h-5 w-5" />
+                  </Button>
                 </div>
-
-                <Button
-                  onClick={onSubmit}
-                  className={cn(
-                    circleBtn,
-                    "bg-[#1b2b8f] text-white hover:bg-[#1b2b8f]/92",
-                  )}
-                  aria-label="Search"
-                >
-                  <Search className="h-5 w-5" />
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  className={cn(circleBtn, "bg-white text-[#1b2b8f] hover:bg-white")}
-                  aria-label="Filters"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setFiltersOpen((v) => !v);
-                  }}
-                >
-                  <SlidersHorizontal className="h-5 w-5" />
-                </Button>
               </div>
 
               {/* DESKTOP row: ONE white container, with inner grey input pill and buttons on right */}
