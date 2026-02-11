@@ -116,7 +116,7 @@ export function SiteFooter({
   return (
     <footer className={cn("w-full", className)}>
       {/* Top CTA strip */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-visible">
         <div className={cn("bg-[#8f9199]", "border-t border-white/10")}>
           <div className="mx-auto max-w-7xl px-4">
             <div className="relative grid items-center gap-8 py-10 md:grid-cols-2 md:py-14">
@@ -139,14 +139,15 @@ export function SiteFooter({
                 </div>
               </div>
 
-              {/* Right: plain image (no box, no border, no rounding) */}
-              <div className="relative z-[1]">
+              {/* Right: plain image, slightly "floating" over the section */}
+              <div className="relative z-[1] md:justify-self-end">
                 <img
                   src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1400&q=80"
                   alt="Agent"
                   className={cn(
-                    "mx-auto w-full max-w-[560px]",
-                    "h-[240px] object-cover object-top md:h-[300px]",
+                    "mx-auto w-full max-w-[520px]",
+                    "h-[190px] object-cover object-top md:h-[240px]",
+                    "-mb-6 md:-mb-10",
                   )}
                   loading="lazy"
                 />
