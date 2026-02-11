@@ -387,133 +387,84 @@ export function SiteFooter({
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
 
-              {/* Bottom row: equal side reserves + true center + pinned arrow */}
-              <div className="mt-12 border-t border-black/10 pt-6">
-                <div className="relative flex items-center">
-                  {/* Reserve equal space on BOTH sides (matches arrow footprint). */}
-                  <div className="w-12 shrink-0" aria-hidden="true" />
+        {/* FULL-WIDTH separator + bottom bar (outside max-width container) */}
+        <div className="border-t border-black/10">
+          <div className={cn(containerClass, "py-6")}>
+            <div className="grid grid-cols-[48px_1fr_48px] items-center">
+              {/* Left lane (matches arrow lane width) */}
+              <div aria-hidden="true" />
 
-                  {/* Desktop/tablet: mathematically centered cluster independent of arrow */}
-                  <div className="absolute left-1/2 hidden -translate-x-1/2 sm:block">
-                    <div className="flex items-center justify-center gap-x-6 gap-y-2 text-center">
-                      <div className="text-xs font-semibold text-[#0b1025]/80 whitespace-nowrap">
-                        © {year} Zain International Group. All Rights Reserved
-                      </div>
-
-                      <span className="hidden h-4 w-px bg-black/10 sm:inline-block" />
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          toast({
-                            title: "Privacy Policy",
-                            description:
-                              "We can add a privacy policy page next.",
-                          })
-                        }
-                        className={cn(bottomLinkClass, "whitespace-nowrap")}
-                      >
-                        Privacy Policy
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          toast({
-                            title: "Terms of Service",
-                            description: "We can add terms of service next.",
-                          })
-                        }
-                        className={cn(bottomLinkClass, "whitespace-nowrap")}
-                      >
-                        Terms of Service
-                      </button>
-
-                      <span className="hidden h-4 w-px bg-black/10 sm:inline-block" />
-
-                      <div className="text-xs font-semibold text-[#0b1025]/60 whitespace-nowrap">
-                        Created by{" "}
-                        <a
-                          href="https://marknova.io"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[#0b1025]/80 underline underline-offset-4 decoration-black/20 transition hover:text-[#0b1025] hover:decoration-black/40"
-                        >
-                          marknova
-                        </a>
-                      </div>
-                    </div>
+              {/* Center lane: always pure centered, wraps on small screens */}
+              <div className="text-center">
+                <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+                  <div className="text-xs font-semibold text-[#0b1025]/80">
+                    © {year} Zain International Group. All Rights Reserved
                   </div>
 
-                  {/* Mobile: pure centered lane with equal gaps; wraps naturally (Option A). */}
-                  <div className="w-full px-12 text-center sm:hidden">
-                    <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-                      <div className="text-xs font-semibold text-[#0b1025]/80">
-                        © {year} Zain International Group. All Rights Reserved
-                      </div>
+                  <span className="h-4 w-px bg-black/10" />
 
-                      <span className="h-4 w-px bg-black/10" />
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          toast({
-                            title: "Privacy Policy",
-                            description:
-                              "We can add a privacy policy page next.",
-                          })
-                        }
-                        className={bottomLinkClass}
-                      >
-                        Privacy Policy
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          toast({
-                            title: "Terms of Service",
-                            description: "We can add terms of service next.",
-                          })
-                        }
-                        className={bottomLinkClass}
-                      >
-                        Terms of Service
-                      </button>
-
-                      <span className="h-4 w-px bg-black/10" />
-
-                      <div className="text-xs font-semibold text-[#0b1025]/60">
-                        Created by{" "}
-                        <a
-                          href="https://marknova.io"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[#0b1025]/80 underline underline-offset-4 decoration-black/20 transition hover:text-[#0b1025] hover:decoration-black/40"
-                        >
-                          marknova
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Arrow pinned right */}
                   <button
                     type="button"
-                    onClick={() => onNavigateSection("#top")}
-                    className={cn(
-                      "absolute right-0 inline-flex h-12 w-12 items-center justify-center rounded-[5px]",
-                      "bg-white text-[#0b1025] ring-1 ring-black/10",
-                      "shadow-sm transition hover:bg-[#0b1025]/[0.03]",
-                      "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
-                      "shrink-0",
-                    )}
-                    aria-label="Scroll to top"
+                    onClick={() =>
+                      toast({
+                        title: "Privacy Policy",
+                        description: "We can add a privacy policy page next.",
+                      })
+                    }
+                    className={bottomLinkClass}
                   >
-                    <ChevronUp className="h-5 w-5" />
+                    Privacy Policy
                   </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      toast({
+                        title: "Terms of Service",
+                        description: "We can add terms of service next.",
+                      })
+                    }
+                    className={bottomLinkClass}
+                  >
+                    Terms of Service
+                  </button>
+
+                  <span className="h-4 w-px bg-black/10" />
+
+                  <div className="text-xs font-semibold text-[#0b1025]/60">
+                    Created by{" "}
+                    <a
+                      href="https://marknova.io"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#0b1025]/80 underline underline-offset-4 decoration-black/20 transition hover:text-[#0b1025] hover:decoration-black/40"
+                    >
+                      marknova
+                    </a>
+                  </div>
                 </div>
+              </div>
+
+              {/* Right lane: arrow pinned, same width as left lane */}
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => onNavigateSection("#top")}
+                  className={cn(
+                    "inline-flex h-12 w-12 items-center justify-center rounded-[5px]",
+                    "bg-white text-[#0b1025] ring-1 ring-black/10",
+                    "shadow-sm transition hover:bg-[#0b1025]/[0.03]",
+                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
+                    "shrink-0",
+                  )}
+                  aria-label="Scroll to top"
+                >
+                  <ChevronUp className="h-5 w-5" />
+                </button>
               </div>
             </div>
           </div>
