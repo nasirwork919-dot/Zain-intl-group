@@ -28,6 +28,7 @@ import { ExploreCommunities } from "@/components/real-estate/ExploreCommunities"
 import { ScrollUpButton } from "@/components/ScrollUpButton";
 import { FeaturedListingsMobileSlider } from "@/components/real-estate/FeaturedListingsMobileSlider";
 import { YourHomeYourWay } from "@/components/real-estate/YourHomeYourWay";
+import { SiteFooter } from "@/components/real-estate/SiteFooter";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -87,6 +88,12 @@ const Index = () => {
       maxPrice: 20000000,
     });
     setHeroBar((prev) => ({ ...prev, query: "" }));
+  };
+
+  const scrollTo = (hash: string) => {
+    const id = hash.replace("#", "");
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
@@ -236,11 +243,7 @@ const Index = () => {
             </ul>
             <Button
               className="mt-5 h-11 w-full rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
-              onClick={() =>
-                document
-                  .getElementById("contact")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
+              onClick={() => scrollTo("#contact")}
             >
               Request a shortlist
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -294,9 +297,7 @@ const Index = () => {
           <ExploreCommunities
             onSearchCommunity={(location) => {
               setFilters((prev) => ({ ...prev, location: location as any }));
-              document
-                .getElementById("listings")
-                ?.scrollIntoView({ behavior: "smooth", block: "start" });
+              scrollTo("#listings");
               toast({
                 title: "Community selected",
                 description: `Showing listings in ${location}.`,
@@ -306,7 +307,6 @@ const Index = () => {
         </div>
       </div>
 
-      {/* NEW placement: directly under Explore Communities */}
       <YourHomeYourWay className="mt-6" />
 
       <ScrollingTextSeparator
@@ -462,11 +462,7 @@ const Index = () => {
               <Button
                 variant="secondary"
                 className="mt-5 h-11 w-full rounded-[5px] bg-white/70 hover:bg-white"
-                onClick={() =>
-                  document
-                    .getElementById("contact")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
+                onClick={() => scrollTo("#contact")}
               >
                 Get a free consultation
               </Button>
@@ -540,18 +536,10 @@ const Index = () => {
         </div>
       </section>
 
-      <footer className="border-t border-white/30 bg-white/40">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-sm font-semibold tracking-tight">
-            Zain International Group{" "}
-            <span className="text-muted-foreground">· Dubai</span>
-          </div>
-          <div className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Zain International Group. All rights
-            reserved.
-          </div>
-        </div>
-      </footer>
+      <SiteFooter
+        onGetInTouch={() => scrollTo("#contact")}
+        onNavigateSection={(hash) => scrollTo(hash)}
+      />
 
       <PropertyDialog
         property={activeProperty}
@@ -559,9 +547,7 @@ const Index = () => {
         onOpenChange={setDialogOpen}
         onRequest={(p) => {
           setDialogOpen(false);
-          document
-            .getElementById("contact")
-            ?.scrollIntoView({ behavior: "smooth" });
+          scrollTo("#contact");
           toast({
             title: "Requesting details",
             description: `We prefilled the form for “${p.title}”.`,
