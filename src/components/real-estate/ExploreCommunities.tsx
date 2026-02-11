@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -55,7 +55,7 @@ function CommunityCard({
       type="button"
       onClick={onSearch}
       className={cn(
-        "group relative overflow-hidden rounded-[5px] text-left",
+        "group relative h-full w-full overflow-hidden rounded-[5px] text-left",
         "ring-1 ring-black/10 bg-white shadow-[0_22px_70px_-55px_rgba(15,23,42,0.7)]",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35",
       )}
@@ -71,7 +71,7 @@ function CommunityCard({
       <div className="pointer-events-none absolute inset-0 bg-black/10" />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/0" />
 
-      <div className="absolute bottom-5 left-5 right-5">
+      <div className="absolute bottom-4 left-4 right-4">
         <div className="text-xs font-semibold tracking-[0.18em] text-white/90 drop-shadow">
           {community.title}
         </div>
@@ -96,6 +96,22 @@ export function ExploreCommunities({
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(true);
 
+  const pausedRef = useRef(false);
+  const resumeTimerRef = useRef<number | null>(null);
+
+  const cancelResumeTimer = () => {
+    if (resumeTimerRef.current) window.clearTimeout(resumeTimerRef.current);
+    resumeTimerRef.current = null;
+  };
+
+  const pauseAuto = (msToResume = 2400) => {
+    pausedRef.current = true;
+    cancelResumeTimer();
+    resumeTimerRef.current = window.setTimeout(() => {
+      pausedRef.current = false;
+    }, msToResume);
+  };
+
   const updateScrollState = () => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -107,14 +123,53 @@ export function ExploreCommunities({
     setCanNext(x < max - 4);
   };
 
+  const getStep = () => {
+    const el = scrollerRef.current;
+    if (!el) return 320;
+    const first = el.firstElementChild as HTMLElement | null;
+    return first ? first.offsetWidth : Math.max(280, el.clientWidth * 0.85);
+  };
+
   const scrollByCard = (dir: "prev" | "next") => {
     const el = scrollerRef.current;
     if (!el) return;
 
-    const first = el.firstElementChild as HTMLElement | null;
-    const step = first ? first.offsetWidth : Math.max(280, el.clientWidth * 0.85);
+    const step = getStep();
     el.scrollBy({ left: dir === "next" ? step : -step, behavior: "smooth" });
+    pauseAuto();
   };
+
+  // Auto-scroll: gentle, card-by-card, loops back to start.
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    updateScrollState();
+
+    const interval = window.setInterval(() => {
+      const node = scrollerRef.current;
+      if (!node) return;
+      if (pausedRef.current) return;
+
+      const step = getStep();
+      const max = node.scrollWidth - node.clientWidth;
+      const x = node.scrollLeft;
+
+      // If we're near the end, loop back to start smoothly.
+      if (x >= max - step * 0.5) {
+        node.scrollTo({ left: 0, behavior: "smooth" });
+        return;
+      }
+
+      node.scrollBy({ left: step, behavior: "smooth" });
+    }, 3200);
+
+    return () => {
+      window.clearInterval(interval);
+      cancelResumeTimer();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const mobileControls = useMemo(() => {
     return (
@@ -181,19 +236,32 @@ export function ExploreCommunities({
             "snap-x snap-mandatory",
             "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
           )}
-          onScroll={updateScrollState}
-          onPointerEnter={updateScrollState}
-          onTouchStart={updateScrollState}
+          onScroll={() => {
+            updateScrollState();
+            pauseAuto(2800);
+          }}
+          onPointerEnter={() => {
+            updateScrollState();
+            pausedRef.current = true;
+            cancelResumeTimer();
+          }}
+          onPointerLeave={() => {
+            pauseAuto(600);
+          }}
+          onTouchStart={() => {
+            updateScrollState();
+            pauseAuto(3200);
+          }}
         >
           {communities.map((c) => (
             <div
               key={c.title}
               className={cn(
                 "flex-none snap-start",
-                "w-[78vw] max-w-[340px] sm:w-[360px] md:w-[420px] lg:w-[460px]",
+                "w-[76vw] max-w-[320px] sm:w-[340px] md:w-[380px] lg:w-[420px]",
               )}
             >
-              <div className="h-[260px] sm:h-[300px]">
+              <div className="h-[210px] sm:h-[240px]">
                 <CommunityCard
                   community={c}
                   onSearch={() => onSearchCommunity(c.locationFilter)}
@@ -204,7 +272,6 @@ export function ExploreCommunities({
         </div>
       </div>
 
-      {/* subtle hint on larger screens */}
       <div className="hidden pt-2 text-center text-xs text-muted-foreground sm:block">
         Tip: hold Shift while scrolling with a mouse wheel to move horizontally.
       </div>
