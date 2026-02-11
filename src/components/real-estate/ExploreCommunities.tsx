@@ -1,4 +1,5 @@
-import { Search } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { SmartImage } from "@/components/real-estate/SmartImage";
@@ -6,7 +7,6 @@ import { SmartImage } from "@/components/real-estate/SmartImage";
 type Community = {
   title: string;
   image: string;
-  layout: "left" | "middle" | "rightTop" | "rightBottom";
   locationFilter: string;
 };
 
@@ -14,44 +14,40 @@ const communities: Community[] = [
   {
     title: "DUBAI HILLS ESTATE",
     image:
-      "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=2000&q=80",
-    layout: "left",
+      "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=2200&q=80",
     locationFilter: "Dubai Hills Estate",
   },
   {
-    title: "DUBAILAND",
+    title: "DUBAI MARINA",
     image:
-      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=2000&q=80",
-    layout: "middle",
-    locationFilter: "Business Bay",
+      "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=2200&q=80",
+    locationFilter: "Dubai Marina",
   },
   {
-    title: "MOHAMMED BIN RASHID CITY",
+    title: "DOWNTOWN DUBAI",
     image:
-      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2000&q=80",
-    layout: "rightTop",
+      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2200&q=80",
     locationFilter: "Downtown Dubai",
   },
   {
-    title: "JUMEIRAH GOLF ESTATES",
+    title: "BUSINESS BAY",
     image:
-      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=2000&q=80",
-    layout: "rightBottom",
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=2200&q=80",
+    locationFilter: "Business Bay",
+  },
+  {
+    title: "JVC",
+    image:
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=2200&q=80",
     locationFilter: "Jumeirah Village Circle",
   },
 ];
 
-function CommunityTile({
-  title,
-  image,
-  className,
+function CommunityCard({
+  community,
   onSearch,
-  roundedClassName,
 }: {
-  title: string;
-  image: string;
-  className?: string;
-  roundedClassName?: string;
+  community: Community;
   onSearch: () => void;
 }) {
   return (
@@ -59,28 +55,25 @@ function CommunityTile({
       type="button"
       onClick={onSearch}
       className={cn(
-        "group relative w-full overflow-hidden text-left",
-        "ring-1 ring-black/10",
-        "bg-white shadow-[0_22px_70px_-55px_rgba(15,23,42,0.7)]",
+        "group relative overflow-hidden rounded-[5px] text-left",
+        "ring-1 ring-black/10 bg-white shadow-[0_22px_70px_-55px_rgba(15,23,42,0.7)]",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35",
-        roundedClassName ?? "rounded-2xl",
-        className,
       )}
-      aria-label={`Search in ${title}`}
+      aria-label={`Search in ${community.title}`}
     >
       <SmartImage
-        src={image}
-        alt={title}
+        src={community.image}
+        alt={community.title}
         className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
         loading="lazy"
       />
 
       <div className="pointer-events-none absolute inset-0 bg-black/10" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/0" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/0" />
 
-      <div className="absolute bottom-6 left-6 right-6">
+      <div className="absolute bottom-5 left-5 right-5">
         <div className="text-xs font-semibold tracking-[0.18em] text-white/90 drop-shadow">
-          {title}
+          {community.title}
         </div>
 
         <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/20 backdrop-blur">
@@ -99,18 +92,71 @@ export function ExploreCommunities({
   onSearchCommunity: (location: string) => void;
   className?: string;
 }) {
-  const left = communities.find((c) => c.layout === "left")!;
-  const middle = communities.find((c) => c.layout === "middle")!;
-  const rightTop = communities.find((c) => c.layout === "rightTop")!;
-  const rightBottom = communities.find((c) => c.layout === "rightBottom")!;
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(true);
 
-  const outer = "rounded-2xl";
-  const clip = "overflow-hidden";
-  const innerRounded = "rounded-none";
+  const updateScrollState = () => {
+    const el = scrollerRef.current;
+    if (!el) return;
 
-  // ONLY change requested: make the desktop mosaic taller.
-  // (Tiles are set to h-full so they fill the container cleanly with no gaps.)
-  const desktopHeight = 600;
+    const max = el.scrollWidth - el.clientWidth;
+    const x = el.scrollLeft;
+
+    setCanPrev(x > 4);
+    setCanNext(x < max - 4);
+  };
+
+  const scrollByCard = (dir: "prev" | "next") => {
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    const first = el.firstElementChild as HTMLElement | null;
+    const step = first ? first.offsetWidth : Math.max(280, el.clientWidth * 0.85);
+    el.scrollBy({ left: dir === "next" ? step : -step, behavior: "smooth" });
+  };
+
+  const mobileControls = useMemo(() => {
+    return (
+      <div className="mt-6 flex items-center justify-between gap-3 sm:hidden">
+        <div className="text-xs font-semibold tracking-[0.18em] text-[hsl(var(--brand-ink))]/75">
+          BROWSE BY AREA
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => scrollByCard("prev")}
+            disabled={!canPrev}
+            className={cn(
+              "inline-flex h-10 w-10 items-center justify-center rounded-full transition",
+              "ring-1 ring-black/10 bg-white/70 text-[hsl(var(--brand-ink))]",
+              "shadow-sm",
+              canPrev ? "hover:bg-white" : "cursor-not-allowed opacity-50",
+            )}
+            aria-label="Scroll left"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => scrollByCard("next")}
+            disabled={!canNext}
+            className={cn(
+              "inline-flex h-10 w-10 items-center justify-center rounded-full transition",
+              "ring-1 ring-black/10 bg-white/70 text-[hsl(var(--brand-ink))]",
+              "shadow-sm",
+              canNext ? "hover:bg-white" : "cursor-not-allowed opacity-50",
+            )}
+            aria-label="Scroll right"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+    );
+  }, [canNext, canPrev]);
 
   return (
     <section className={cn("mx-auto max-w-6xl px-4 pb-12 sm:pb-16", className)}>
@@ -120,74 +166,47 @@ export function ExploreCommunities({
           <span className="text-[hsl(var(--brand))]">Communities</span>
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground">
-          Browse by neighborhood — tap any tile to jump to listings with that
-          area pre-selected.
+          Swipe through neighborhoods — tap any card to jump to listings with
+          that area pre-selected.
         </p>
       </div>
 
-      {/* Desktop mosaic: no gap, combined */}
-      <div
-        className={cn(
-          "mt-9 hidden lg:block",
-          outer,
-          clip,
-          "ring-1 ring-black/10",
-          "bg-white shadow-[0_30px_90px_-75px_rgba(15,23,42,0.9)]",
-        )}
-        style={{ height: desktopHeight }}
-      >
-        <div className="grid h-full grid-cols-12">
-          <div className="col-span-4 h-full">
-            <CommunityTile
-              title={left.title}
-              image={left.image}
-              onSearch={() => onSearchCommunity(left.locationFilter)}
-              roundedClassName={innerRounded}
-              className="h-full ring-0 shadow-none"
-            />
-          </div>
+      {mobileControls}
 
-          <div className="col-span-4 h-full">
-            <CommunityTile
-              title={middle.title}
-              image={middle.image}
-              onSearch={() => onSearchCommunity(middle.locationFilter)}
-              roundedClassName={innerRounded}
-              className="h-full ring-0 shadow-none"
-            />
-          </div>
-
-          <div className="col-span-4 grid h-full grid-rows-2">
-            <CommunityTile
-              title={rightTop.title}
-              image={rightTop.image}
-              onSearch={() => onSearchCommunity(rightTop.locationFilter)}
-              roundedClassName={innerRounded}
-              className="h-full ring-0 shadow-none"
-            />
-            <CommunityTile
-              title={rightBottom.title}
-              image={rightBottom.image}
-              onSearch={() => onSearchCommunity(rightBottom.locationFilter)}
-              roundedClassName={innerRounded}
-              className="h-full ring-0 shadow-none"
-            />
-          </div>
+      <div className="mt-6">
+        <div
+          ref={scrollerRef}
+          className={cn(
+            "flex gap-4 overflow-x-auto pb-4",
+            "snap-x snap-mandatory",
+            "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
+          )}
+          onScroll={updateScrollState}
+          onPointerEnter={updateScrollState}
+          onTouchStart={updateScrollState}
+        >
+          {communities.map((c) => (
+            <div
+              key={c.title}
+              className={cn(
+                "flex-none snap-start",
+                "w-[78vw] max-w-[340px] sm:w-[360px] md:w-[420px] lg:w-[460px]",
+              )}
+            >
+              <div className="h-[260px] sm:h-[300px]">
+                <CommunityCard
+                  community={c}
+                  onSearch={() => onSearchCommunity(c.locationFilter)}
+                />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Mobile/tablet: stacked cards (unchanged, responsive) */}
-      <div className="mt-8 grid gap-3 sm:gap-4 lg:hidden">
-        {communities.map((c) => (
-          <CommunityTile
-            key={c.title}
-            title={c.title}
-            image={c.image}
-            onSearch={() => onSearchCommunity(c.locationFilter)}
-            className="h-[220px] sm:h-[260px]"
-            roundedClassName="rounded-2xl"
-          />
-        ))}
+      {/* subtle hint on larger screens */}
+      <div className="hidden pt-2 text-center text-xs text-muted-foreground sm:block">
+        Tip: hold Shift while scrolling with a mouse wheel to move horizontally.
       </div>
     </section>
   );
