@@ -70,17 +70,12 @@ export function HeroSearchBar({
       <div className="flex flex-col items-center gap-5">
         {/* operation row */}
         <div className="flex flex-wrap items-center justify-center gap-3">
-          <div className="text-xs font-bold tracking-[0.12em] text-[hsl(var(--brand-ink))]/80">
+          <div className="text-xs font-bold tracking-[0.12em] text-white/85">
             {operationLabel}
           </div>
 
-          <div
-            className={cn(
-              "rounded-[999px] bg-white/55 p-1",
-              "ring-1 ring-[hsl(var(--brand-ink))]/25",
-              "shadow-[0_10px_25px_-18px_rgba(15,23,42,0.55)]",
-            )}
-          >
+          {/* Removed the background pill behind the segmented buttons */}
+          <div className="p-1">
             <ToggleGroup
               type="single"
               value={value.operation}
