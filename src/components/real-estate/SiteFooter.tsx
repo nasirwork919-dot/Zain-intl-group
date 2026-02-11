@@ -6,6 +6,7 @@ import {
   Twitter,
   ArrowRight,
   Mail,
+  ChevronUp,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -116,27 +117,32 @@ export function SiteFooter({
   const ctaBg =
     "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2600&q=80";
 
-  const sectionTitle = "text-sm font-extrabold tracking-tight text-white";
-  const subtle =
-    "text-sm font-semibold text-white/82 transition hover:text-white";
+  const sectionTitle =
+    "text-sm font-extrabold tracking-tight text-white";
+  const linkClass = cn(
+    "text-sm font-semibold text-white/80 transition hover:text-white",
+    "rounded-[10px] px-2 py-1 text-left",
+    "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/35",
+  );
+
+  const outlineCard = cn(
+    "rounded-[18px] border border-white/20 bg-[#001a66]",
+    "px-5 py-4",
+  );
 
   return (
     <footer className={cn("w-full", className)}>
       {/* Full-width CTA background strip (no box/border) */}
       <section className="relative overflow-hidden border-t border-white/10">
-        {/* Background */}
         <img
           src={ctaBg}
           alt=""
           className="absolute inset-0 h-full w-full object-cover"
           loading="lazy"
         />
-
-        {/* Contrast overlays */}
         <div className="absolute inset-0 bg-[#0b1220]/60" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0b1220]/80 via-[#0b1220]/55 to-[#0b1220]/10" />
 
-        {/* Content */}
         <div className="relative z-[2]">
           <div className="mx-auto max-w-7xl px-4 py-12 sm:py-14">
             <div className="grid gap-8 md:grid-cols-12 md:items-center">
@@ -192,36 +198,29 @@ export function SiteFooter({
         </div>
       </section>
 
-      {/* Deep blue body */}
-      <section className="relative overflow-hidden bg-[#001a66]">
-        {/* subtle texture / depth (no gradients; just soft lighting) */}
-        <div className="pointer-events-none absolute inset-0 opacity-100">
-          <div className="absolute -left-24 -top-32 h-[520px] w-[520px] rounded-full bg-white/6 blur-3xl" />
-          <div className="absolute -right-24 -bottom-40 h-[560px] w-[560px] rounded-full bg-black/15 blur-3xl" />
-          <div className="absolute inset-0 ring-1 ring-white/10" />
-        </div>
-
-        <div className="relative mx-auto max-w-7xl px-4">
-          <div className="grid gap-10 py-10 lg:grid-cols-12 lg:gap-10 lg:py-12">
+      {/* Clean deep-blue footer (match site + provided reference) */}
+      <section className="relative bg-[#001a66]">
+        <div className="mx-auto max-w-7xl px-4 py-12">
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-start">
             {/* Newsletter card */}
             <div className="lg:col-span-5">
-              <Card className="rounded-[28px] border-0 bg-white p-6 shadow-[0_30px_90px_-70px_rgba(0,0,0,0.75)] sm:p-8">
+              <Card className="rounded-[28px] border-0 bg-white p-7 shadow-none sm:p-8">
                 <div className="text-2xl font-extrabold tracking-tight text-[#0b1025]">
                   Newsletter
                 </div>
-                <div className="mt-2 text-sm text-[#0b1025]/60">
+                <div className="mt-2 text-sm text-[#0b1025]/65">
                   Subscribe for our weekly newsletter and marketing updates
                 </div>
 
                 <div className="mt-6 grid gap-3">
                   <div className="relative">
-                    <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#0b1025]/50" />
+                    <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#0b1025]/45" />
                     <Input
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Email Address"
                       className={cn(
-                        "h-12 rounded-full border-0 bg-[#0b0b45]/10 pl-11",
+                        "h-12 rounded-full border-0 bg-[#0b1025]/10 pl-11",
                         "text-[#0b1025] placeholder:text-[#0b1025]/45",
                         "ring-1 ring-black/10 focus-visible:ring-2 focus-visible:ring-[#001a66]/25",
                       )}
@@ -256,109 +255,87 @@ export function SiteFooter({
               </Card>
             </div>
 
-            {/* Links + contact */}
+            {/* Right side: links + contact + social */}
             <div className="lg:col-span-7">
-              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                {/* Quick Links */}
-                <div className="sm:col-span-2 lg:col-span-1">
+              <div className="grid gap-10 sm:grid-cols-3">
+                {/* Quick links (two columns inside) */}
+                <div className="sm:col-span-1">
                   <div className={sectionTitle}>Quick Links</div>
-
-                  <div className="mt-5 grid gap-7 sm:grid-cols-2 lg:grid-cols-2">
-                    <ul className="grid gap-3">
+                  <div className="mt-5 grid grid-cols-2 gap-x-8 gap-y-2">
+                    <ul className="grid gap-2">
                       {quickLinks.slice(0, 4).map((l) => (
                         <li key={l.label}>
-                          <button
-                            type="button"
-                            onClick={l.onClick}
-                            className={cn(
-                              "w-full text-left",
-                              subtle,
-                              "rounded-[10px] px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/35",
-                            )}
-                          >
+                          <button type="button" onClick={l.onClick} className={linkClass}>
                             {l.label}
                           </button>
                         </li>
                       ))}
                     </ul>
-
-                    <ul className="grid gap-3">
+                    <ul className="grid gap-2">
                       {quickLinks.slice(4).map((l) => (
                         <li key={l.label}>
-                          <button
-                            type="button"
-                            onClick={l.onClick}
-                            className={cn(
-                              "w-full text-left",
-                              subtle,
-                              "rounded-[10px] px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/35",
-                            )}
-                          >
+                          <button type="button" onClick={l.onClick} className={linkClass}>
                             {l.label}
                           </button>
                         </li>
                       ))}
-                      <li className="pt-2">
-                        <div className={sectionTitle}>Resources</div>
-                        <ul className="mt-4 grid gap-3">
-                          {resources.map((l) => (
-                            <li key={l.label}>
-                              <button
-                                type="button"
-                                onClick={l.onClick}
-                                className={cn(
-                                  "w-full text-left",
-                                  subtle,
-                                  "rounded-[10px] px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/35",
-                                )}
-                              >
-                                {l.label}
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      </li>
                     </ul>
                   </div>
+
+                  <div className="mt-8 text-sm font-extrabold tracking-tight text-white">
+                    Resources
+                  </div>
+                  <ul className="mt-4 grid gap-2">
+                    {resources.map((l) => (
+                      <li key={l.label}>
+                        <button type="button" onClick={l.onClick} className={linkClass}>
+                          {l.label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
-                {/* Contact Us */}
-                <div>
+                {/* Contact */}
+                <div className="sm:col-span-1">
                   <div className={sectionTitle}>Contact Us</div>
 
-                  <div className="mt-5 grid gap-3">
-                    {[
-                      {
-                        label: "Address",
-                        value: "Floor 13, Blue Bay Tower, Business Bay, Dubai, UAE",
-                      },
-                      { label: "Phone", value: "+971 800 32632" },
-                      {
-                        label: "Email",
-                        value: "inquiry@zaininternational.ae",
-                      },
-                    ].map((i) => (
-                      <div
-                        key={i.label}
-                        className={cn(
-                          "rounded-[16px] bg-white/6 p-4",
-                          "ring-1 ring-white/12",
-                        )}
-                      >
-                        <div className="text-[11px] font-semibold tracking-[0.18em] text-white/60">
-                          {i.label.toUpperCase()}
-                        </div>
-                        <div className="mt-2 text-sm font-semibold text-white/88">
-                          {i.value}
-                        </div>
+                  <div className="mt-5 grid gap-4">
+                    <div className={outlineCard}>
+                      <div className="text-[11px] font-semibold tracking-[0.18em] text-white/60">
+                        ADDRESS
                       </div>
-                    ))}
+                      <div className="mt-2 text-sm font-semibold leading-relaxed text-white/85">
+                        Floor 13, Blue Bay Tower
+                        <br />
+                        Business Bay, Dubai, UAE
+                      </div>
+                    </div>
+
+                    <div className={outlineCard}>
+                      <div className="text-[11px] font-semibold tracking-[0.18em] text-white/60">
+                        PHONE
+                      </div>
+                      <div className="mt-2 text-sm font-semibold text-white/85">
+                        +971 800 32632
+                      </div>
+                    </div>
+
+                    <div className={outlineCard}>
+                      <div className="text-[11px] font-semibold tracking-[0.18em] text-white/60">
+                        EMAIL
+                      </div>
+                      <div className="mt-2 text-sm font-semibold text-white/85">
+                        inquiry@zaininternational.ae
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Social */}
-                <div>
+                {/* Social + availability */}
+                <div className="sm:col-span-1">
                   <div className={sectionTitle}>Social Media</div>
+
                   <div className="mt-5 flex flex-wrap items-center gap-3">
                     {social.map((s) => (
                       <button
@@ -367,8 +344,8 @@ export function SiteFooter({
                         onClick={s.onClick}
                         className={cn(
                           "inline-flex h-10 w-10 items-center justify-center rounded-full",
-                          "bg-white/8 text-white ring-1 ring-white/16",
-                          "transition hover:bg-white/14",
+                          "border border-white/25 bg-transparent text-white",
+                          "transition hover:bg-white/10",
                           "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
                         )}
                         aria-label={s.label}
@@ -378,23 +355,26 @@ export function SiteFooter({
                     ))}
                   </div>
 
-                  <div className="mt-6 rounded-[16px] bg-white/6 p-4 ring-1 ring-white/12">
+                  <div className={cn("mt-6", outlineCard)}>
                     <div className="text-[11px] font-semibold tracking-[0.18em] text-white/60">
                       AVAILABILITY
                     </div>
-                    <div className="mt-2 text-sm font-semibold text-white/88">
+                    <div className="mt-2 text-sm font-semibold leading-relaxed text-white/85">
                       Online 24/7 for shortlists & viewings
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-10 h-px w-full bg-white/12" />
+              {/* Bottom row */}
+              <div className="mt-12 grid items-center gap-4 border-t border-white/15 pt-6 sm:grid-cols-3">
+                <div className="hidden sm:block" />
 
-              <div className="flex flex-col gap-3 py-6 text-xs font-semibold text-white/80 sm:flex-row sm:items-center sm:justify-between">
-                <div>© {year} Zain International Group. All Rights Reserved</div>
+                <div className="text-center text-xs font-semibold text-white/85">
+                  © {year} Zain International Group. All Rights Reserved
+                </div>
 
-                <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                <div className="flex items-center justify-center gap-6 sm:justify-end">
                   <button
                     type="button"
                     onClick={() =>
@@ -403,7 +383,7 @@ export function SiteFooter({
                         description: "We can add a privacy policy page next.",
                       })
                     }
-                    className="rounded-[10px] px-2 py-1 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+                    className="text-xs font-semibold text-white/80 transition hover:text-white"
                   >
                     Privacy Policy
                   </button>
@@ -415,13 +395,30 @@ export function SiteFooter({
                         description: "We can add terms of service next.",
                       })
                     }
-                    className="rounded-[10px] px-2 py-1 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+                    className="text-xs font-semibold text-white/80 transition hover:text-white"
                   >
                     Terms of Service
                   </button>
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Scroll-to-top button inside footer, aligned bottom-right like reference */}
+          <div className="pointer-events-none mt-8 flex justify-end">
+            <button
+              type="button"
+              onClick={() => onNavigateSection("#top")}
+              className={cn(
+                "pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-[6px]",
+                "bg-white/90 text-[#0b1025] ring-1 ring-black/10",
+                "transition hover:bg-white",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50",
+              )}
+              aria-label="Scroll to top"
+            >
+              <ChevronUp className="h-5 w-5" />
+            </button>
           </div>
         </div>
       </section>
