@@ -113,6 +113,9 @@ export function SiteFooter({
     [],
   );
 
+  const agentImg =
+    "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1400&q=80";
+
   return (
     <footer className={cn("w-full", className)}>
       {/* Top CTA strip */}
@@ -139,41 +142,36 @@ export function SiteFooter({
                 </div>
               </div>
 
-              {/* Right: blended image, slightly out of the section from above */}
+              {/* Right: blended image, responsive so mobile looks clean and desktop "floats" upward */}
               <div className="relative z-[1] md:justify-self-end">
                 <div
                   className={cn(
-                    "relative mx-auto w-full max-w-[520px]",
-                    "h-[260px] md:h-[330px]",
-                    "-mt-7 md:-mt-10",
-                    "-mb-6 md:-mb-10",
+                    "relative mx-auto w-full",
+                    "max-w-[360px] sm:max-w-[420px] md:max-w-[520px]",
+                    "h-[220px] sm:h-[260px] md:h-[330px]",
+                    "md:-mt-10 md:-mb-10",
                   )}
                 >
-                  {/* Using a background-image allows us to mask/fade edges so it "merges" into the section */}
-                  <div
-                    className="absolute inset-0 bg-no-repeat"
+                  <img
+                    src={agentImg}
+                    alt="Agent"
+                    loading="lazy"
+                    className={cn(
+                      "absolute inset-0 h-full w-full",
+                      "object-contain object-right-bottom",
+                      // keep it "plain": no border, no rounding, no container box
+                      "select-none",
+                    )}
                     style={{
-                      backgroundImage:
-                        'url("https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1400&q=80")',
-                      backgroundSize: "contain",
-                      backgroundPosition: "right bottom",
-                      // Blend/mask edges: fade to transparent on the left and bottom
+                      // Mobile: subtle fade so it doesn't look chopped.
+                      // Desktop: stronger left/bottom fade so it merges into the CTA background.
                       WebkitMaskImage:
-                        "radial-gradient(120% 120% at 75% 55%, rgba(0,0,0,1) 58%, rgba(0,0,0,0) 76%), linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,1) 100%), linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
+                        "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 20%, rgba(0,0,0,1) 100%), linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%)",
                       maskImage:
-                        "radial-gradient(120% 120% at 75% 55%, rgba(0,0,0,1) 58%, rgba(0,0,0,0) 76%), linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,1) 100%), linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
+                        "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 20%, rgba(0,0,0,1) 100%), linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%)",
                       WebkitMaskComposite: "source-in",
                       maskComposite: "intersect",
                     }}
-                    aria-hidden="true"
-                  />
-
-                  {/* Accessibility: hidden img for alt text (no visual box) */}
-                  <img
-                    src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1400&q=80"
-                    alt="Agent"
-                    className="sr-only"
-                    loading="lazy"
                   />
                 </div>
               </div>
