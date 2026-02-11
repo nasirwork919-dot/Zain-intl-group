@@ -67,11 +67,12 @@ export function HeroFiltersDropdown({
 
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
+      {/* The entire row becomes the anchor/trigger element (for width matching). */}
       <PopoverTrigger asChild>{children}</PopoverTrigger>
 
       <PopoverContent
         side="bottom"
-        align="end"
+        align="start"
         sideOffset={12}
         avoidCollisions={false}
         collisionPadding={16}
