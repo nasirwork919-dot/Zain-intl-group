@@ -76,59 +76,63 @@ export function HeroSearchBar({
               </ToggleGroup>
             </div>
 
-            {/* search row */}
-            <div className="grid w-full max-w-5xl gap-3 sm:grid-cols-[220px_1fr_auto_auto] sm:items-center">
-              <Select
-                value={value.propertyType}
-                onValueChange={(v) =>
-                  onChange({
-                    ...value,
-                    propertyType: v as HeroBarFilters["propertyType"],
-                  })
-                }
-              >
-                <SelectTrigger className="h-12 rounded-[5px] border-transparent bg-white/75 px-5 text-sm text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 focus:ring-2 focus:ring-[hsl(var(--brand))]/25">
-                  <SelectValue placeholder="Choose Property Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="apartment">Choose Property Type</SelectItem>
-                  <SelectItem value="apartment">Apartment</SelectItem>
-                  <SelectItem value="villa">Villa</SelectItem>
-                  <SelectItem value="townhouse">Townhouse</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Input
-                value={value.query}
-                onChange={(e) => onChange({ ...value, query: e.target.value })}
-                placeholder="Community or Building..."
-                className="h-12 rounded-[5px] border-transparent bg-white/75 px-5 text-sm text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 placeholder:text-[hsl(var(--brand-ink))]/45 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") onSubmit();
-                }}
-              />
-
-              <Button
-                onClick={onSubmit}
-                className="h-12 w-12 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white shadow-sm hover:bg-[hsl(var(--brand-ink))]/92"
-                aria-label="Search"
-              >
-                <Search className="h-4 w-4" />
-              </Button>
-
-              <HeroFiltersDropdown
-                open={filtersOpen}
-                onOpenChange={setFiltersOpen}
-              >
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="h-12 w-12 rounded-[5px] border-transparent bg-white/75 text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 hover:bg-white"
-                  aria-label="Filters"
+            {/* search row + dropdown anchor */}
+            <div className="relative w-full max-w-5xl">
+              <div className="grid w-full gap-3 sm:grid-cols-[220px_1fr_auto_auto] sm:items-center">
+                <Select
+                  value={value.propertyType}
+                  onValueChange={(v) =>
+                    onChange({
+                      ...value,
+                      propertyType: v as HeroBarFilters["propertyType"],
+                    })
+                  }
                 >
-                  <SlidersHorizontal className="h-4 w-4" />
+                  <SelectTrigger className="h-12 rounded-[5px] border-transparent bg-white/75 px-5 text-sm text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 focus:ring-2 focus:ring-[hsl(var(--brand))]/25">
+                    <SelectValue placeholder="Choose Property Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="apartment">
+                      Choose Property Type
+                    </SelectItem>
+                    <SelectItem value="apartment">Apartment</SelectItem>
+                    <SelectItem value="villa">Villa</SelectItem>
+                    <SelectItem value="townhouse">Townhouse</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Input
+                  value={value.query}
+                  onChange={(e) => onChange({ ...value, query: e.target.value })}
+                  placeholder="Community or Building..."
+                  className="h-12 rounded-[5px] border-transparent bg-white/75 px-5 text-sm text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 placeholder:text-[hsl(var(--brand-ink))]/45 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") onSubmit();
+                  }}
+                />
+
+                <Button
+                  onClick={onSubmit}
+                  className="h-12 w-12 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white shadow-sm hover:bg-[hsl(var(--brand-ink))]/92"
+                  aria-label="Search"
+                >
+                  <Search className="h-4 w-4" />
                 </Button>
-              </HeroFiltersDropdown>
+
+                <HeroFiltersDropdown
+                  open={filtersOpen}
+                  onOpenChange={setFiltersOpen}
+                >
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-12 w-12 rounded-[5px] border-transparent bg-white/75 text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 hover:bg-white"
+                    aria-label="Filters"
+                  >
+                    <SlidersHorizontal className="h-4 w-4" />
+                  </Button>
+                </HeroFiltersDropdown>
+              </div>
             </div>
           </div>
         </div>

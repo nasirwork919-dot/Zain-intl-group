@@ -72,11 +72,12 @@ export function HeroFiltersDropdown({
       <PopoverContent
         side="bottom"
         align="end"
-        sideOffset={10}
+        sideOffset={12}
         avoidCollisions={false}
         collisionPadding={16}
+        portalled={false}
         className={cn(
-          "w-[min(92vw,560px)]",
+          "w-full",
           "rounded-[5px] border border-white/80 bg-white p-4",
           "shadow-[0_26px_70px_-50px_rgba(15,23,42,0.75)] ring-1 ring-black/10",
         )}
