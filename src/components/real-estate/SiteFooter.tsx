@@ -25,7 +25,7 @@ export function SiteFooter({
   onGetInTouch: () => void;
   onNavigateSection: (hash: string) => void;
   className?: string;
-  }) {
+}) {
   const year = new Date().getFullYear();
   const [email, setEmail] = useState("");
 
@@ -388,61 +388,61 @@ export function SiteFooter({
                 </div>
               </div>
 
-              {/* Bottom bar: one horizontal row, centered, with arrow on same row */}
+              {/* Bottom row: arrow stays right; the text cluster is one single row with clear gaps */}
               <div className="mt-12 border-t border-black/10 pt-6">
-                <div
-                  className={cn(
-                    "flex flex-col items-center justify-center gap-3 text-center",
-                    "sm:flex-row sm:flex-wrap sm:gap-x-4 sm:gap-y-2",
-                  )}
-                >
-                  <div className="text-xs font-semibold text-[#0b1025]/80">
-                    © {year} Zain International Group. All Rights Reserved
-                  </div>
+                <div className="flex items-center justify-between gap-4">
+                  {/* Left spacer keeps the middle cluster visually centered relative to the right arrow */}
+                  <div className="hidden w-12 sm:block" />
 
-                  <span className="hidden h-4 w-px bg-black/10 sm:inline-block" />
+                  <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-center">
+                    <div className="text-xs font-semibold text-[#0b1025]/80">
+                      © {year} Zain International Group. All Rights Reserved
+                    </div>
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      toast({
-                        title: "Privacy Policy",
-                        description: "We can add a privacy policy page next.",
-                      })
-                    }
-                    className={bottomLinkClass}
-                  >
-                    Privacy Policy
-                  </button>
+                    <span className="hidden h-4 w-px bg-black/10 sm:inline-block" />
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      toast({
-                        title: "Terms of Service",
-                        description: "We can add terms of service next.",
-                      })
-                    }
-                    className={bottomLinkClass}
-                  >
-                    Terms of Service
-                  </button>
-
-                  <span className="hidden h-4 w-px bg-black/10 sm:inline-block" />
-
-                  <div className="text-xs font-semibold text-[#0b1025]/60">
-                    Created by{" "}
-                    <a
-                      href="https://marknova.io"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#0b1025]/80 underline underline-offset-4 decoration-black/20 transition hover:text-[#0b1025] hover:decoration-black/40"
+                    <button
+                      type="button"
+                      onClick={() =>
+                        toast({
+                          title: "Privacy Policy",
+                          description: "We can add a privacy policy page next.",
+                        })
+                      }
+                      className={bottomLinkClass}
                     >
-                      marknova
-                    </a>
+                      Privacy Policy
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        toast({
+                          title: "Terms of Service",
+                          description: "We can add terms of service next.",
+                        })
+                      }
+                      className={bottomLinkClass}
+                    >
+                      Terms of Service
+                    </button>
+
+                    <span className="hidden h-4 w-px bg-black/10 sm:inline-block" />
+
+                    <div className="text-xs font-semibold text-[#0b1025]/60">
+                      Created by{" "}
+                      <a
+                        href="https://marknova.io"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#0b1025]/80 underline underline-offset-4 decoration-black/20 transition hover:text-[#0b1025] hover:decoration-black/40"
+                      >
+                        marknova
+                      </a>
+                    </div>
                   </div>
 
-                  {/* Arrow: same row as the above on >=sm, stacked below on mobile */}
+                  {/* Arrow stays at the far right (original placement) */}
                   <button
                     type="button"
                     onClick={() => onNavigateSection("#top")}
@@ -451,7 +451,7 @@ export function SiteFooter({
                       "bg-white text-[#0b1025] ring-1 ring-black/10",
                       "shadow-sm transition hover:bg-[#0b1025]/[0.03]",
                       "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
-                      "mt-2 sm:mt-0",
+                      "shrink-0",
                     )}
                     aria-label="Scroll to top"
                   >
