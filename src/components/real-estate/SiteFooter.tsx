@@ -135,7 +135,7 @@ export function SiteFooter({
 
   return (
     <footer className={cn("w-full", className)}>
-      {/* Full-width CTA strip (keep visuals, improve spacing responsiveness) */}
+      {/* Full-width CTA strip */}
       <section className="relative overflow-hidden border-t border-white/10">
         <img
           src={ctaBg}
@@ -418,8 +418,8 @@ export function SiteFooter({
                 </div>
               </div>
 
-              {/* Creator credit (very bottom, after the legal row) */}
-              <div className="mt-4 text-center text-xs font-semibold text-[#0b1025]/60 sm:text-right">
+              {/* Creator credit — centered at the very bottom */}
+              <div className="mt-4 text-center text-xs font-semibold text-[#0b1025]/60">
                 Created by{" "}
                 <a
                   href="https://marknova.io"
@@ -427,7 +427,7 @@ export function SiteFooter({
                   rel="noopener noreferrer"
                   className="text-[#0b1025]/80 underline underline-offset-4 decoration-black/20 transition hover:text-[#0b1025] hover:decoration-black/40"
                 >
-                  Mark Nova (marknova.io)
+                  marknova
                 </a>
               </div>
             </div>
