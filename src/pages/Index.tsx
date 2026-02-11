@@ -97,7 +97,7 @@ const Index = () => {
       <RealEstateHeader />
 
       {/* Hero (match reference: background slider + only title + search controls) */}
-      <section className="relative overflow-hidden pt-20">
+      <section className="relative overflow-hidden pt-20 min-h-[560px] sm:min-h-[620px]">
         {/* background slider */}
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0">

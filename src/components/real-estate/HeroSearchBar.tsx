@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
 
+import { HeroFiltersDropdown } from "@/components/real-estate/HeroFiltersDropdown";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -26,6 +28,10 @@ export function HeroSearchBar({
   onChange: (next: HeroBarFilters) => void;
   onSubmit: () => void;
 }) {
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
+  const operationLabel =
+    value.operation === "buy" ? "BUY" : value.operation.toUpperCase();
   return (
     <div className="w-full">
       <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-end lg:gap-4">
@@ -34,7 +40,7 @@ export function HeroSearchBar({
             {/* operation row */}
             <div className="flex flex-wrap items-center justify-center gap-3">
               <div className="text-xs font-bold tracking-[0.12em] text-[hsl(var(--brand-ink))]/80">
-                BUY
+                {operationLabel}
               </div>
               <ToggleGroup
                 type="single"
@@ -109,14 +115,16 @@ export function HeroSearchBar({
                 <Search className="h-4 w-4" />
               </Button>
 
-              <Button
-                type="button"
-                variant="outline"
-                className="h-12 w-12 rounded-full border-transparent bg-white/75 text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 hover:bg-white"
-                aria-label="Filters"
-              >
-                <SlidersHorizontal className="h-4 w-4" />
-              </Button>
+              <HeroFiltersDropdown open={filtersOpen} onOpenChange={setFiltersOpen}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-12 w-12 rounded-full border-transparent bg-white/75 text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 hover:bg-white"
+                  aria-label="Filters"
+                >
+                  <SlidersHorizontal className="h-4 w-4" />
+                </Button>
+              </HeroFiltersDropdown>
             </div>
           </div>
         </div>
