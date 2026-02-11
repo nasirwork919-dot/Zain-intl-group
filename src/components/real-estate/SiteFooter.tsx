@@ -139,18 +139,43 @@ export function SiteFooter({
                 </div>
               </div>
 
-              {/* Right: plain image, slightly "floating" over the section */}
+              {/* Right: blended image, slightly out of the section from above */}
               <div className="relative z-[1] md:justify-self-end">
-                <img
-                  src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1400&q=80"
-                  alt="Agent"
+                <div
                   className={cn(
-                    "mx-auto w-full max-w-[520px]",
-                    "h-[190px] object-cover object-top md:h-[240px]",
+                    "relative mx-auto w-full max-w-[520px]",
+                    "h-[260px] md:h-[330px]",
+                    "-mt-7 md:-mt-10",
                     "-mb-6 md:-mb-10",
                   )}
-                  loading="lazy"
-                />
+                >
+                  {/* Using a background-image allows us to mask/fade edges so it "merges" into the section */}
+                  <div
+                    className="absolute inset-0 bg-no-repeat"
+                    style={{
+                      backgroundImage:
+                        'url("https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1400&q=80")',
+                      backgroundSize: "contain",
+                      backgroundPosition: "right bottom",
+                      // Blend/mask edges: fade to transparent on the left and bottom
+                      WebkitMaskImage:
+                        "radial-gradient(120% 120% at 75% 55%, rgba(0,0,0,1) 58%, rgba(0,0,0,0) 76%), linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,1) 100%), linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
+                      maskImage:
+                        "radial-gradient(120% 120% at 75% 55%, rgba(0,0,0,1) 58%, rgba(0,0,0,0) 76%), linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,1) 100%), linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
+                      WebkitMaskComposite: "source-in",
+                      maskComposite: "intersect",
+                    }}
+                    aria-hidden="true"
+                  />
+
+                  {/* Accessibility: hidden img for alt text (no visual box) */}
+                  <img
+                    src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1400&q=80"
+                    alt="Agent"
+                    className="sr-only"
+                    loading="lazy"
+                  />
+                </div>
               </div>
 
               {/* Background tint to the right */}
