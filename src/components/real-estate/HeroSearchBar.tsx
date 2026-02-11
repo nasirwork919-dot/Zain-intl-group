@@ -37,12 +37,13 @@ export function HeroSearchBar({
   const segItemClass = cn(
     "h-10 rounded-[4px] px-5",
     "text-[11px] font-semibold tracking-[0.14em]",
-    "text-[hsl(var(--brand-ink))]/85",
     "transition-colors",
-    "hover:text-[hsl(var(--brand-ink))]",
+    // On the dark hero background:
+    "text-white/85 hover:text-white",
+    // Active
     "data-[state=on]:bg-white data-[state=on]:text-[hsl(var(--brand-ink))]",
     "data-[state=on]:shadow-sm",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30",
   );
 
   const pillShell = cn(
@@ -74,34 +75,32 @@ export function HeroSearchBar({
             {operationLabel}
           </div>
 
-          {/* Removed the background pill behind the segmented buttons */}
-          <div className="p-1">
-            <ToggleGroup
-              type="single"
-              value={value.operation}
-              onValueChange={(v) => {
-                if (!v) return;
-                onChange({
-                  ...value,
-                  operation: v as HeroBarFilters["operation"],
-                });
-              }}
-              className="gap-1 bg-transparent"
-            >
-              <ToggleGroupItem value="buy" className={segItemClass}>
-                BUY
-              </ToggleGroupItem>
-              <ToggleGroupItem value="rent" className={segItemClass}>
-                RENT
-              </ToggleGroupItem>
-              <ToggleGroupItem value="sell" className={segItemClass}>
-                SELL
-              </ToggleGroupItem>
-              <ToggleGroupItem value="manage" className={segItemClass}>
-                MANAGE
-              </ToggleGroupItem>
-            </ToggleGroup>
-          </div>
+          {/* Tabs directly on background (no container background) */}
+          <ToggleGroup
+            type="single"
+            value={value.operation}
+            onValueChange={(v) => {
+              if (!v) return;
+              onChange({
+                ...value,
+                operation: v as HeroBarFilters["operation"],
+              });
+            }}
+            className="gap-1 bg-transparent"
+          >
+            <ToggleGroupItem value="buy" className={segItemClass}>
+              BUY
+            </ToggleGroupItem>
+            <ToggleGroupItem value="rent" className={segItemClass}>
+              RENT
+            </ToggleGroupItem>
+            <ToggleGroupItem value="sell" className={segItemClass}>
+              SELL
+            </ToggleGroupItem>
+            <ToggleGroupItem value="manage" className={segItemClass}>
+              MANAGE
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
 
         {/* Search controls (dropdown anchors here) */}
@@ -135,7 +134,9 @@ export function HeroSearchBar({
                 <div className="flex items-center gap-2 px-2 py-2">
                   <Input
                     value={value.query}
-                    onChange={(e) => onChange({ ...value, query: e.target.value })}
+                    onChange={(e) =>
+                      onChange({ ...value, query: e.target.value })
+                    }
                     placeholder="Community or Building..."
                     className={cn(
                       "h-14 flex-1 rounded-full border-transparent bg-muted/35 px-6",
@@ -221,7 +222,9 @@ export function HeroSearchBar({
                 <div className="flex-1">
                   <Input
                     value={value.query}
-                    onChange={(e) => onChange({ ...value, query: e.target.value })}
+                    onChange={(e) =>
+                      onChange({ ...value, query: e.target.value })
+                    }
                     placeholder="Community or Building..."
                     className={cn(
                       "h-14 w-full rounded-full border-transparent",
