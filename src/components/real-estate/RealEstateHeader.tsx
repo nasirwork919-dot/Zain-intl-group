@@ -16,6 +16,17 @@ import { TopBarPreferencesPopover } from "@/components/real-estate/TopBarPrefere
 import { RentMegaMenu } from "@/components/real-estate/RentMegaMenu";
 import { CommunitiesMegaMenu } from "@/components/real-estate/CommunitiesMegaMenu";
 import { DevelopersMegaMenu } from "@/components/real-estate/DevelopersMegaMenu";
+import { MarketTrendsMegaMenu } from "@/components/real-estate/MarketTrendsMegaMenu";
+import { ServicesMegaMenu } from "@/components/real-estate/ServicesMegaMenu";
+import { MoreMegaMenu } from "@/components/real-estate/MoreMegaMenu";
+import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function useActiveSection(ids: string[]) {
   const [active, setActive] = useState<string>(ids[0] ?? "");
@@ -52,9 +63,70 @@ type NavItem =
       type: "scroll";
       href: string;
       hasChevron?: boolean;
-      mega?: "buy" | "rent" | "communities" | "developers";
+      mega?:
+        | "buy"
+        | "rent"
+        | "communities"
+        | "developers"
+        | "marketTrends"
+        | "services"
+        | "more";
     }
   | { label: string; type: "noop"; hasChevron?: boolean };
+
+function MobileMenuSection({
+  title,
+  open,
+  onToggle,
+  children,
+}: {
+  title: string;
+  open: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-2xl bg-muted/35 ring-1 ring-black/5">
+      <button
+        type="button"
+        onClick={onToggle}
+        className={cn(
+          "flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-semibold",
+          "hover:bg-muted/50 rounded-2xl",
+        )}
+        aria-expanded={open}
+      >
+        <span>{title}</span>
+        <ChevronDown
+          className={cn("h-4 w-4 opacity-70 transition-transform", open && "rotate-180")}
+        />
+      </button>
+      {open ? <div className="px-3 pb-3">{children}</div> : null}
+    </div>
+  );
+}
+
+function MobileMenuItem({
+  label,
+  onClick,
+}: {
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold",
+        "bg-white/70 ring-1 ring-black/5 hover:bg-white",
+        "text-[#11124a]",
+      )}
+    >
+      <span>{label}</span>
+    </button>
+  );
+}
 
 export function RealEstateHeader() {
   const active = useActiveSection([
@@ -66,10 +138,25 @@ export function RealEstateHeader() {
   ]);
 
   const [mobileOpen, setMobileOpen] = useState(false);
+
   const [buyOpen, setBuyOpen] = useState(false);
   const [rentOpen, setRentOpen] = useState(false);
   const [communitiesOpen, setCommunitiesOpen] = useState(false);
   const [developersOpen, setDevelopersOpen] = useState(false);
+  const [marketTrendsOpen, setMarketTrendsOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+
+  const [mobileBuyOpen, setMobileBuyOpen] = useState(false);
+  const [mobileRentOpen, setMobileRentOpen] = useState(false);
+  const [mobileCommunitiesOpen, setMobileCommunitiesOpen] = useState(false);
+  const [mobileDevelopersOpen, setMobileDevelopersOpen] = useState(false);
+  const [mobileMarketTrendsOpen, setMobileMarketTrendsOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
+
+  const [mobileLanguage, setMobileLanguage] = useState("en");
+  const [mobileCurrency, setMobileCurrency] = useState("AED");
 
   const scrollTo = (hash: string) => {
     const id = hash.replace("#", "");
@@ -82,6 +169,9 @@ export function RealEstateHeader() {
     setRentOpen(false);
     setCommunitiesOpen(false);
     setDevelopersOpen(false);
+    setMarketTrendsOpen(false);
+    setServicesOpen(false);
+    setMoreOpen(false);
   };
 
   const navItems: NavItem[] = useMemo(
@@ -114,10 +204,32 @@ export function RealEstateHeader() {
         hasChevron: true,
         mega: "developers",
       },
-      { label: "Market Trends", type: "scroll", href: "#about" },
-      { label: "Featured Projects", type: "scroll", href: "#projects" },
-      { label: "Services", type: "scroll", href: "#contact", hasChevron: true },
-      { label: "More", type: "scroll", href: "#about", hasChevron: true },
+      {
+        label: "Market Trends",
+        type: "scroll",
+        href: "#about",
+        hasChevron: true,
+        mega: "marketTrends",
+      },
+      {
+        label: "Featured Projects",
+        type: "scroll",
+        href: "#projects",
+      },
+      {
+        label: "Services",
+        type: "scroll",
+        href: "#contact",
+        hasChevron: true,
+        mega: "services",
+      },
+      {
+        label: "More",
+        type: "scroll",
+        href: "#about",
+        hasChevron: true,
+        mega: "more",
+      },
     ],
     [],
   );
@@ -175,18 +287,15 @@ export function RealEstateHeader() {
     <div className="w-full bg-[#1f2937] text-white">
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex h-14 items-center justify-between gap-4">
-          {/* Small screens: keep pills on the left */}
           <div className="flex items-center gap-3 lg:hidden">
             <UtilityPill>Your Voice Matters</UtilityPill>
             <UtilityPill>List Your Property</UtilityPill>
           </div>
 
-          {/* Desktop spacer */}
           <div className="hidden lg:flex" />
 
           <div className="flex items-center gap-3">
             <div className="hidden items-center gap-4 text-xs font-semibold text-white/90 sm:flex">
-              {/* Desktop placement: pills move next to EN/AR/AED */}
               <div className="hidden items-center gap-3 lg:flex">
                 <UtilityPill>Your Voice Matters</UtilityPill>
                 <UtilityPill>List Your Property</UtilityPill>
@@ -228,7 +337,21 @@ export function RealEstateHeader() {
 
             {/* Mobile */}
             <div className="md:hidden">
-              <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+              <Sheet
+                open={mobileOpen}
+                onOpenChange={(v) => {
+                  setMobileOpen(v);
+                  if (!v) {
+                    setMobileBuyOpen(false);
+                    setMobileRentOpen(false);
+                    setMobileCommunitiesOpen(false);
+                    setMobileDevelopersOpen(false);
+                    setMobileMarketTrendsOpen(false);
+                    setMobileServicesOpen(false);
+                    setMobileMoreOpen(false);
+                  }
+                }}
+              >
                 <SheetTrigger asChild>
                   <Button
                     variant="outline"
@@ -239,61 +362,273 @@ export function RealEstateHeader() {
                   </Button>
                 </SheetTrigger>
 
-                <SheetContent side="right" className="w-[320px]">
+                <SheetContent side="right" className="w-[340px]">
                   <SheetHeader>
                     <SheetTitle className="text-left">Menu</SheetTitle>
                   </SheetHeader>
 
-                  <div className="mt-4 grid gap-2">
-                    {navItems.map((item) => (
-                      <button
-                        key={item.label}
-                        type="button"
-                        onClick={() => {
-                          if (item.type === "scroll") scrollTo(item.href);
-                          setMobileOpen(false);
-                        }}
-                        className={cn(
-                          "flex items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-semibold",
-                          "bg-muted/40 ring-1 ring-black/5 hover:bg-muted/55",
+                  <div className="mt-4 grid gap-3">
+                    <MobileMenuSection
+                      title="Buy"
+                      open={mobileBuyOpen}
+                      onToggle={() => setMobileBuyOpen((v) => !v)}
+                    >
+                      <div className="grid gap-2">
+                        {["Apartments", "Townhouses", "Penthouses", "Villas", "View All"].map(
+                          (label) => (
+                            <MobileMenuItem
+                              key={label}
+                              label={label}
+                              onClick={() => {
+                                scrollTo("#listings");
+                                setMobileOpen(false);
+                                toast({
+                                  title: `Buy · ${label}`,
+                                  description:
+                                    "Showing listings — we can wire these to filters next.",
+                                });
+                              }}
+                            />
+                          ),
                         )}
-                      >
-                        <span>{item.label}</span>
-                        {item.hasChevron ? (
-                          <ChevronDown className="h-4 w-4 opacity-70" />
-                        ) : null}
-                      </button>
-                    ))}
-
-                    <div className="mt-3 grid gap-2 rounded-2xl bg-muted/35 p-3 ring-1 ring-black/5">
-                      <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
-                        <span>Language</span>
-                        <span className="text-foreground">EN · AR</span>
                       </div>
-                      <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
-                        <span>Currency</span>
-                        <span className="text-foreground">AED</span>
+                    </MobileMenuSection>
+
+                    <MobileMenuSection
+                      title="Rent"
+                      open={mobileRentOpen}
+                      onToggle={() => setMobileRentOpen((v) => !v)}
+                    >
+                      <div className="grid gap-2">
+                        {["Apartments", "Offices", "Townhouses", "Villas", "Commercial"].map(
+                          (label) => (
+                            <MobileMenuItem
+                              key={label}
+                              label={label}
+                              onClick={() => {
+                                scrollTo("#listings");
+                                setMobileOpen(false);
+                                toast({
+                                  title: `Rent · ${label}`,
+                                  description:
+                                    "Showing listings — we can wire these to filters next.",
+                                });
+                              }}
+                            />
+                          ),
+                        )}
+                      </div>
+                    </MobileMenuSection>
+
+                    <MobileMenuSection
+                      title="Communities"
+                      open={mobileCommunitiesOpen}
+                      onToggle={() => setMobileCommunitiesOpen((v) => !v)}
+                    >
+                      <div className="grid gap-2">
+                        {[
+                          "Dubai Marina",
+                          "Dubai Creek Harbour",
+                          "Jumeirah Village Circle (JVC)",
+                          "Dubai Hills Estate",
+                          "Jumeirah Beach Residence (JBR)",
+                          "Palm Jebel Ali",
+                          "Downtown Dubai",
+                          "Palm Jumeirah",
+                        ].map((label) => (
+                          <MobileMenuItem
+                            key={label}
+                            label={label}
+                            onClick={() => {
+                              scrollTo("#projects");
+                              setMobileOpen(false);
+                              toast({
+                                title: `Community · ${label}`,
+                                description:
+                                  "Opened communities section — we can wire this to filters next.",
+                              });
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </MobileMenuSection>
+
+                    <MobileMenuSection
+                      title="Developers"
+                      open={mobileDevelopersOpen}
+                      onToggle={() => setMobileDevelopersOpen((v) => !v)}
+                    >
+                      <div className="grid gap-2">
+                        {["Emaar", "Nakheel", "Danube", "Select Group", "View All Developers"].map(
+                          (label) => (
+                            <MobileMenuItem
+                              key={label}
+                              label={label}
+                              onClick={() => {
+                                scrollTo("#projects");
+                                setMobileOpen(false);
+                                toast({
+                                  title: `Developer · ${label}`,
+                                  description:
+                                    "Opened projects section — we can wire this to a developer filter next.",
+                                });
+                              }}
+                            />
+                          ),
+                        )}
+                      </div>
+                    </MobileMenuSection>
+
+                    <MobileMenuSection
+                      title="Market Trends"
+                      open={mobileMarketTrendsOpen}
+                      onToggle={() => setMobileMarketTrendsOpen((v) => !v)}
+                    >
+                      <div className="grid gap-2">
+                        {[
+                          "Daily Transaction",
+                          "Rental Transaction",
+                          "Sale Transaction",
+                          "Market Guide",
+                        ].map((label) => (
+                          <MobileMenuItem
+                            key={label}
+                            label={label}
+                            onClick={() => {
+                              scrollTo("#about");
+                              setMobileOpen(false);
+                              toast({
+                                title: `Market Trends · ${label}`,
+                                description:
+                                  "We can create these pages/sections next.",
+                              });
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </MobileMenuSection>
+
+                    <MobileMenuSection
+                      title="Services"
+                      open={mobileServicesOpen}
+                      onToggle={() => setMobileServicesOpen((v) => !v)}
+                    >
+                      <div className="grid gap-2">
+                        {[
+                          "Asset Management",
+                          "Holiday Homes",
+                          "Commercial",
+                          "Investment Advisory",
+                          "Luxury",
+                          "Property Valuation",
+                          "List Your Property",
+                          "Mortgage Advisory",
+                        ].map((label) => (
+                          <MobileMenuItem
+                            key={label}
+                            label={label}
+                            onClick={() => {
+                              scrollTo("#contact");
+                              setMobileOpen(false);
+                              toast({
+                                title: `Services · ${label}`,
+                                description:
+                                  "We can create a dedicated service page next.",
+                              });
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </MobileMenuSection>
+
+                    <MobileMenuSection
+                      title="More"
+                      open={mobileMoreOpen}
+                      onToggle={() => setMobileMoreOpen((v) => !v)}
+                    >
+                      <div className="grid gap-2">
+                        {["About Us", "Careers", "Reports", "News", "Blogs", "Media"].map(
+                          (label) => (
+                            <MobileMenuItem
+                              key={label}
+                              label={label}
+                              onClick={() => {
+                                scrollTo("#about");
+                                setMobileOpen(false);
+                                toast({
+                                  title: `More · ${label}`,
+                                  description:
+                                    "We can create these pages/sections next.",
+                                });
+                              }}
+                            />
+                          ),
+                        )}
+                      </div>
+                    </MobileMenuSection>
+
+                    <div className="rounded-2xl bg-muted/35 p-4 ring-1 ring-black/5">
+                      <div className="text-xs font-semibold text-muted-foreground">
+                        Preferences
                       </div>
 
-                      <div className="mt-2 grid gap-2">
-                        <PhonePill label="Free Property Valuation" />
-                        <PhonePill
-                          label="Contact Us"
+                      <div className="mt-3 grid gap-3">
+                        <div>
+                          <div className="text-xs font-semibold text-foreground">
+                            Language
+                          </div>
+                          <Select
+                            value={mobileLanguage}
+                            onValueChange={(v) => setMobileLanguage(v)}
+                          >
+                            <SelectTrigger className="mt-2 h-11 rounded-xl bg-white/70 ring-1 ring-black/5">
+                              <SelectValue placeholder="Select language" />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-xl">
+                              <SelectItem value="en">English</SelectItem>
+                              <SelectItem value="ar">العربية</SelectItem>
+                              <SelectItem value="zh">中文</SelectItem>
+                              <SelectItem value="ru">Русский</SelectItem>
+                              <SelectItem value="de">Deutsch</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div>
+                          <div className="text-xs font-semibold text-foreground">
+                            Currency
+                          </div>
+                          <Select
+                            value={mobileCurrency}
+                            onValueChange={(v) => setMobileCurrency(v)}
+                          >
+                            <SelectTrigger className="mt-2 h-11 rounded-xl bg-white/70 ring-1 ring-black/5">
+                              <SelectValue placeholder="Select currency" />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-xl">
+                              <SelectItem value="AED">AED</SelectItem>
+                              <SelectItem value="USD">USD</SelectItem>
+                              <SelectItem value="USDT">USDT</SelectItem>
+                              <SelectItem value="BTC">BTC</SelectItem>
+                              <SelectItem value="ETH">ETH</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <Separator className="my-1" />
+
+                        <Button
+                          className="h-11 rounded-xl bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
                           onClick={() => {
-                            scrollTo("#contact");
+                            toast({
+                              title: "Saved",
+                              description: `Language: ${mobileLanguage.toUpperCase()} · Currency: ${mobileCurrency}`,
+                            });
                             setMobileOpen(false);
                           }}
-                        />
-                        <button
-                          type="button"
-                          className={cn(
-                            "inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-semibold",
-                            "bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92",
-                          )}
                         >
-                          <User className="h-4 w-4" />
-                          Login
-                        </button>
+                          Save preferences
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -310,7 +645,6 @@ export function RealEstateHeader() {
     <div className="w-full bg-white">
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex h-[76px] items-center justify-between gap-4">
-          {/* Keep YOUR business name */}
           <button
             type="button"
             onClick={() => scrollTo("#top")}
@@ -348,6 +682,9 @@ export function RealEstateHeader() {
               const isRent = item.mega === "rent";
               const isCommunities = item.mega === "communities";
               const isDevelopers = item.mega === "developers";
+              const isMarketTrends = item.mega === "marketTrends";
+              const isServices = item.mega === "services";
+              const isMore = item.mega === "more";
 
               const expanded = isBuy
                 ? buyOpen
@@ -357,7 +694,13 @@ export function RealEstateHeader() {
                     ? communitiesOpen
                     : isDevelopers
                       ? developersOpen
-                      : undefined;
+                      : isMarketTrends
+                        ? marketTrendsOpen
+                        : isServices
+                          ? servicesOpen
+                          : isMore
+                            ? moreOpen
+                            : undefined;
 
               return (
                 <button
@@ -369,6 +712,9 @@ export function RealEstateHeader() {
                       setRentOpen(false);
                       setCommunitiesOpen(false);
                       setDevelopersOpen(false);
+                      setMarketTrendsOpen(false);
+                      setServicesOpen(false);
+                      setMoreOpen(false);
                       return;
                     }
                     if (isRent) {
@@ -376,6 +722,9 @@ export function RealEstateHeader() {
                       setBuyOpen(false);
                       setCommunitiesOpen(false);
                       setDevelopersOpen(false);
+                      setMarketTrendsOpen(false);
+                      setServicesOpen(false);
+                      setMoreOpen(false);
                       return;
                     }
                     if (isCommunities) {
@@ -383,6 +732,9 @@ export function RealEstateHeader() {
                       setBuyOpen(false);
                       setRentOpen(false);
                       setDevelopersOpen(false);
+                      setMarketTrendsOpen(false);
+                      setServicesOpen(false);
+                      setMoreOpen(false);
                       return;
                     }
                     if (isDevelopers) {
@@ -390,8 +742,42 @@ export function RealEstateHeader() {
                       setBuyOpen(false);
                       setRentOpen(false);
                       setCommunitiesOpen(false);
+                      setMarketTrendsOpen(false);
+                      setServicesOpen(false);
+                      setMoreOpen(false);
                       return;
                     }
+                    if (isMarketTrends) {
+                      setMarketTrendsOpen((v) => !v);
+                      setBuyOpen(false);
+                      setRentOpen(false);
+                      setCommunitiesOpen(false);
+                      setDevelopersOpen(false);
+                      setServicesOpen(false);
+                      setMoreOpen(false);
+                      return;
+                    }
+                    if (isServices) {
+                      setServicesOpen((v) => !v);
+                      setBuyOpen(false);
+                      setRentOpen(false);
+                      setCommunitiesOpen(false);
+                      setDevelopersOpen(false);
+                      setMarketTrendsOpen(false);
+                      setMoreOpen(false);
+                      return;
+                    }
+                    if (isMore) {
+                      setMoreOpen((v) => !v);
+                      setBuyOpen(false);
+                      setRentOpen(false);
+                      setCommunitiesOpen(false);
+                      setDevelopersOpen(false);
+                      setMarketTrendsOpen(false);
+                      setServicesOpen(false);
+                      return;
+                    }
+
                     closeMegas();
                     if (item.type === "scroll") scrollTo(item.href);
                   }}
@@ -401,24 +787,63 @@ export function RealEstateHeader() {
                       setRentOpen(false);
                       setCommunitiesOpen(false);
                       setDevelopersOpen(false);
+                      setMarketTrendsOpen(false);
+                      setServicesOpen(false);
+                      setMoreOpen(false);
                     }
                     if (isRent) {
                       setRentOpen(true);
                       setBuyOpen(false);
                       setCommunitiesOpen(false);
                       setDevelopersOpen(false);
+                      setMarketTrendsOpen(false);
+                      setServicesOpen(false);
+                      setMoreOpen(false);
                     }
                     if (isCommunities) {
                       setCommunitiesOpen(true);
                       setBuyOpen(false);
                       setRentOpen(false);
                       setDevelopersOpen(false);
+                      setMarketTrendsOpen(false);
+                      setServicesOpen(false);
+                      setMoreOpen(false);
                     }
                     if (isDevelopers) {
                       setDevelopersOpen(true);
                       setBuyOpen(false);
                       setRentOpen(false);
                       setCommunitiesOpen(false);
+                      setMarketTrendsOpen(false);
+                      setServicesOpen(false);
+                      setMoreOpen(false);
+                    }
+                    if (isMarketTrends) {
+                      setMarketTrendsOpen(true);
+                      setBuyOpen(false);
+                      setRentOpen(false);
+                      setCommunitiesOpen(false);
+                      setDevelopersOpen(false);
+                      setServicesOpen(false);
+                      setMoreOpen(false);
+                    }
+                    if (isServices) {
+                      setServicesOpen(true);
+                      setBuyOpen(false);
+                      setRentOpen(false);
+                      setCommunitiesOpen(false);
+                      setDevelopersOpen(false);
+                      setMarketTrendsOpen(false);
+                      setMoreOpen(false);
+                    }
+                    if (isMore) {
+                      setMoreOpen(true);
+                      setBuyOpen(false);
+                      setRentOpen(false);
+                      setCommunitiesOpen(false);
+                      setDevelopersOpen(false);
+                      setMarketTrendsOpen(false);
+                      setServicesOpen(false);
                     }
                   }}
                   className={cn(
@@ -429,6 +854,9 @@ export function RealEstateHeader() {
                       !isRent &&
                       !isCommunities &&
                       !isDevelopers &&
+                      !isMarketTrends &&
+                      !isServices &&
+                      !isMore &&
                       "underline underline-offset-8 decoration-black/30",
                   )}
                   aria-expanded={expanded}
@@ -441,7 +869,10 @@ export function RealEstateHeader() {
                         ((isBuy && buyOpen) ||
                           (isRent && rentOpen) ||
                           (isCommunities && communitiesOpen) ||
-                          (isDevelopers && developersOpen)) &&
+                          (isDevelopers && developersOpen) ||
+                          (isMarketTrends && marketTrendsOpen) ||
+                          (isServices && servicesOpen) ||
+                          (isMore && moreOpen)) &&
                           "rotate-180",
                       )}
                     />
@@ -501,7 +932,6 @@ export function RealEstateHeader() {
       <TopBar />
       <MainBar />
 
-      {/* Desktop mega menus */}
       <div className="hidden lg:block">
         <BuyMegaMenu
           open={buyOpen}
@@ -549,6 +979,39 @@ export function RealEstateHeader() {
               title: `Developer · ${label}`,
               description:
                 "Opened projects section — we can wire this to a developer filter next.",
+            });
+          }}
+        />
+
+        <MarketTrendsMegaMenu
+          open={marketTrendsOpen}
+          onClose={() => setMarketTrendsOpen(false)}
+          onNavigate={(label) => {
+            toast({
+              title: `Market Trends · ${label}`,
+              description: "We can build these pages/sections next.",
+            });
+          }}
+        />
+
+        <ServicesMegaMenu
+          open={servicesOpen}
+          onClose={() => setServicesOpen(false)}
+          onNavigate={(label) => {
+            toast({
+              title: `Services · ${label}`,
+              description: "We can build these pages/sections next.",
+            });
+          }}
+        />
+
+        <MoreMegaMenu
+          open={moreOpen}
+          onClose={() => setMoreOpen(false)}
+          onNavigate={(label) => {
+            toast({
+              title: `More · ${label}`,
+              description: "We can build these pages/sections next.",
             });
           }}
         />
