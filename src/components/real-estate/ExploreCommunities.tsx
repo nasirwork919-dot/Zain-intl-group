@@ -261,7 +261,7 @@ export function ExploreCommunities({
                 "w-[76vw] max-w-[320px] sm:w-[340px] md:w-[380px] lg:w-[420px]",
               )}
             >
-              <div className="h-[210px] sm:h-[240px]">
+              <div className="h-[232px] sm:h-[265px]">
                 <CommunityCard
                   community={c}
                   onSearch={() => onSearchCommunity(c.locationFilter)}
