@@ -102,7 +102,7 @@ const Index = () => {
       <RealEstateHeader />
 
       {/* Hero (background slider + only title + search controls) */}
-      <section className="relative overflow-hidden pt-20 min-h-[600px] sm:min-h-[680px]">
+      <section className="relative overflow-hidden pt-20 min-h-[720px] sm:min-h-[820px] lg:min-h-[920px]">
         {/* background slider */}
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0">
@@ -126,7 +126,7 @@ const Index = () => {
           <div className="absolute inset-0 bg-[#0b1220]/35" />
         </div>
 
-        <div className="relative mx-auto max-w-6xl px-4 pb-10 pt-10 sm:pb-14 lg:pt-16">
+        <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-16 sm:pb-24 sm:pt-20 lg:pb-28 lg:pt-24">
           <div className="mx-auto max-w-4xl text-center">
             <div className="text-xs font-semibold tracking-[0.14em] text-white/85">
               At the Heart of Every Home is You
@@ -135,7 +135,7 @@ const Index = () => {
               Let’s Find Your Perfect Haven Together
             </h1>
 
-            <div className="mx-auto mt-8 max-w-5xl">
+            <div className="mx-auto mt-10 max-w-5xl">
               <HeroSearchBar
                 value={heroBar}
                 onChange={setHeroBar}
