@@ -25,7 +25,7 @@ export function SiteFooter({
   onGetInTouch: () => void;
   onNavigateSection: (hash: string) => void;
   className?: string;
-}) {
+  }) {
   const year = new Date().getFullYear();
   const [email, setEmail] = useState("");
 
@@ -132,6 +132,12 @@ export function SiteFooter({
   );
 
   const containerClass = "mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8";
+
+  const bottomLinkClass = cn(
+    "text-xs font-semibold text-[#0b1025]/70 transition hover:text-[#0b1025]",
+    "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
+    "rounded-[5px] px-2 py-1",
+  );
 
   return (
     <footer className={cn("w-full", className)}>
@@ -382,39 +388,47 @@ export function SiteFooter({
                 </div>
               </div>
 
-              {/* Bottom area: fully centered */}
+              {/* Bottom bar: one horizontal row, centered, with arrow on same row */}
               <div className="mt-12 border-t border-black/10 pt-6">
-                <div className="grid justify-items-center gap-3 text-center">
+                <div
+                  className={cn(
+                    "flex flex-col items-center justify-center gap-3 text-center",
+                    "sm:flex-row sm:flex-wrap sm:gap-x-4 sm:gap-y-2",
+                  )}
+                >
                   <div className="text-xs font-semibold text-[#0b1025]/80">
                     © {year} Zain International Group. All Rights Reserved
                   </div>
 
-                  <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        toast({
-                          title: "Privacy Policy",
-                          description: "We can add a privacy policy page next.",
-                        })
-                      }
-                      className="text-xs font-semibold text-[#0b1025]/70 transition hover:text-[#0b1025]"
-                    >
-                      Privacy Policy
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        toast({
-                          title: "Terms of Service",
-                          description: "We can add terms of service next.",
-                        })
-                      }
-                      className="text-xs font-semibold text-[#0b1025]/70 transition hover:text-[#0b1025]"
-                    >
-                      Terms of Service
-                    </button>
-                  </div>
+                  <span className="hidden h-4 w-px bg-black/10 sm:inline-block" />
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      toast({
+                        title: "Privacy Policy",
+                        description: "We can add a privacy policy page next.",
+                      })
+                    }
+                    className={bottomLinkClass}
+                  >
+                    Privacy Policy
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      toast({
+                        title: "Terms of Service",
+                        description: "We can add terms of service next.",
+                      })
+                    }
+                    className={bottomLinkClass}
+                  >
+                    Terms of Service
+                  </button>
+
+                  <span className="hidden h-4 w-px bg-black/10 sm:inline-block" />
 
                   <div className="text-xs font-semibold text-[#0b1025]/60">
                     Created by{" "}
@@ -427,26 +441,25 @@ export function SiteFooter({
                       marknova
                     </a>
                   </div>
+
+                  {/* Arrow: same row as the above on >=sm, stacked below on mobile */}
+                  <button
+                    type="button"
+                    onClick={() => onNavigateSection("#top")}
+                    className={cn(
+                      "inline-flex h-12 w-12 items-center justify-center rounded-[5px]",
+                      "bg-white text-[#0b1025] ring-1 ring-black/10",
+                      "shadow-sm transition hover:bg-[#0b1025]/[0.03]",
+                      "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
+                      "mt-2 sm:mt-0",
+                    )}
+                    aria-label="Scroll to top"
+                  >
+                    <ChevronUp className="h-5 w-5" />
+                  </button>
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Scroll-to-top button bottom-right */}
-          <div className="pointer-events-none mt-8 flex justify-end">
-            <button
-              type="button"
-              onClick={() => onNavigateSection("#top")}
-              className={cn(
-                "pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-[5px]",
-                "bg-white text-[#0b1025] ring-1 ring-black/10",
-                "shadow-sm transition hover:bg-[#0b1025]/[0.03]",
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
-              )}
-              aria-label="Scroll to top"
-            >
-              <ChevronUp className="h-5 w-5" />
-            </button>
           </div>
         </div>
       </section>
