@@ -81,12 +81,8 @@ export function HeroFiltersDropdown({
         collisionPadding={16}
         portalled={false}
         className={cn(
-          // MOBILE (Radix can end up slightly off-center due to transforms):
-          // Force a true centered, symmetric gutter layout in the viewport.
-          "fixed left-1/2 w-[calc(100vw-32px)] -translate-x-1/2",
-          "max-w-[720px]",
-          // Desktop: allow Radix to position normally
-          "sm:static sm:left-auto sm:w-[min(720px,100%)] sm:translate-x-0",
+          // Anchor directly under the trigger (search bar), instead of viewport-centered fixed positioning.
+          "w-[min(720px,calc(100vw-32px))] max-w-[720px]",
           // Scrolling behavior
           "max-h-[76vh] overflow-y-auto overflow-x-hidden overscroll-contain",
           // Hide scrollbar but keep scrolling
@@ -168,11 +164,7 @@ export function HeroFiltersDropdown({
                     value={v}
                     className="h-10 rounded-[5px] border border-black/5 bg-muted px-4 text-xs font-semibold text-[hsl(var(--brand-ink))] data-[state=on]:bg-[hsl(var(--brand-ink))] data-[state=on]:text-white"
                   >
-                    {v === "all"
-                      ? "All"
-                      : v === "studio"
-                        ? "Studio"
-                        : v}
+                    {v === "all" ? "All" : v === "studio" ? "Studio" : v}
                   </ToggleGroupItem>
                 ))}
               </ToggleGroup>
