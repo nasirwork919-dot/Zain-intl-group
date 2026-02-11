@@ -388,10 +388,13 @@ export function SiteFooter({
                 </div>
               </div>
 
-              {/* Bottom row: full-width divider; centered cluster independent of arrow; wraps on tiny screens */}
+              {/* Bottom row: equal side reserves + true center + pinned arrow */}
               <div className="mt-12 border-t border-black/10 pt-6">
-                <div className="relative flex items-center justify-end">
-                  {/* Truly centered cluster (desktop+). Independent of arrow width. */}
+                <div className="relative flex items-center">
+                  {/* Reserve equal space on BOTH sides (matches arrow footprint). */}
+                  <div className="w-12 shrink-0" aria-hidden="true" />
+
+                  {/* Desktop/tablet: mathematically centered cluster independent of arrow */}
                   <div className="absolute left-1/2 hidden -translate-x-1/2 sm:block">
                     <div className="flex items-center justify-center gap-x-6 gap-y-2 text-center">
                       <div className="text-xs font-semibold text-[#0b1025]/80 whitespace-nowrap">
@@ -443,8 +446,8 @@ export function SiteFooter({
                     </div>
                   </div>
 
-                  {/* Mobile: centered but allowed to wrap (Option A) */}
-                  <div className="mr-14 w-full text-center sm:hidden">
+                  {/* Mobile: pure centered lane with equal gaps; wraps naturally (Option A). */}
+                  <div className="w-full px-12 text-center sm:hidden">
                     <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
                       <div className="text-xs font-semibold text-[#0b1025]/80">
                         © {year} Zain International Group. All Rights Reserved
@@ -495,7 +498,7 @@ export function SiteFooter({
                     </div>
                   </div>
 
-                  {/* Arrow stays at the far right */}
+                  {/* Arrow pinned right */}
                   <button
                     type="button"
                     onClick={() => onNavigateSection("#top")}
