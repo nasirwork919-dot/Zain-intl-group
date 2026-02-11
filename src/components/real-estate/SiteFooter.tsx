@@ -388,11 +388,14 @@ export function SiteFooter({
                 </div>
               </div>
 
-              {/* Bottom row: arrow stays right; the text cluster is one single row with clear gaps */}
+              {/* Bottom row: arrow stays right; the text cluster is one centered single row */}
               <div className="mt-12 border-t border-black/10 pt-6">
                 <div className="flex items-center justify-between gap-4">
-                  {/* Left spacer keeps the middle cluster visually centered relative to the right arrow */}
-                  <div className="hidden w-12 sm:block" />
+                  {/* Left placeholder matches arrow width so the center cluster is truly centered */}
+                  <div
+                    className="hidden h-12 w-12 shrink-0 sm:block"
+                    aria-hidden="true"
+                  />
 
                   <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-center">
                     <div className="text-xs font-semibold text-[#0b1025]/80">
