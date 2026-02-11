@@ -115,14 +115,9 @@ export function SiteFooter({
 
   return (
     <footer className={cn("w-full", className)}>
-      {/* Top CTA strip (grey/purple) */}
+      {/* Top CTA strip */}
       <section className="relative overflow-hidden">
-        <div
-          className={cn(
-            "bg-[#8f9199]",
-            "border-t border-white/10",
-          )}
-        >
+        <div className={cn("bg-[#8f9199]", "border-t border-white/10")}>
           <div className="mx-auto max-w-7xl px-4">
             <div className="relative grid items-center gap-8 py-10 md:grid-cols-2 md:py-14">
               {/* Left */}
@@ -144,20 +139,52 @@ export function SiteFooter({
                 </div>
               </div>
 
-              {/* Right image */}
+              {/* Right: image INSIDE a box/card container */}
               <div className="relative z-[1]">
-                <div className="relative mx-auto h-[240px] w-full max-w-[520px] overflow-hidden rounded-[28px] md:h-[300px]">
-                  <img
-                    src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80"
-                    alt="Agent"
-                    className="h-full w-full object-cover object-top"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-l from-[#1d2250]/55 via-transparent to-transparent" />
+                <div className="mx-auto w-full max-w-[560px]">
+                  <div
+                    className={cn(
+                      "relative overflow-hidden rounded-[28px]",
+                      "bg-white/10",
+                      "ring-1 ring-white/25",
+                      "shadow-[0_30px_90px_-70px_rgba(0,0,0,0.65)]",
+                    )}
+                  >
+                    <div className="absolute inset-0 pointer-events-none">
+                      {/* subtle frame/glow */}
+                      <div className="absolute inset-0 ring-1 ring-white/10" />
+                      <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent" />
+                    </div>
+
+                    <div className="p-3 sm:p-4">
+                      <div className="relative h-[240px] overflow-hidden rounded-[22px] md:h-[300px]">
+                        <img
+                          src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1400&q=80"
+                          alt="Agent"
+                          className="h-full w-full object-cover object-top"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-l from-[#1d2250]/55 via-transparent to-transparent" />
+                      </div>
+
+                      {/* small bottom bar inside the box like a caption area */}
+                      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 px-1">
+                        <div className="text-xs font-semibold tracking-[0.18em] text-white/85">
+                          ZAIN INTERNATIONAL GROUP
+                        </div>
+                        <div className="text-xs font-semibold text-white/80">
+                          Response time: ~5 mins
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* a soft shadow underneath to mimic screenshot depth */}
+                  <div className="pointer-events-none mx-auto mt-2 h-6 w-[86%] rounded-full bg-black/15 blur-xl" />
                 </div>
               </div>
 
-              {/* Background tint to the right like the screenshot */}
+              {/* Background tint to the right */}
               <div className="pointer-events-none absolute inset-0">
                 <div className="absolute inset-0 bg-gradient-to-r from-black/0 via-black/0 to-[#1d2250]/40" />
               </div>
@@ -222,7 +249,7 @@ export function SiteFooter({
             {/* Links + contact */}
             <div className="lg:col-span-7">
               <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                {/* Quick Links (2 sub-columns on desktop like screenshot) */}
+                {/* Quick Links */}
                 <div className="sm:col-span-2 lg:col-span-1">
                   <div className="text-sm font-extrabold text-white">
                     Quick Links
@@ -319,10 +346,8 @@ export function SiteFooter({
                 </div>
               </div>
 
-              {/* divider line above bottom bar */}
               <div className="mt-10 h-px w-full bg-white/15" />
 
-              {/* Bottom bar */}
               <div className="flex flex-col gap-3 py-6 text-xs font-semibold text-white/80 sm:flex-row sm:items-center sm:justify-between">
                 <div>© {year} Zain International Group. All Rights Reserved</div>
 
