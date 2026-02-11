@@ -16,21 +16,13 @@ export function ServicesMegaMenu({
   const columns: Column[] = React.useMemo(
     () => [
       {
-        items: [
-          { label: "Asset Management" },
-          { label: "Holiday Homes" },
-          { label: "Commercial" },
-        ],
+        items: [{ label: "Selling" }, { label: "Buying" }],
       },
       {
-        items: [
-          { label: "Investment Advisory" },
-          { label: "Luxury" },
-          { label: "Property Valuation" },
-        ],
+        items: [{ label: "Leasing" }, { label: "Management" }],
       },
       {
-        items: [{ label: "List Your Property" }, { label: "Mortgage Advisory" }],
+        items: [{ label: "Legal Assistance" }, { label: "Property Maintenance" }],
       },
     ],
     [],

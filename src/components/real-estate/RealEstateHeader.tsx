@@ -525,14 +525,12 @@ export function RealEstateHeader() {
                         >
                           <div className="grid gap-2">
                             {[
-                              "Asset Management",
-                              "Holiday Homes",
-                              "Commercial",
-                              "Investment Advisory",
-                              "Luxury",
-                              "Property Valuation",
-                              "List Your Property",
-                              "Mortgage Advisory",
+                              "Selling",
+                              "Buying",
+                              "Leasing",
+                              "Management",
+                              "Legal Assistance",
+                              "Property Maintenance",
                             ].map((label) => (
                               <MobileMenuItem
                                 key={label}
