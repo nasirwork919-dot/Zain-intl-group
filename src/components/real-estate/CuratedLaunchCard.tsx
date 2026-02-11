@@ -51,12 +51,12 @@ export function CuratedLaunchCard({
           <div className="pointer-events-none inline-flex items-center gap-2">
             <div className="grid h-10 w-10 place-items-center rounded-2xl bg-white/15 ring-1 ring-white/20 backdrop-blur">
               <span className="text-lg font-black tracking-tight text-white">
-                D
+                Z
               </span>
             </div>
             <div className="hidden sm:block">
               <div className="text-xs font-extrabold tracking-[0.08em] text-white">
-                D&B PROPERTIES
+                ZAIN INTERNATIONAL GROUP
               </div>
               <div className="text-[10px] font-semibold tracking-[0.22em] text-white/70">
                 REAL ESTATE · DUBAI
