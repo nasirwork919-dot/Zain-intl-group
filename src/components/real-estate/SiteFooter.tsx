@@ -382,53 +382,52 @@ export function SiteFooter({
                 </div>
               </div>
 
-              {/* Bottom row */}
-              <div className="mt-12 grid gap-4 border-t border-black/10 pt-6 sm:grid-cols-3 sm:items-center">
-                <div className="hidden sm:block" />
+              {/* Bottom area: fully centered */}
+              <div className="mt-12 border-t border-black/10 pt-6">
+                <div className="grid justify-items-center gap-3 text-center">
+                  <div className="text-xs font-semibold text-[#0b1025]/80">
+                    © {year} Zain International Group. All Rights Reserved
+                  </div>
 
-                <div className="text-center text-xs font-semibold text-[#0b1025]/80">
-                  © {year} Zain International Group. All Rights Reserved
+                  <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        toast({
+                          title: "Privacy Policy",
+                          description: "We can add a privacy policy page next.",
+                        })
+                      }
+                      className="text-xs font-semibold text-[#0b1025]/70 transition hover:text-[#0b1025]"
+                    >
+                      Privacy Policy
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        toast({
+                          title: "Terms of Service",
+                          description: "We can add terms of service next.",
+                        })
+                      }
+                      className="text-xs font-semibold text-[#0b1025]/70 transition hover:text-[#0b1025]"
+                    >
+                      Terms of Service
+                    </button>
+                  </div>
+
+                  <div className="text-xs font-semibold text-[#0b1025]/60">
+                    Created by{" "}
+                    <a
+                      href="https://marknova.io"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#0b1025]/80 underline underline-offset-4 decoration-black/20 transition hover:text-[#0b1025] hover:decoration-black/40"
+                    >
+                      marknova
+                    </a>
+                  </div>
                 </div>
-
-                <div className="flex items-center justify-center gap-6 sm:justify-end">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      toast({
-                        title: "Privacy Policy",
-                        description: "We can add a privacy policy page next.",
-                      })
-                    }
-                    className="text-xs font-semibold text-[#0b1025]/70 transition hover:text-[#0b1025]"
-                  >
-                    Privacy Policy
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      toast({
-                        title: "Terms of Service",
-                        description: "We can add terms of service next.",
-                      })
-                    }
-                    className="text-xs font-semibold text-[#0b1025]/70 transition hover:text-[#0b1025]"
-                  >
-                    Terms of Service
-                  </button>
-                </div>
-              </div>
-
-              {/* Creator credit — centered at the very bottom */}
-              <div className="mt-4 text-center text-xs font-semibold text-[#0b1025]/60">
-                Created by{" "}
-                <a
-                  href="https://marknova.io"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#0b1025]/80 underline underline-offset-4 decoration-black/20 transition hover:text-[#0b1025] hover:decoration-black/40"
-                >
-                  marknova
-                </a>
               </div>
             </div>
           </div>
