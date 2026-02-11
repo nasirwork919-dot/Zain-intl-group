@@ -70,13 +70,16 @@ export function HeroFiltersDropdown({
       <PopoverTrigger asChild>{children}</PopoverTrigger>
 
       <PopoverContent
-        align="center"
         side="bottom"
+        align="end"
+        sideOffset={10}
         className={cn(
-          "w-[min(92vw,860px)] rounded-[22px] border border-white/80 bg-white p-5 shadow-[0_30px_80px_-55px_rgba(15,23,42,0.75)] ring-1 ring-black/10",
+          "w-[min(92vw,560px)]",
+          "rounded-[5px] border border-white/80 bg-white p-4",
+          "shadow-[0_26px_70px_-50px_rgba(15,23,42,0.75)] ring-1 ring-black/10",
         )}
       >
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-5 md:grid-cols-2">
           {/* Price */}
           <div className="space-y-3">
             <div className="flex items-center gap-3">
@@ -152,7 +155,7 @@ export function HeroFiltersDropdown({
                   <ToggleGroupItem
                     key={v}
                     value={v}
-                    className="h-10 rounded-[10px] border border-black/5 bg-muted px-4 text-xs font-semibold text-[hsl(var(--brand-ink))] data-[state=on]:bg-[hsl(var(--brand-ink))] data-[state=on]:text-white"
+                    className="h-10 rounded-[5px] border border-black/5 bg-muted px-4 text-xs font-semibold text-[hsl(var(--brand-ink))] data-[state=on]:bg-[hsl(var(--brand-ink))] data-[state=on]:text-white"
                   >
                     {v === "all"
                       ? "All"
@@ -187,7 +190,7 @@ export function HeroFiltersDropdown({
                   <ToggleGroupItem
                     key={v}
                     value={v}
-                    className="h-10 rounded-[10px] border border-black/5 bg-muted px-4 text-xs font-semibold text-[hsl(var(--brand-ink))] data-[state=on]:bg-[hsl(var(--brand-ink))] data-[state=on]:text-white"
+                    className="h-10 rounded-[5px] border border-black/5 bg-muted px-4 text-xs font-semibold text-[hsl(var(--brand-ink))] data-[state=on]:bg-[hsl(var(--brand-ink))] data-[state=on]:text-white"
                   >
                     {v === "all" ? "All" : v}
                   </ToggleGroupItem>
@@ -209,13 +212,16 @@ export function HeroFiltersDropdown({
                 <Select
                   value={draft.view}
                   onValueChange={(v) =>
-                    setDraft((p) => ({ ...p, view: v as HeroAdvancedFilters["view"] }))
+                    setDraft((p) => ({
+                      ...p,
+                      view: v as HeroAdvancedFilters["view"],
+                    }))
                   }
                 >
-                  <SelectTrigger className="h-12 rounded-full border-black/5 bg-muted/70 px-5 ring-1 ring-black/10">
+                  <SelectTrigger className="h-12 rounded-[5px] border-black/5 bg-muted/70 px-5 ring-1 ring-black/10">
                     <SelectValue placeholder="Any" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="rounded-[5px]">
                     <SelectItem value="any">Any</SelectItem>
                     <SelectItem value="sea">Sea</SelectItem>
                     <SelectItem value="city">City</SelectItem>
@@ -234,7 +240,7 @@ export function HeroFiltersDropdown({
                     setDraft((p) => ({ ...p, referenceNumber: e.target.value }))
                   }
                   placeholder="123456"
-                  className="h-12 rounded-full border-black/5 bg-muted/70 px-5 ring-1 ring-black/10"
+                  className="h-12 rounded-[5px] border-black/5 bg-muted/70 px-5 ring-1 ring-black/10"
                 />
               </div>
             </div>
@@ -306,14 +312,14 @@ export function HeroFiltersDropdown({
               <Button
                 type="button"
                 variant="outline"
-                className="h-11 w-full rounded-full border-[hsl(var(--brand-ink))]/25 bg-transparent text-[hsl(var(--brand-ink))] hover:bg-[hsl(var(--brand-ink))]/5 sm:w-[200px]"
+                className="h-11 w-full rounded-[5px] border-[hsl(var(--brand-ink))]/25 bg-transparent text-[hsl(var(--brand-ink))] hover:bg-[hsl(var(--brand-ink))]/5 sm:w-[200px]"
                 onClick={() => setDraft(defaultFilters)}
               >
                 Reset
               </Button>
               <Button
                 type="button"
-                className="h-11 w-full rounded-full bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92 sm:w-[200px]"
+                className="h-11 w-full rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92 sm:w-[200px]"
                 onClick={() => onOpenChange(false)}
               >
                 Done

@@ -32,6 +32,7 @@ export function HeroSearchBar({
 
   const operationLabel =
     value.operation === "buy" ? "BUY" : value.operation.toUpperCase();
+
   return (
     <div className="w-full">
       <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-end lg:gap-4">
@@ -56,19 +57,19 @@ export function HeroSearchBar({
               >
                 <ToggleGroupItem
                   value="rent"
-                  className="h-10 rounded-full border border-[hsl(var(--brand-ink))]/25 bg-white/60 px-7 text-[11px] font-semibold tracking-[0.14em] text-[hsl(var(--brand-ink))] shadow-sm data-[state=on]:border-[hsl(var(--brand-ink))]/35 data-[state=on]:bg-white"
+                  className="h-10 rounded-[5px] border border-[hsl(var(--brand-ink))]/25 bg-white/60 px-7 text-[11px] font-semibold tracking-[0.14em] text-[hsl(var(--brand-ink))] shadow-sm data-[state=on]:border-[hsl(var(--brand-ink))]/35 data-[state=on]:bg-white"
                 >
                   RENT
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value="sell"
-                  className="h-10 rounded-full border border-[hsl(var(--brand-ink))]/25 bg-white/60 px-7 text-[11px] font-semibold tracking-[0.14em] text-[hsl(var(--brand-ink))] shadow-sm data-[state=on]:border-[hsl(var(--brand-ink))]/35 data-[state=on]:bg-white"
+                  className="h-10 rounded-[5px] border border-[hsl(var(--brand-ink))]/25 bg-white/60 px-7 text-[11px] font-semibold tracking-[0.14em] text-[hsl(var(--brand-ink))] shadow-sm data-[state=on]:border-[hsl(var(--brand-ink))]/35 data-[state=on]:bg-white"
                 >
                   SELL
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value="manage"
-                  className="h-10 rounded-full border border-[hsl(var(--brand-ink))]/25 bg-white/60 px-7 text-[11px] font-semibold tracking-[0.14em] text-[hsl(var(--brand-ink))] shadow-sm data-[state=on]:border-[hsl(var(--brand-ink))]/35 data-[state=on]:bg-white"
+                  className="h-10 rounded-[5px] border border-[hsl(var(--brand-ink))]/25 bg-white/60 px-7 text-[11px] font-semibold tracking-[0.14em] text-[hsl(var(--brand-ink))] shadow-sm data-[state=on]:border-[hsl(var(--brand-ink))]/35 data-[state=on]:bg-white"
                 >
                   MANAGE
                 </ToggleGroupItem>
@@ -86,7 +87,7 @@ export function HeroSearchBar({
                   })
                 }
               >
-                <SelectTrigger className="h-12 rounded-full border-transparent bg-white/75 px-5 text-sm text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 focus:ring-2 focus:ring-[hsl(var(--brand))]/25">
+                <SelectTrigger className="h-12 rounded-[5px] border-transparent bg-white/75 px-5 text-sm text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 focus:ring-2 focus:ring-[hsl(var(--brand))]/25">
                   <SelectValue placeholder="Choose Property Type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -101,7 +102,7 @@ export function HeroSearchBar({
                 value={value.query}
                 onChange={(e) => onChange({ ...value, query: e.target.value })}
                 placeholder="Community or Building..."
-                className="h-12 rounded-full border-transparent bg-white/75 px-5 text-sm text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 placeholder:text-[hsl(var(--brand-ink))]/45 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25"
+                className="h-12 rounded-[5px] border-transparent bg-white/75 px-5 text-sm text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 placeholder:text-[hsl(var(--brand-ink))]/45 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") onSubmit();
                 }}
@@ -109,17 +110,20 @@ export function HeroSearchBar({
 
               <Button
                 onClick={onSubmit}
-                className="h-12 w-12 rounded-full bg-[hsl(var(--brand-ink))] text-white shadow-sm hover:bg-[hsl(var(--brand-ink))]/92"
+                className="h-12 w-12 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white shadow-sm hover:bg-[hsl(var(--brand-ink))]/92"
                 aria-label="Search"
               >
                 <Search className="h-4 w-4" />
               </Button>
 
-              <HeroFiltersDropdown open={filtersOpen} onOpenChange={setFiltersOpen}>
+              <HeroFiltersDropdown
+                open={filtersOpen}
+                onOpenChange={setFiltersOpen}
+              >
                 <Button
                   type="button"
                   variant="outline"
-                  className="h-12 w-12 rounded-full border-transparent bg-white/75 text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 hover:bg-white"
+                  className="h-12 w-12 rounded-[5px] border-transparent bg-white/75 text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 hover:bg-white"
                   aria-label="Filters"
                 >
                   <SlidersHorizontal className="h-4 w-4" />

@@ -96,24 +96,27 @@ const Index = () => {
     <div id="top" className="min-h-screen bg-[hsl(var(--page))]">
       <RealEstateHeader />
 
-      {/* Hero (match reference: background slider + only title + search controls) */}
-      <section className="relative overflow-hidden pt-20 min-h-[560px] sm:min-h-[620px]">
+      {/* Hero (background slider + only title + search controls) */}
+      <section className="relative overflow-hidden pt-20 min-h-[600px] sm:min-h-[680px]">
         {/* background slider */}
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0">
-            {["https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=3200&q=90","https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=3200&q=90","https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=3200&q=90"].map(
-              (src, idx) => (
-                <img
-                  key={src}
-                  src={src}
-                  alt=""
-                  className="absolute inset-0 h-full w-full object-cover opacity-0 hero-slide"
-                  style={{ animationDelay: `${idx * 6}s` }}
-                  loading={idx === 0 ? "eager" : "lazy"}
-                />
-              ),
-            )}
+            {[
+              "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=3200&q=90",
+              "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=3200&q=90",
+              "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=3200&q=90",
+            ].map((src, idx) => (
+              <img
+                key={src}
+                src={src}
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover opacity-0 hero-slide"
+                style={{ animationDelay: `${idx * 8}s` }}
+                loading={idx === 0 ? "eager" : "lazy"}
+              />
+            ))}
           </div>
+
           {/* subtle wash so text stays crisp */}
           <div className="absolute inset-0 bg-white/75" />
         </div>
@@ -142,14 +145,18 @@ const Index = () => {
           </div>
 
           <style>{`
-            @keyframes heroFade {
-              0% { opacity: 0; transform: scale(1.03); }
-              8% { opacity: 1; transform: scale(1.0); }
-              33% { opacity: 1; }
-              41% { opacity: 0; }
-              100% { opacity: 0; }
+            /* Each slide: fade-in -> HOLD -> fade-out -> stay hidden.
+               Total cycle per slide group = 24s (3 slides * 8s).
+               This creates a clear delay/hold so it doesn't constantly transition. */
+            @keyframes heroHoldFade {
+              0% { opacity: 0; transform: scale(1.02); }
+              10% { opacity: 1; transform: scale(1.0); }
+              70% { opacity: 1; transform: scale(1.0); }
+              85% { opacity: 0; transform: scale(1.005); }
+              100% { opacity: 0; transform: scale(1.005); }
             }
-            .hero-slide{ animation: heroFade 18s ease-in-out infinite; }
+            .hero-slide{ animation: heroHoldFade 24s ease-in-out infinite; will-change: opacity, transform; }
+
             @media (prefers-reduced-motion: reduce){
               .hero-slide{ animation: none !important; opacity: 0 !important; }
               .hero-slide:first-of-type{ opacity: 1 !important; }
@@ -338,7 +345,6 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Mobile: slider (one card at a time) */}
           <div className="mt-6">
             <FeaturedListingsMobileSlider
               properties={results}
@@ -346,7 +352,6 @@ const Index = () => {
             />
           </div>
 
-          {/* Desktop/tablet: grid */}
           <div className="mt-6 hidden gap-4 md:grid md:grid-cols-3">
             {results.map((p, idx) => (
               <PropertyCard
@@ -439,19 +444,16 @@ const Index = () => {
             <div className="p-6">
               <div className="text-sm font-semibold">What you’ll get</div>
               <ul className="mt-3 grid gap-2 text-sm text-muted-foreground">
-                {[
-                  "Project comparisons",
-                  "Payment plan breakdowns",
-                  "ROI & rental insights",
-                  "Priority access",
-                ].map((t) => (
-                  <li key={t} className="inline-flex items-center gap-2">
-                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-[5px] bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))] ring-1 ring-black/5">
-                      <CheckCircle2 className="h-4 w-4" />
-                    </span>
-                    <span>{t}</span>
-                  </li>
-                ))}
+                {["Project comparisons", "Payment plan breakdowns", "ROI & rental insights", "Priority access"].map(
+                  (t) => (
+                    <li key={t} className="inline-flex items-center gap-2">
+                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-[5px] bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))] ring-1 ring-black/5">
+                        <CheckCircle2 className="h-4 w-4" />
+                      </span>
+                      <span>{t}</span>
+                    </li>
+                  ),
+                )}
               </ul>
 
               <Button
@@ -497,18 +499,9 @@ const Index = () => {
 
             <div className="grid gap-3">
               {[
-                {
-                  label: "WhatsApp",
-                  value: "+971 55 123 4567",
-                },
-                {
-                  label: "Email",
-                  value: "hello@primadom.ae",
-                },
-                {
-                  label: "Office",
-                  value: "Dubai, United Arab Emirates",
-                },
+                { label: "WhatsApp", value: "+971 55 123 4567" },
+                { label: "Email", value: "hello@primadom.ae" },
+                { label: "Office", value: "Dubai, United Arab Emirates" },
               ].map((i) => (
                 <div
                   key={i.label}
