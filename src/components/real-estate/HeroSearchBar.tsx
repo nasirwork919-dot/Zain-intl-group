@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { Search, SlidersHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 
 export type HeroBarFilters = {
-  operation: "buy" | "rent" | "list";
+  operation: "buy" | "rent" | "sell" | "manage";
   propertyType: "apartment" | "villa" | "townhouse";
   query: string;
 };
@@ -29,100 +29,96 @@ export function HeroSearchBar({
   return (
     <div className="w-full">
       <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-end lg:gap-4">
-        <div className="min-w-[220px]">
-          <div className="text-xs font-semibold text-white/80">Operation</div>
-          <div className="mt-2">
-            <ToggleGroup
-              type="single"
-              value={value.operation}
-              onValueChange={(v) => {
-                if (!v) return;
-                onChange({
-                  ...value,
-                  operation: v as HeroBarFilters["operation"],
-                });
-              }}
-              className="justify-start rounded-[5px] bg-white/12 p-1 ring-1 ring-white/20 backdrop-blur"
-            >
-              <ToggleGroupItem
-                value="buy"
-                className="rounded-[5px] px-4 text-white data-[state=on]:bg-white data-[state=on]:text-[hsl(var(--brand-ink))]"
+        <div className="w-full">
+          <div className="flex flex-col items-center gap-5">
+            {/* operation row */}
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <div className="text-xs font-bold tracking-[0.12em] text-[hsl(var(--brand-ink))]/80">
+                BUY
+              </div>
+              <ToggleGroup
+                type="single"
+                value={value.operation}
+                onValueChange={(v) => {
+                  if (!v) return;
+                  onChange({
+                    ...value,
+                    operation: v as HeroBarFilters["operation"],
+                  });
+                }}
+                className="justify-center gap-3 bg-transparent"
               >
-                Buy
-              </ToggleGroupItem>
-              <ToggleGroupItem
-                value="rent"
-                className="rounded-[5px] px-4 text-white data-[state=on]:bg-white data-[state=on]:text-[hsl(var(--brand-ink))]"
+                <ToggleGroupItem
+                  value="rent"
+                  className="h-10 rounded-full border border-[hsl(var(--brand-ink))]/25 bg-white/60 px-7 text-[11px] font-semibold tracking-[0.14em] text-[hsl(var(--brand-ink))] shadow-sm data-[state=on]:border-[hsl(var(--brand-ink))]/35 data-[state=on]:bg-white"
+                >
+                  RENT
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  value="sell"
+                  className="h-10 rounded-full border border-[hsl(var(--brand-ink))]/25 bg-white/60 px-7 text-[11px] font-semibold tracking-[0.14em] text-[hsl(var(--brand-ink))] shadow-sm data-[state=on]:border-[hsl(var(--brand-ink))]/35 data-[state=on]:bg-white"
+                >
+                  SELL
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  value="manage"
+                  className="h-10 rounded-full border border-[hsl(var(--brand-ink))]/25 bg-white/60 px-7 text-[11px] font-semibold tracking-[0.14em] text-[hsl(var(--brand-ink))] shadow-sm data-[state=on]:border-[hsl(var(--brand-ink))]/35 data-[state=on]:bg-white"
+                >
+                  MANAGE
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </div>
+
+            {/* search row */}
+            <div className="grid w-full max-w-5xl gap-3 sm:grid-cols-[220px_1fr_auto_auto] sm:items-center">
+              <Select
+                value={value.propertyType}
+                onValueChange={(v) =>
+                  onChange({
+                    ...value,
+                    propertyType: v as HeroBarFilters["propertyType"],
+                  })
+                }
               >
-                Rent
-              </ToggleGroupItem>
-              <ToggleGroupItem
-                value="list"
-                className="rounded-[5px] px-4 text-white data-[state=on]:bg-white data-[state=on]:text-[hsl(var(--brand-ink))]"
+                <SelectTrigger className="h-12 rounded-full border-transparent bg-white/75 px-5 text-sm text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 focus:ring-2 focus:ring-[hsl(var(--brand))]/25">
+                  <SelectValue placeholder="Choose Property Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="apartment">Choose Property Type</SelectItem>
+                  <SelectItem value="apartment">Apartment</SelectItem>
+                  <SelectItem value="villa">Villa</SelectItem>
+                  <SelectItem value="townhouse">Townhouse</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Input
+                value={value.query}
+                onChange={(e) => onChange({ ...value, query: e.target.value })}
+                placeholder="Community or Building..."
+                className="h-12 rounded-full border-transparent bg-white/75 px-5 text-sm text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 placeholder:text-[hsl(var(--brand-ink))]/45 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") onSubmit();
+                }}
+              />
+
+              <Button
+                onClick={onSubmit}
+                className="h-12 w-12 rounded-full bg-[hsl(var(--brand-ink))] text-white shadow-sm hover:bg-[hsl(var(--brand-ink))]/92"
+                aria-label="Search"
               >
-                List
-              </ToggleGroupItem>
-            </ToggleGroup>
-          </div>
-        </div>
+                <Search className="h-4 w-4" />
+              </Button>
 
-        <div className="min-w-[200px]">
-          <div className="text-xs font-semibold text-white/80">Property Type</div>
-          <Select
-            value={value.propertyType}
-            onValueChange={(v) =>
-              onChange({
-                ...value,
-                propertyType: v as HeroBarFilters["propertyType"],
-              })
-            }
-          >
-            <SelectTrigger className="mt-2 h-12 rounded-[5px] border-white/20 bg-white/12 text-white ring-1 ring-white/15 backdrop-blur focus:ring-2 focus:ring-white/25">
-              <SelectValue placeholder="Choose" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="apartment">Apartment</SelectItem>
-              <SelectItem value="villa">Villa</SelectItem>
-              <SelectItem value="townhouse">Townhouse</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex-1 min-w-[240px]">
-          <div className="text-xs font-semibold text-white/80">
-            Find Properties
+              <Button
+                type="button"
+                variant="outline"
+                className="h-12 w-12 rounded-full border-transparent bg-white/75 text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/10 hover:bg-white"
+                aria-label="Filters"
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-          <div className="relative mt-2">
-            <Search
-              className="pointer-events-none absolute left-4 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-white opacity-100"
-              style={{ filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.7))" }}
-            />
-            <Input
-              value={value.query}
-              onChange={(e) => onChange({ ...value, query: e.target.value })}
-              placeholder="Search by area or community"
-              className="hero-find-input relative z-0 h-12 w-full rounded-[5px] border-white/20 bg-white/12 pl-11 text-white placeholder:text-white/60 ring-1 ring-white/15 backdrop-blur focus-visible:ring-2 focus-visible:ring-white/25"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") onSubmit();
-              }}
-            />
-            {/* Hard override to prevent any global/input styles making the field white on hero */}
-            <style>{`
-              .hero-find-input{ color: rgba(255,255,255,.92) !important; background-color: rgba(255,255,255,.12) !important; }
-              .hero-find-input::placeholder{ color: rgba(255,255,255,.6) !important; }
-            `}</style>
-          </div>
-        </div>
-
-        <div className="lg:min-w-[170px]">
-          <div className="sr-only">Quick Search</div>
-          <Button
-            onClick={onSubmit}
-            className="h-12 w-full rounded-[5px] bg-white text-[hsl(var(--brand-ink))] hover:bg-white/90"
-          >
-            <Search className="mr-2 h-4 w-4" />
-            Quick Search
-          </Button>
         </div>
       </div>
     </div>

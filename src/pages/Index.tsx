@@ -96,125 +96,65 @@ const Index = () => {
     <div id="top" className="min-h-screen bg-[hsl(var(--page))]">
       <RealEstateHeader />
 
-      {/* Hero */}
+      {/* Hero (match reference: background slider + only title + search controls) */}
       <section className="relative overflow-hidden pt-20">
+        {/* background slider */}
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0">
-            <img
-              src="https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=3840&q=95"
-              alt="Dubai skyline"
-              className="h-full w-full object-cover"
-              loading="eager"
-            />
+            {["https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=3200&q=90","https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=3200&q=90","https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=3200&q=90"].map(
+              (src, idx) => (
+                <img
+                  key={src}
+                  src={src}
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover opacity-0 hero-slide"
+                  style={{ animationDelay: `${idx * 6}s` }}
+                  loading={idx === 0 ? "eager" : "lazy"}
+                />
+              ),
+            )}
           </div>
-
-          {/* Lighter overlays so the image stays clear */}
-          <div className="absolute inset-0 bg-black/25" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/20 to-black/5" />
+          {/* subtle wash so text stays crisp */}
+          <div className="absolute inset-0 bg-white/75" />
         </div>
 
-        <div className="relative mx-auto max-w-6xl px-4 pb-12 pt-10 sm:pb-16 lg:pt-16">
-          <div className="mx-auto max-w-3xl text-center text-white">
-            <div className="inline-flex items-center gap-2 rounded-[5px] bg-white/10 px-4 py-2 text-xs font-semibold tracking-wide text-white ring-1 ring-white/20 backdrop-blur">
-              <Star className="h-4 w-4 text-white/90" />
-              WE GUIDE INVESTORS AND HOMEBUYERS
+        <div className="relative mx-auto max-w-6xl px-4 pb-10 pt-10 sm:pb-14 lg:pt-16">
+          <div className="mx-auto max-w-4xl text-center">
+            <div className="text-xs font-semibold tracking-[0.14em] text-[hsl(var(--brand-ink))]/70">
+              At the Heart of Every Home is You
             </div>
-
-            <h1 className="mt-6 font-extrabold tracking-tight">
-              <span className="block text-4xl leading-[0.98] sm:text-5xl lg:text-6xl">
-                ZAIN INTERNATIONAL GROUP
-              </span>
-              <span className="mt-2 block text-3xl font-semibold italic text-white/90 sm:text-4xl lg:text-5xl">
-                Real Estate
-              </span>
+            <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-[hsl(var(--brand-ink))] sm:text-5xl lg:text-6xl">
+              Let’s Find Your Perfect Haven Together
             </h1>
 
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-sm text-white/80">
-              <span className="inline-flex items-center gap-2 rounded-[5px] bg-white/10 px-3 py-1 ring-1 ring-white/15 backdrop-blur">
-                <span className="text-white">4.5</span>
-                <span className="text-white/70">Google</span>
-              </span>
-              <span className="text-white/70">·</span>
-              <span className="text-white/80">
-                Join 300+ people who trust us with confidence
-              </span>
+            <div className="mx-auto mt-8 max-w-5xl">
+              <HeroSearchBar
+                value={heroBar}
+                onChange={setHeroBar}
+                onSubmit={() => {
+                  setFilters((prev) => ({ ...prev, query: heroBar.query }));
+                  document
+                    .getElementById("listings")
+                    ?.scrollIntoView({ behavior: "smooth" });
+                }}
+              />
             </div>
           </div>
 
-          {/* Primary hero search */}
-          <div className="mx-auto mt-10 max-w-5xl">
-            <HeroSearchBar
-              value={heroBar}
-              onChange={setHeroBar}
-              onSubmit={() => {
-                setFilters((prev) => ({ ...prev, query: heroBar.query }));
-                document
-                  .getElementById("listings")
-                  ?.scrollIntoView({ behavior: "smooth" });
-                toast({
-                  title: "Quick search applied",
-                  description: `Operation: ${heroBar.operation.toUpperCase()} · Type: ${heroBar.propertyType}`,
-                });
-              }}
-            />
-          </div>
-
-          {/* Secondary advanced filters */}
-          <div className="mx-auto mt-5 max-w-5xl">
-            <HeroSearch
-              onSearch={(f) => {
-                setFilters(f);
-                document
-                  .getElementById("listings")
-                  ?.scrollIntoView({ behavior: "smooth" });
-                toast({
-                  title: "Filters applied",
-                  description: "Scroll to see matching listings below.",
-                });
-              }}
-            />
-          </div>
-
-          <div className="mx-auto mt-6 flex max-w-4xl flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button
-              className="h-11 rounded-[5px] bg-white text-[hsl(var(--brand-ink))] hover:bg-white/90"
-              onClick={() =>
-                document
-                  .getElementById("listings")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
-            >
-              Browse listings
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-            <Button
-              variant="secondary"
-              className="h-11 rounded-[5px] bg-white/10 text-white ring-1 ring-white/20 hover:bg-white/15"
-              onClick={() =>
-                document
-                  .getElementById("contact")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
-            >
-              Speak to an agent
-            </Button>
-          </div>
-
-          <div className="mx-auto mt-10 grid max-w-4xl grid-cols-3 gap-3">
-            {featuredStats.map((s) => (
-              <Card
-                key={s.label}
-                className="rounded-[5px] border border-white/18 bg-white/10 p-4 text-white shadow-[0_18px_50px_-40px_rgba(0,0,0,0.55)] ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/10"
-              >
-                <div className="text-2xl font-extrabold tracking-tight">
-                  {s.value}
-                </div>
-                <div className="mt-1 text-xs font-medium text-white/70">
-                  {s.label}
-                </div>
-              </Card>
-            ))}
-          </div>
+          <style>{`
+            @keyframes heroFade {
+              0% { opacity: 0; transform: scale(1.03); }
+              8% { opacity: 1; transform: scale(1.0); }
+              33% { opacity: 1; }
+              41% { opacity: 0; }
+              100% { opacity: 0; }
+            }
+            .hero-slide{ animation: heroFade 18s ease-in-out infinite; }
+            @media (prefers-reduced-motion: reduce){
+              .hero-slide{ animation: none !important; opacity: 0 !important; }
+              .hero-slide:first-of-type{ opacity: 1 !important; }
+            }
+          `}</style>
         </div>
       </section>
 
