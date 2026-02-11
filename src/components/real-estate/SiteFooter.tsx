@@ -117,22 +117,23 @@ export function SiteFooter({
   const ctaBg =
     "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2600&q=80";
 
-  const sectionTitle =
-    "text-sm font-extrabold tracking-tight text-white";
+  const ink = "text-[#0b1025]";
+  const sectionTitle = cn("text-sm font-extrabold tracking-tight", ink);
+
   const linkClass = cn(
-    "text-sm font-semibold text-white/80 transition hover:text-white",
+    "text-sm font-semibold text-[#0b1025]/75 transition hover:text-[#0b1025]",
     "rounded-[10px] px-2 py-1 text-left",
-    "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/35",
+    "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
   );
 
   const outlineCard = cn(
-    "rounded-[18px] border border-white/20 bg-[#001a66]",
+    "rounded-[18px] border border-black/10 bg-white",
     "px-5 py-4",
   );
 
   return (
     <footer className={cn("w-full", className)}>
-      {/* Full-width CTA background strip (no box/border) */}
+      {/* Full-width CTA background strip (keep as-is) */}
       <section className="relative overflow-hidden border-t border-white/10">
         <img
           src={ctaBg}
@@ -198,17 +199,17 @@ export function SiteFooter({
         </div>
       </section>
 
-      {/* Clean deep-blue footer (match site + provided reference) */}
-      <section className="relative bg-[#001a66]">
+      {/* White footer (new scheme) */}
+      <section className="relative border-t border-black/10 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-12">
           <div className="grid gap-10 lg:grid-cols-12 lg:items-start">
-            {/* Newsletter card */}
+            {/* Newsletter */}
             <div className="lg:col-span-5">
-              <Card className="rounded-[28px] border-0 bg-white p-7 shadow-none sm:p-8">
+              <Card className="rounded-[28px] border border-black/10 bg-white p-7 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.35)] sm:p-8">
                 <div className="text-2xl font-extrabold tracking-tight text-[#0b1025]">
                   Newsletter
                 </div>
-                <div className="mt-2 text-sm text-[#0b1025]/65">
+                <div className="mt-2 text-sm text-[#0b1025]/60">
                   Subscribe for our weekly newsletter and marketing updates
                 </div>
 
@@ -220,15 +221,15 @@ export function SiteFooter({
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Email Address"
                       className={cn(
-                        "h-12 rounded-full border-0 bg-[#0b1025]/10 pl-11",
+                        "h-12 rounded-full border border-black/10 bg-[#0b1025]/[0.05] pl-11",
                         "text-[#0b1025] placeholder:text-[#0b1025]/45",
-                        "ring-1 ring-black/10 focus-visible:ring-2 focus-visible:ring-[#001a66]/25",
+                        "focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
                       )}
                     />
                   </div>
 
                   <Button
-                    className="h-12 rounded-full bg-[#0b0b45] text-white hover:bg-[#0b0b45]/92"
+                    className="h-12 rounded-full bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
                     onClick={() => {
                       const v = email.trim();
                       if (!v) {
@@ -255,12 +256,13 @@ export function SiteFooter({
               </Card>
             </div>
 
-            {/* Right side: links + contact + social */}
+            {/* Right side */}
             <div className="lg:col-span-7">
               <div className="grid gap-10 sm:grid-cols-3">
-                {/* Quick links (two columns inside) */}
+                {/* Quick Links + Resources */}
                 <div className="sm:col-span-1">
                   <div className={sectionTitle}>Quick Links</div>
+
                   <div className="mt-5 grid grid-cols-2 gap-x-8 gap-y-2">
                     <ul className="grid gap-2">
                       {quickLinks.slice(0, 4).map((l) => (
@@ -282,7 +284,7 @@ export function SiteFooter({
                     </ul>
                   </div>
 
-                  <div className="mt-8 text-sm font-extrabold tracking-tight text-white">
+                  <div className="mt-8 text-sm font-extrabold tracking-tight text-[#0b1025]">
                     Resources
                   </div>
                   <ul className="mt-4 grid gap-2">
@@ -302,10 +304,10 @@ export function SiteFooter({
 
                   <div className="mt-5 grid gap-4">
                     <div className={outlineCard}>
-                      <div className="text-[11px] font-semibold tracking-[0.18em] text-white/60">
+                      <div className="text-[11px] font-semibold tracking-[0.18em] text-[#0b1025]/55">
                         ADDRESS
                       </div>
-                      <div className="mt-2 text-sm font-semibold leading-relaxed text-white/85">
+                      <div className="mt-2 text-sm font-semibold leading-relaxed text-[#0b1025]/85">
                         Floor 13, Blue Bay Tower
                         <br />
                         Business Bay, Dubai, UAE
@@ -313,19 +315,19 @@ export function SiteFooter({
                     </div>
 
                     <div className={outlineCard}>
-                      <div className="text-[11px] font-semibold tracking-[0.18em] text-white/60">
+                      <div className="text-[11px] font-semibold tracking-[0.18em] text-[#0b1025]/55">
                         PHONE
                       </div>
-                      <div className="mt-2 text-sm font-semibold text-white/85">
+                      <div className="mt-2 text-sm font-semibold text-[#0b1025]/85">
                         +971 800 32632
                       </div>
                     </div>
 
                     <div className={outlineCard}>
-                      <div className="text-[11px] font-semibold tracking-[0.18em] text-white/60">
+                      <div className="text-[11px] font-semibold tracking-[0.18em] text-[#0b1025]/55">
                         EMAIL
                       </div>
-                      <div className="mt-2 text-sm font-semibold text-white/85">
+                      <div className="mt-2 text-sm font-semibold text-[#0b1025]/85">
                         inquiry@zaininternational.ae
                       </div>
                     </div>
@@ -344,9 +346,9 @@ export function SiteFooter({
                         onClick={s.onClick}
                         className={cn(
                           "inline-flex h-10 w-10 items-center justify-center rounded-full",
-                          "border border-white/25 bg-transparent text-white",
-                          "transition hover:bg-white/10",
-                          "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
+                          "border border-black/12 bg-white text-[#0b1025]",
+                          "transition hover:bg-[#0b1025]/[0.04]",
+                          "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
                         )}
                         aria-label={s.label}
                       >
@@ -356,10 +358,10 @@ export function SiteFooter({
                   </div>
 
                   <div className={cn("mt-6", outlineCard)}>
-                    <div className="text-[11px] font-semibold tracking-[0.18em] text-white/60">
+                    <div className="text-[11px] font-semibold tracking-[0.18em] text-[#0b1025]/55">
                       AVAILABILITY
                     </div>
-                    <div className="mt-2 text-sm font-semibold leading-relaxed text-white/85">
+                    <div className="mt-2 text-sm font-semibold leading-relaxed text-[#0b1025]/85">
                       Online 24/7 for shortlists & viewings
                     </div>
                   </div>
@@ -367,10 +369,10 @@ export function SiteFooter({
               </div>
 
               {/* Bottom row */}
-              <div className="mt-12 grid items-center gap-4 border-t border-white/15 pt-6 sm:grid-cols-3">
+              <div className="mt-12 grid items-center gap-4 border-t border-black/10 pt-6 sm:grid-cols-3">
                 <div className="hidden sm:block" />
 
-                <div className="text-center text-xs font-semibold text-white/85">
+                <div className="text-center text-xs font-semibold text-[#0b1025]/80">
                   © {year} Zain International Group. All Rights Reserved
                 </div>
 
@@ -383,7 +385,7 @@ export function SiteFooter({
                         description: "We can add a privacy policy page next.",
                       })
                     }
-                    className="text-xs font-semibold text-white/80 transition hover:text-white"
+                    className="text-xs font-semibold text-[#0b1025]/70 transition hover:text-[#0b1025]"
                   >
                     Privacy Policy
                   </button>
@@ -395,7 +397,7 @@ export function SiteFooter({
                         description: "We can add terms of service next.",
                       })
                     }
-                    className="text-xs font-semibold text-white/80 transition hover:text-white"
+                    className="text-xs font-semibold text-[#0b1025]/70 transition hover:text-[#0b1025]"
                   >
                     Terms of Service
                   </button>
@@ -404,16 +406,16 @@ export function SiteFooter({
             </div>
           </div>
 
-          {/* Scroll-to-top button inside footer, aligned bottom-right like reference */}
+          {/* Scroll-to-top button bottom-right */}
           <div className="pointer-events-none mt-8 flex justify-end">
             <button
               type="button"
               onClick={() => onNavigateSection("#top")}
               className={cn(
                 "pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-[6px]",
-                "bg-white/90 text-[#0b1025] ring-1 ring-black/10",
-                "transition hover:bg-white",
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50",
+                "bg-white text-[#0b1025] ring-1 ring-black/10",
+                "shadow-sm transition hover:bg-[#0b1025]/[0.03]",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
               )}
               aria-label="Scroll to top"
             >
