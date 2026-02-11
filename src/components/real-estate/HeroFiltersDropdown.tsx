@@ -81,10 +81,12 @@ export function HeroFiltersDropdown({
         collisionPadding={16}
         portalled={false}
         className={cn(
-          // Symmetric mobile gutters: 16px left + 16px right
-          "w-[calc(100vw-32px)] max-w-[720px]",
-          // Desktop: allow it to follow the trigger width (but never exceed max)
-          "sm:w-[min(720px,100%)]",
+          // MOBILE (Radix can end up slightly off-center due to transforms):
+          // Force a true centered, symmetric gutter layout in the viewport.
+          "fixed left-1/2 w-[calc(100vw-32px)] -translate-x-1/2",
+          "max-w-[720px]",
+          // Desktop: allow Radix to position normally
+          "sm:static sm:left-auto sm:w-[min(720px,100%)] sm:translate-x-0",
           // Scrolling behavior
           "max-h-[76vh] overflow-y-auto overflow-x-hidden overscroll-contain",
           // Hide scrollbar but keep scrolling
