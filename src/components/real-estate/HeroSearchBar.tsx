@@ -75,7 +75,6 @@ export function HeroSearchBar({
             {operationLabel}
           </div>
 
-          {/* Tabs directly on background (no container background) */}
           <ToggleGroup
             type="single"
             value={value.operation}
@@ -86,7 +85,13 @@ export function HeroSearchBar({
                 operation: v as HeroBarFilters["operation"],
               });
             }}
-            className="gap-1 bg-transparent"
+            className={cn(
+              "gap-1",
+              "rounded-[999px] px-1 py-1",
+              "bg-white/15 backdrop-blur supports-[backdrop-filter]:bg-white/10",
+              "ring-1 ring-white/15",
+              "shadow-[0_12px_30px_-24px_rgba(15,23,42,0.7)]",
+            )}
           >
             <ToggleGroupItem value="buy" className={segItemClass}>
               BUY
