@@ -73,6 +73,8 @@ export function HeroFiltersDropdown({
         side="bottom"
         align="end"
         sideOffset={10}
+        avoidCollisions={false}
+        collisionPadding={16}
         className={cn(
           "w-[min(92vw,560px)]",
           "rounded-[5px] border border-white/80 bg-white p-4",
