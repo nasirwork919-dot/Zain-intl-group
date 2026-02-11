@@ -102,7 +102,7 @@ const Index = () => {
       <RealEstateHeader />
 
       {/* Hero (background slider + only title + search controls) */}
-      <section className="relative overflow-hidden pt-20 min-h-[720px] sm:min-h-[820px] lg:min-h-[920px]">
+      <section className="relative flex overflow-hidden pt-20 min-h-[720px] sm:min-h-[820px] lg:min-h-[920px]">
         {/* background slider */}
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0">
@@ -126,8 +126,8 @@ const Index = () => {
           <div className="absolute inset-0 bg-[#0b1220]/35" />
         </div>
 
-        <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-16 sm:pb-24 sm:pt-20 lg:pb-28 lg:pt-24">
-          <div className="mx-auto max-w-4xl text-center">
+        <div className="relative mx-auto flex w-full max-w-6xl flex-1 items-center justify-center px-4 py-16 sm:py-20 lg:py-24">
+          <div className="mx-auto w-full max-w-4xl text-center">
             <div className="text-xs font-semibold tracking-[0.14em] text-white/85">
               At the Heart of Every Home is You
             </div>
