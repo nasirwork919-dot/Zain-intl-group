@@ -75,14 +75,14 @@ export function HeroFiltersDropdown({
 
       <PopoverContent
         side="bottom"
-        align="start"
+        align="center"
         sideOffset={12}
-        avoidCollisions={true}
-        collisionPadding={16}
+        // Keep it under the trigger on all screen sizes (no auto-flip above fields).
+        avoidCollisions={false}
         portalled={false}
         className={cn(
-          // Mobile-first: fit within viewport with even side padding (16px each side).
-          "w-[calc(100vw-2rem)] sm:w-[min(720px,calc(100vw-32px))] max-w-[720px]",
+          // Mobile-first: always keep equal 16px gutters on both sides.
+          "w-[calc(100vw-2rem)] max-w-[720px]",
           // Scrolling behavior
           "max-h-[76vh] overflow-y-auto overflow-x-hidden overscroll-contain",
           // Hide scrollbar but keep scrolling
