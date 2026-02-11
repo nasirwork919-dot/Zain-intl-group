@@ -128,12 +128,14 @@ export function SiteFooter({
 
   const outlineCard = cn(
     "rounded-[5px] border border-black/10 bg-white",
-    "px-5 py-4",
+    "p-4 sm:p-5",
   );
+
+  const containerClass = "mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8";
 
   return (
     <footer className={cn("w-full", className)}>
-      {/* Full-width CTA background strip (keep as-is) */}
+      {/* Full-width CTA strip (keep visuals, improve spacing responsiveness) */}
       <section className="relative overflow-hidden border-t border-white/10">
         <img
           src={ctaBg}
@@ -145,8 +147,8 @@ export function SiteFooter({
         <div className="absolute inset-0 bg-gradient-to-r from-[#0b1220]/80 via-[#0b1220]/55 to-[#0b1220]/10" />
 
         <div className="relative z-[2]">
-          <div className="mx-auto max-w-7xl px-4 py-12 sm:py-14">
-            <div className="grid gap-8 md:grid-cols-12 md:items-center">
+          <div className={cn(containerClass, "py-12 sm:py-14 lg:py-16")}>
+            <div className="grid gap-10 md:grid-cols-12 md:items-center">
               <div className="md:col-span-8">
                 <div className="text-xs font-semibold tracking-[0.18em] text-white/80">
                   ZAIN INTERNATIONAL GROUP
@@ -154,7 +156,7 @@ export function SiteFooter({
                 <h3 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
                   Our Expert Will Help You
                 </h3>
-                <p className="mt-2 max-w-xl text-sm font-medium text-white/85">
+                <p className="mt-3 max-w-xl text-sm font-medium text-white/85">
                   Feel free to contact us at any time — we’re online 24/7 for
                   shortlists, payment plans, and viewings.
                 </p>
@@ -165,10 +167,10 @@ export function SiteFooter({
               </div>
 
               <div className="md:col-span-4 md:flex md:justify-end">
-                <div className="flex flex-col gap-3 sm:flex-row md:flex-col md:items-stretch">
+                <div className="grid w-full gap-3 sm:max-w-[360px]">
                   <Button
                     onClick={onGetInTouch}
-                    className="h-11 rounded-[5px] bg-white px-7 font-semibold text-[#111827] hover:bg-white/95"
+                    className="h-11 w-full rounded-[5px] bg-white px-7 font-semibold text-[#111827] hover:bg-white/95"
                   >
                     Get In Touch
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -177,7 +179,7 @@ export function SiteFooter({
                   <Button
                     variant="outline"
                     className={cn(
-                      "h-11 rounded-[5px]",
+                      "h-11 w-full rounded-[5px]",
                       "border-white/25 bg-white/0 text-white",
                       "ring-1 ring-white/15",
                       "hover:bg-white/10 hover:text-white",
@@ -201,11 +203,11 @@ export function SiteFooter({
 
       {/* White footer */}
       <section className="relative border-t border-black/10 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-12">
-          <div className="grid gap-10 lg:grid-cols-12 lg:items-start">
+        <div className={cn(containerClass, "py-12 sm:py-14 lg:py-16")}>
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-start lg:gap-12">
             {/* Newsletter */}
             <div className="lg:col-span-5">
-              <Card className="rounded-[5px] border border-black/10 bg-white p-7 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.35)] sm:p-8">
+              <Card className="rounded-[5px] border border-black/10 bg-white p-6 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.35)] sm:p-7">
                 <div className="text-2xl font-extrabold tracking-tight text-[#0b1025]">
                   Newsletter
                 </div>
@@ -258,12 +260,12 @@ export function SiteFooter({
 
             {/* Right side */}
             <div className="lg:col-span-7">
-              <div className="grid gap-10 sm:grid-cols-3">
+              <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
                 {/* Quick Links + Resources */}
-                <div className="sm:col-span-1">
+                <div>
                   <div className={sectionTitle}>Quick Links</div>
 
-                  <div className="mt-5 grid grid-cols-2 gap-x-8 gap-y-2">
+                  <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-2">
                     <ul className="grid gap-2">
                       {quickLinks.slice(0, 4).map((l) => (
                         <li key={l.label}>
@@ -311,7 +313,7 @@ export function SiteFooter({
                 </div>
 
                 {/* Contact */}
-                <div className="sm:col-span-1">
+                <div>
                   <div className={sectionTitle}>Contact Us</div>
 
                   <div className="mt-5 grid gap-4">
@@ -347,7 +349,7 @@ export function SiteFooter({
                 </div>
 
                 {/* Social + availability */}
-                <div className="sm:col-span-1">
+                <div className="sm:col-span-2 lg:col-span-1">
                   <div className={sectionTitle}>Social Media</div>
 
                   <div className="mt-5 flex flex-wrap items-center gap-3">
@@ -381,7 +383,7 @@ export function SiteFooter({
               </div>
 
               {/* Bottom row */}
-              <div className="mt-12 grid items-center gap-4 border-t border-black/10 pt-6 sm:grid-cols-3">
+              <div className="mt-12 grid gap-4 border-t border-black/10 pt-6 sm:grid-cols-3 sm:items-center">
                 <div className="hidden sm:block" />
 
                 <div className="text-center text-xs font-semibold text-[#0b1025]/80">
