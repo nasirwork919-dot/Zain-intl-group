@@ -122,12 +122,12 @@ export function SiteFooter({
 
   const linkClass = cn(
     "text-sm font-semibold text-[#0b1025]/75 transition hover:text-[#0b1025]",
-    "rounded-[10px] px-2 py-1 text-left",
+    "rounded-[5px] px-2 py-1 text-left",
     "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
   );
 
   const outlineCard = cn(
-    "rounded-[18px] border border-black/10 bg-white",
+    "rounded-[5px] border border-black/10 bg-white",
     "px-5 py-4",
   );
 
@@ -168,7 +168,7 @@ export function SiteFooter({
                 <div className="flex flex-col gap-3 sm:flex-row md:flex-col md:items-stretch">
                   <Button
                     onClick={onGetInTouch}
-                    className="h-11 rounded-full bg-white px-7 font-semibold text-[#111827] hover:bg-white/95"
+                    className="h-11 rounded-[5px] bg-white px-7 font-semibold text-[#111827] hover:bg-white/95"
                   >
                     Get In Touch
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -177,7 +177,7 @@ export function SiteFooter({
                   <Button
                     variant="outline"
                     className={cn(
-                      "h-11 rounded-full",
+                      "h-11 rounded-[5px]",
                       "border-white/25 bg-white/0 text-white",
                       "ring-1 ring-white/15",
                       "hover:bg-white/10 hover:text-white",
@@ -199,13 +199,13 @@ export function SiteFooter({
         </div>
       </section>
 
-      {/* White footer (new scheme) */}
+      {/* White footer */}
       <section className="relative border-t border-black/10 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-12">
           <div className="grid gap-10 lg:grid-cols-12 lg:items-start">
             {/* Newsletter */}
             <div className="lg:col-span-5">
-              <Card className="rounded-[28px] border border-black/10 bg-white p-7 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.35)] sm:p-8">
+              <Card className="rounded-[5px] border border-black/10 bg-white p-7 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.35)] sm:p-8">
                 <div className="text-2xl font-extrabold tracking-tight text-[#0b1025]">
                   Newsletter
                 </div>
@@ -221,7 +221,7 @@ export function SiteFooter({
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Email Address"
                       className={cn(
-                        "h-12 rounded-full border border-black/10 bg-[#0b1025]/[0.05] pl-11",
+                        "h-12 rounded-[5px] border border-black/10 bg-[#0b1025]/[0.05] pl-11",
                         "text-[#0b1025] placeholder:text-[#0b1025]/45",
                         "focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
                       )}
@@ -229,7 +229,7 @@ export function SiteFooter({
                   </div>
 
                   <Button
-                    className="h-12 rounded-full bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
+                    className="h-12 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
                     onClick={() => {
                       const v = email.trim();
                       if (!v) {
@@ -267,7 +267,11 @@ export function SiteFooter({
                     <ul className="grid gap-2">
                       {quickLinks.slice(0, 4).map((l) => (
                         <li key={l.label}>
-                          <button type="button" onClick={l.onClick} className={linkClass}>
+                          <button
+                            type="button"
+                            onClick={l.onClick}
+                            className={linkClass}
+                          >
                             {l.label}
                           </button>
                         </li>
@@ -276,7 +280,11 @@ export function SiteFooter({
                     <ul className="grid gap-2">
                       {quickLinks.slice(4).map((l) => (
                         <li key={l.label}>
-                          <button type="button" onClick={l.onClick} className={linkClass}>
+                          <button
+                            type="button"
+                            onClick={l.onClick}
+                            className={linkClass}
+                          >
                             {l.label}
                           </button>
                         </li>
@@ -290,7 +298,11 @@ export function SiteFooter({
                   <ul className="mt-4 grid gap-2">
                     {resources.map((l) => (
                       <li key={l.label}>
-                        <button type="button" onClick={l.onClick} className={linkClass}>
+                        <button
+                          type="button"
+                          onClick={l.onClick}
+                          className={linkClass}
+                        >
                           {l.label}
                         </button>
                       </li>
@@ -345,7 +357,7 @@ export function SiteFooter({
                         type="button"
                         onClick={s.onClick}
                         className={cn(
-                          "inline-flex h-10 w-10 items-center justify-center rounded-full",
+                          "inline-flex h-10 w-10 items-center justify-center rounded-[5px]",
                           "border border-black/12 bg-white text-[#0b1025]",
                           "transition hover:bg-[#0b1025]/[0.04]",
                           "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
@@ -412,7 +424,7 @@ export function SiteFooter({
               type="button"
               onClick={() => onNavigateSection("#top")}
               className={cn(
-                "pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-[6px]",
+                "pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-[5px]",
                 "bg-white text-[#0b1025] ring-1 ring-black/10",
                 "shadow-sm transition hover:bg-[#0b1025]/[0.03]",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
