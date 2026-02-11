@@ -75,19 +75,20 @@ export function HeroFiltersDropdown({
 
       <PopoverContent
         side="bottom"
-        align="center"
+        align="start"
         sideOffset={12}
         avoidCollisions={true}
         collisionPadding={16}
         portalled={false}
         className={cn(
-          // Anchor directly under the trigger (search bar), instead of viewport-centered fixed positioning.
-          "w-[min(720px,calc(100vw-32px))] max-w-[720px]",
+          // Mobile-first: fit within viewport with even side padding (16px each side).
+          "w-[calc(100vw-2rem)] sm:w-[min(720px,calc(100vw-32px))] max-w-[720px]",
           // Scrolling behavior
           "max-h-[76vh] overflow-y-auto overflow-x-hidden overscroll-contain",
           // Hide scrollbar but keep scrolling
           "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
           "box-border",
+          // Visuals
           "rounded-[5px] border border-white/80 bg-white p-4 sm:p-5",
           "shadow-[0_26px_70px_-50px_rgba(15,23,42,0.75)] ring-1 ring-black/10",
         )}
