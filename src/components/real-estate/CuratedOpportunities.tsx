@@ -1,16 +1,21 @@
-import { useMemo, useState } from "react";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import type { Property } from "@/components/real-estate/site-data";
 import { featuredProperties } from "@/components/real-estate/site-data";
-import { CuratedOpportunityCard } from "@/components/real-estate/CuratedOpportunityCard";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { CuratedLaunchCard } from "@/components/real-estate/CuratedLaunchCard";
 
-function paginate<T>(items: T[], page: number, perPage: number) {
-  const start = page * perPage;
-  return items.slice(start, start + perPage);
-}
+const completionById: Record<string, string> = {
+  p1: "2029 Q1",
+  p2: "2028",
+  p3: "TCB",
+  p4: "2029 Q3",
+  p5: "2028 Q4",
+  p6: "2029 Q2",
+  p7: "2028 Q2",
+  p8: "TCB",
+};
 
 export function CuratedOpportunities({
   onOpenProperty,
@@ -19,89 +24,58 @@ export function CuratedOpportunities({
   onOpenProperty: (p: Property) => void;
   onViewAll?: () => void;
 }) {
-  const perPage = 3;
-  const items = featuredProperties;
-  const pageCount = Math.max(1, Math.ceil(items.length / perPage));
-  const [page, setPage] = useState(0);
-
-  const visible = useMemo(() => paginate(items, page, perPage), [items, page]);
-
-  const canPrev = page > 0;
-  const canNext = page < pageCount - 1;
+  const items = featuredProperties.slice(0, 4);
 
   return (
-    <section className="mx-auto max-w-6xl px-4 pb-16">
-      <div className="px-0 text-center">
-        <h2 className="font-serif text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-          Curated{" "}
-          <span className="text-[hsl(var(--brand))]">Opportunities</span>
+    <section className="mx-auto max-w-7xl px-4 pb-16">
+      <div className="text-left">
+        <h2 className="font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+          Stay up to date on the latest{" "}
+          <span className="text-[hsl(var(--brand))]">off-plan launches</span>.
         </h2>
       </div>
 
-      <div className="mt-10 grid gap-10 lg:grid-cols-3 lg:gap-8">
-        {visible.map((p) => (
-          <CuratedOpportunityCard
+      {/* Mobile: horizontal scroll row */}
+      <div className="mt-7 sm:hidden">
+        <div
+          className={cn(
+            "flex gap-4 overflow-x-auto pb-4",
+            "snap-x snap-mandatory",
+            "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
+          )}
+        >
+          {items.map((p) => (
+            <div
+              key={p.id}
+              className="w-[82vw] max-w-[340px] flex-none snap-start"
+            >
+              <CuratedLaunchCard
+                property={p}
+                completionDate={completionById[p.id] ?? "TCB"}
+                onOpen={() => onOpenProperty(p)}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop/tablet: 4 column grid */}
+      <div className="mt-8 hidden sm:grid sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
+        {items.map((p) => (
+          <CuratedLaunchCard
             key={p.id}
             property={p}
+            completionDate={completionById[p.id] ?? "TCB"}
             onOpen={() => onOpenProperty(p)}
           />
         ))}
       </div>
 
-      <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-        {/* Pager (left) */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-          <div className="flex items-center gap-4">
-            <div className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">{page + 1}</span>/
-              {pageCount}
-            </div>
-
-            <div className="h-1.5 w-44 overflow-hidden rounded-full bg-muted/60 sm:w-64">
-              <div
-                className="h-full rounded-full bg-[hsl(var(--brand))]"
-                style={{ width: `${((page + 1) / pageCount) * 100}%` }}
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
-              disabled={!canPrev}
-              className={cn(
-                "inline-flex w-full items-center justify-center gap-2 rounded-[5px] px-3 py-2 text-sm font-semibold transition sm:w-auto sm:rounded-full sm:px-3 sm:py-2 sm:text-sm sm:font-medium",
-                "ring-1 ring-black/10 sm:ring-0",
-                canPrev
-                  ? "bg-white/75 text-[hsl(var(--brand-ink))] hover:bg-white sm:bg-transparent sm:hover:bg-white/70"
-                  : "cursor-not-allowed bg-white/45 text-muted-foreground/60 sm:bg-transparent",
-              )}
-              aria-label="Previous page"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              PREV
-            </button>
-            <button
-              type="button"
-              onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
-              disabled={!canNext}
-              className={cn(
-                "inline-flex w-full items-center justify-center gap-2 rounded-[5px] px-3 py-2 text-sm font-semibold transition sm:w-auto sm:rounded-full sm:px-3 sm:py-2 sm:text-sm sm:font-medium",
-                "ring-1 ring-black/10 sm:ring-0",
-                canNext
-                  ? "bg-white/75 text-[hsl(var(--brand-ink))] hover:bg-white sm:bg-transparent sm:hover:bg-white/70"
-                  : "cursor-not-allowed bg-white/45 text-muted-foreground/60 sm:bg-transparent",
-              )}
-              aria-label="Next page"
-            >
-              NEXT
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
+      <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="text-sm text-muted-foreground">
+          Explore new launches, compare pricing, and request a curated shortlist.
         </div>
 
-        {/* View All (right) */}
         <Button
           className="h-12 rounded-[5px] bg-[hsl(var(--brand))] px-7 text-white hover:bg-[hsl(var(--brand))]/90"
           onClick={() => {
