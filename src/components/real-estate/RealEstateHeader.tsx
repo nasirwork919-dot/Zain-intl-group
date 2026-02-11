@@ -215,11 +215,6 @@ export function RealEstateHeader() {
         mega: "marketTrends",
       },
       {
-        label: "Featured Projects",
-        type: "scroll",
-        href: "#projects",
-      },
-      {
         label: "Services",
         type: "scroll",
         href: "#contact",
