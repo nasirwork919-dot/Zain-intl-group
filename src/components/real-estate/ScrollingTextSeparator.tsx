@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 
 export function ScrollingTextSeparator({
+  label,
   items = [
     "Dubai Marina",
     "Downtown Dubai",
@@ -17,6 +18,7 @@ export function ScrollingTextSeparator({
   className,
   speedSeconds = 18,
 }: {
+  label?: string;
   items?: string[];
   className?: string;
   speedSeconds?: number;
@@ -35,7 +37,12 @@ export function ScrollingTextSeparator({
           <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[hsl(var(--page))] to-transparent sm:w-24" />
 
           <div className="px-6 sm:px-12">
-            <div className="py-3.5 sm:py-4">
+            {label ? (
+              <div className="pt-5 text-center text-xs font-semibold uppercase tracking-[0.22em] text-[hsl(var(--brand-ink))]/75">
+                {label}
+              </div>
+            ) : null}
+            <div className={cn("py-3.5 sm:py-4", label ? "pt-3" : "")}>
               <div className="marquee">
                 <div className="marquee__group">
                   <span className="marquee__text">{line}</span>
