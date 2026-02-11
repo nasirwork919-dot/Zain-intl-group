@@ -34,10 +34,16 @@ export function HeroSearchBar({
   const operationLabel =
     value.operation === "buy" ? "BUY" : value.operation.toUpperCase();
 
-  const opItemClass =
-    "h-10 rounded-[5px] border bg-white/60 px-7 text-[11px] font-semibold tracking-[0.14em] text-[hsl(var(--brand-ink))] shadow-sm " +
-    "data-[state=on]:bg-white data-[state=on]:border-[hsl(var(--brand-ink))]/35 " +
-    "border-[hsl(var(--brand-ink))]/25";
+  const segItemClass = cn(
+    "h-10 rounded-[4px] px-5",
+    "text-[11px] font-semibold tracking-[0.14em]",
+    "text-[hsl(var(--brand-ink))]/85",
+    "transition-colors",
+    "hover:text-[hsl(var(--brand-ink))]",
+    "data-[state=on]:bg-white data-[state=on]:text-[hsl(var(--brand-ink))]",
+    "data-[state=on]:shadow-sm",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
+  );
 
   return (
     <div className="w-full">
@@ -50,36 +56,47 @@ export function HeroSearchBar({
                 {operationLabel}
               </div>
 
-              <ToggleGroup
-                type="single"
-                value={value.operation}
-                onValueChange={(v) => {
-                  if (!v) return;
-                  onChange({
-                    ...value,
-                    operation: v as HeroBarFilters["operation"],
-                  });
-                }}
-                className="justify-center gap-3 bg-transparent"
+              <div
+                className={cn(
+                  "rounded-[5px] bg-white/55 p-1",
+                  "ring-1 ring-[hsl(var(--brand-ink))]/25",
+                  "shadow-[0_10px_25px_-18px_rgba(15,23,42,0.55)]",
+                )}
               >
-                <ToggleGroupItem value="buy" className={opItemClass}>
-                  BUY
-                </ToggleGroupItem>
-                <ToggleGroupItem value="rent" className={opItemClass}>
-                  RENT
-                </ToggleGroupItem>
-                <ToggleGroupItem value="sell" className={opItemClass}>
-                  SELL
-                </ToggleGroupItem>
-                <ToggleGroupItem value="manage" className={opItemClass}>
-                  MANAGE
-                </ToggleGroupItem>
-              </ToggleGroup>
+                <ToggleGroup
+                  type="single"
+                  value={value.operation}
+                  onValueChange={(v) => {
+                    if (!v) return;
+                    onChange({
+                      ...value,
+                      operation: v as HeroBarFilters["operation"],
+                    });
+                  }}
+                  className="gap-1 bg-transparent"
+                >
+                  <ToggleGroupItem value="buy" className={segItemClass}>
+                    BUY
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="rent" className={segItemClass}>
+                    RENT
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="sell" className={segItemClass}>
+                    SELL
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="manage" className={segItemClass}>
+                    MANAGE
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </div>
             </div>
 
             {/* search row + dropdown anchor */}
             <div className="relative w-full max-w-5xl">
-              <HeroFiltersDropdown open={filtersOpen} onOpenChange={setFiltersOpen}>
+              <HeroFiltersDropdown
+                open={filtersOpen}
+                onOpenChange={setFiltersOpen}
+              >
                 <div
                   className={cn(
                     "grid w-full gap-3",
