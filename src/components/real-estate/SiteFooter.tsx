@@ -139,17 +139,17 @@ export function SiteFooter({
                 </div>
               </div>
 
-              {/* Right: clean image (no box) */}
+              {/* Right: plain image (no box, no border, no rounding) */}
               <div className="relative z-[1]">
-                <div className="relative mx-auto h-[240px] w-full max-w-[560px] overflow-hidden rounded-[28px] md:h-[300px]">
-                  <img
-                    src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1400&q=80"
-                    alt="Agent"
-                    className="h-full w-full object-cover object-top"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-l from-[#1d2250]/55 via-transparent to-transparent" />
-                </div>
+                <img
+                  src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1400&q=80"
+                  alt="Agent"
+                  className={cn(
+                    "mx-auto w-full max-w-[560px]",
+                    "h-[240px] object-cover object-top md:h-[300px]",
+                  )}
+                  loading="lazy"
+                />
               </div>
 
               {/* Background tint to the right */}
