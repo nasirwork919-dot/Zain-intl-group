@@ -65,6 +65,10 @@ export function HeroFiltersDropdown({
     return Object.values(draft.amenities).filter(Boolean).length;
   }, [draft.amenities]);
 
+  const labelClass = "text-sm font-semibold text-[hsl(var(--brand-ink))]";
+  const subLabelClass =
+    "text-xs font-semibold text-[hsl(var(--brand-ink))]/70";
+
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -78,6 +82,7 @@ export function HeroFiltersDropdown({
         portalled={false}
         className={cn(
           "w-full",
+          "max-h-[76vh] overflow-auto overscroll-contain",
           "rounded-[5px] border border-white/80 bg-white p-4 sm:p-5",
           "shadow-[0_26px_70px_-50px_rgba(15,23,42,0.75)] ring-1 ring-black/10",
         )}
@@ -85,10 +90,8 @@ export function HeroFiltersDropdown({
         <div className="grid gap-5 md:grid-cols-2">
           {/* Price */}
           <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="w-16 text-sm font-semibold text-[hsl(var(--brand-ink))]">
-                Price
-              </div>
+            <div className="grid gap-3 sm:flex sm:items-center sm:gap-3">
+              <div className={cn(labelClass, "sm:w-16")}>Price</div>
               <div className="flex-1">
                 <Slider
                   value={draft.price}
@@ -109,10 +112,8 @@ export function HeroFiltersDropdown({
 
           {/* Area */}
           <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="w-16 text-sm font-semibold text-[hsl(var(--brand-ink))]">
-                Area
-              </div>
+            <div className="grid gap-3 sm:flex sm:items-center sm:gap-3">
+              <div className={cn(labelClass, "sm:w-16")}>Area</div>
               <div className="flex-1">
                 <Slider
                   value={draft.area}
@@ -133,10 +134,8 @@ export function HeroFiltersDropdown({
 
           {/* Bed */}
           <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="w-16 text-sm font-semibold text-[hsl(var(--brand-ink))]">
-                Bed
-              </div>
+            <div className="grid gap-3 sm:flex sm:items-center sm:gap-3">
+              <div className={cn(labelClass, "sm:w-16")}>Bed</div>
               <ToggleGroup
                 type="single"
                 value={String(draft.bed)}
@@ -152,7 +151,7 @@ export function HeroFiltersDropdown({
                           : (Number(v) as 1 | 2 | 3 | 4),
                   }));
                 }}
-                className="flex flex-wrap justify-start gap-2"
+                className="flex w-full flex-wrap justify-start gap-2 sm:w-auto"
               >
                 {["all", "studio", "1", "2", "3", "4"].map((v) => (
                   <ToggleGroupItem
@@ -173,10 +172,8 @@ export function HeroFiltersDropdown({
 
           {/* Bath */}
           <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="w-16 text-sm font-semibold text-[hsl(var(--brand-ink))]">
-                Bath
-              </div>
+            <div className="grid gap-3 sm:flex sm:items-center sm:gap-3">
+              <div className={cn(labelClass, "sm:w-16")}>Bath</div>
               <ToggleGroup
                 type="single"
                 value={String(draft.bath)}
@@ -187,7 +184,7 @@ export function HeroFiltersDropdown({
                     bath: v === "all" ? "all" : (Number(v) as 1 | 2 | 3 | 4),
                   }));
                 }}
-                className="flex flex-wrap justify-start gap-2"
+                className="flex w-full flex-wrap justify-start gap-2 sm:w-auto"
               >
                 {["all", "1", "2", "3", "4"].map((v) => (
                   <ToggleGroupItem
@@ -203,15 +200,11 @@ export function HeroFiltersDropdown({
           </div>
 
           <div className="md:col-span-2">
-            <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">
-              Other Specs
-            </div>
+            <div className={labelClass}>Other Specs</div>
 
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <div className="text-xs font-semibold text-[hsl(var(--brand-ink))]/70">
-                  View
-                </div>
+                <div className={subLabelClass}>View</div>
                 <Select
                   value={draft.view}
                   onValueChange={(v) =>
@@ -234,9 +227,7 @@ export function HeroFiltersDropdown({
               </div>
 
               <div className="space-y-2">
-                <div className="text-xs font-semibold text-[hsl(var(--brand-ink))]/70">
-                  Reference Number
-                </div>
+                <div className={subLabelClass}>Reference Number</div>
                 <Input
                   value={draft.referenceNumber}
                   onChange={(e) =>
@@ -249,10 +240,9 @@ export function HeroFiltersDropdown({
             </div>
 
             <div className="mt-5">
-              <div className="text-xs font-semibold text-[hsl(var(--brand-ink))]/70">
-                Amenities
-              </div>
-              <div className="mt-3 flex flex-wrap gap-x-5 gap-y-3">
+              <div className={subLabelClass}>Amenities</div>
+
+              <div className="mt-3 grid grid-cols-2 gap-x-5 gap-y-3 sm:grid-cols-3">
                 <AmenityCheck
                   label="Study"
                   checked={draft.amenities.study}
@@ -304,6 +294,7 @@ export function HeroFiltersDropdown({
                   }
                 />
               </div>
+
               <div className="mt-2 text-xs text-muted-foreground">
                 {selectedAmenitiesCount > 0
                   ? `${selectedAmenitiesCount} selected`
@@ -311,7 +302,7 @@ export function HeroFiltersDropdown({
               </div>
             </div>
 
-            <div className="mt-6 grid grid-cols-1 gap-3 sm:flex sm:w-auto sm:flex-row sm:items-center sm:justify-start">
+            <div className="mt-6 grid grid-cols-1 gap-3 sm:flex sm:w-auto sm:flex-row sm:items-center sm:justify-end">
               <Button
                 type="button"
                 variant="outline"
@@ -351,7 +342,7 @@ function AmenityCheck({
         onCheckedChange={(v) => onCheckedChange(Boolean(v))}
         className="h-4 w-4 rounded-[5px]"
       />
-      <span>{label}</span>
+      <span className="min-w-0 truncate">{label}</span>
     </label>
   );
 }
