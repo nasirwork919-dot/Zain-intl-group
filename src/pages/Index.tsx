@@ -13,9 +13,7 @@ import {
   type HeroBarFilters,
   HeroSearchBar,
 } from "@/components/real-estate/HeroSearchBar";
-import {
-  type SearchFilters,
-} from "@/components/real-estate/HeroSearch";
+import { type SearchFilters } from "@/components/real-estate/HeroSearch";
 import {
   featuredProperties,
   type Property,
@@ -179,8 +177,6 @@ const Index = () => {
         }}
       />
 
-      <YourHomeYourWay className="-mt-6" />
-
       <ScrollingTextSeparator
         label="Signature projects"
         items={[
@@ -309,6 +305,9 @@ const Index = () => {
           />
         </div>
       </div>
+
+      {/* NEW placement: directly under Explore Communities */}
+      <YourHomeYourWay className="mt-6" />
 
       <ScrollingTextSeparator
         label="Featured listings"
@@ -445,16 +444,19 @@ const Index = () => {
             <div className="p-6">
               <div className="text-sm font-semibold">What you’ll get</div>
               <ul className="mt-3 grid gap-2 text-sm text-muted-foreground">
-                {["Project comparisons", "Payment plan breakdowns", "ROI & rental insights", "Priority access"].map(
-                  (t) => (
-                    <li key={t} className="inline-flex items-center gap-2">
-                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-[5px] bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))] ring-1 ring-black/5">
-                        <CheckCircle2 className="h-4 w-4" />
-                      </span>
-                      <span>{t}</span>
-                    </li>
-                  ),
-                )}
+                {[
+                  "Project comparisons",
+                  "Payment plan breakdowns",
+                  "ROI & rental insights",
+                  "Priority access",
+                ].map((t) => (
+                  <li key={t} className="inline-flex items-center gap-2">
+                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-[5px] bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))] ring-1 ring-black/5">
+                      <CheckCircle2 className="h-4 w-4" />
+                    </span>
+                    <span>{t}</span>
+                  </li>
+                ))}
               </ul>
 
               <Button
