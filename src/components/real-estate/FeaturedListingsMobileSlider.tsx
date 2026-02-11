@@ -2,8 +2,8 @@ import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import type { Property } from "@/components/real-estate/site-data";
-import { PropertyCard } from "@/components/real-estate/PropertyCard";
 import { cn } from "@/lib/utils";
+import { FeaturedPropertyLaunchCard } from "@/components/real-estate/FeaturedPropertyLaunchCard";
 
 function paginate<T>(items: T[], page: number, perPage: number) {
   const start = page * perPage;
@@ -36,13 +36,13 @@ export function FeaturedListingsMobileSlider({
   return (
     <div className={cn("block md:hidden", className)}>
       <div className="grid gap-4">
-        {visible.map((p, idx) => (
-          <PropertyCard
-            key={p.id}
-            property={p}
-            featured={page === 0 && idx === 0}
-            onClick={() => onOpenProperty(p)}
-          />
+        {visible.map((p) => (
+          <div key={p.id} className="h-[520px]">
+            <FeaturedPropertyLaunchCard
+              property={p}
+              onOpen={() => onOpenProperty(p)}
+            />
+          </div>
         ))}
       </div>
 

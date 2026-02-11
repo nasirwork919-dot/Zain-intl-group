@@ -29,6 +29,7 @@ import { ScrollUpButton } from "@/components/ScrollUpButton";
 import { FeaturedListingsMobileSlider } from "@/components/real-estate/FeaturedListingsMobileSlider";
 import { YourHomeYourWay } from "@/components/real-estate/YourHomeYourWay";
 import { SiteFooter } from "@/components/real-estate/SiteFooter";
+import { FeaturedPropertyLaunchCard } from "@/components/real-estate/FeaturedPropertyLaunchCard";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -353,13 +354,13 @@ const Index = () => {
           </div>
 
           <div className="mt-6 hidden gap-4 md:grid md:grid-cols-3">
-            {results.map((p, idx) => (
-              <PropertyCard
-                key={p.id}
-                property={p}
-                featured={idx === 0}
-                onClick={() => openProperty(p)}
-              />
+            {results.map((p) => (
+              <div key={p.id} className="h-[520px]">
+                <FeaturedPropertyLaunchCard
+                  property={p}
+                  onOpen={() => openProperty(p)}
+                />
+              </div>
             ))}
           </div>
 
