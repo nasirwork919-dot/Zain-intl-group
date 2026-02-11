@@ -280,7 +280,6 @@ export function RealEstateHeader() {
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex h-14 items-center justify-between gap-4">
           <div className="flex items-center gap-3 lg:hidden">
-            <UtilityPill>Your Voice Matters</UtilityPill>
             <UtilityPill>List Your Property</UtilityPill>
           </div>
 
@@ -289,7 +288,6 @@ export function RealEstateHeader() {
           <div className="flex items-center gap-3">
             <div className="hidden items-center gap-4 text-xs font-semibold text-white/90 sm:flex">
               <div className="hidden items-center gap-3 lg:flex">
-                <UtilityPill>Your Voice Matters</UtilityPill>
                 <UtilityPill>List Your Property</UtilityPill>
               </div>
 

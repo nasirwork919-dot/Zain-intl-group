@@ -38,19 +38,6 @@ function langLabel(code: LanguageCode) {
   }
 }
 
-function currencyLabel(code: Currency) {
-  switch (code) {
-    case "AED":
-      return "AED (Emirati Dirham)";
-    case "USD":
-      return "USD";
-    case "GBP":
-      return "GBP";
-    case "EUR":
-      return "EUR";
-  }
-}
-
 export function TopBarPreferencesPopover({
   className,
   trigger,
@@ -71,13 +58,7 @@ export function TopBarPreferencesPopover({
   );
 
   const currencies = useMemo(
-    () =>
-      [
-        { code: "AED" as const, label: "AED (Emirati Dirham)" },
-        { code: "USD" as const, label: "USD" },
-        { code: "GBP" as const, label: "GBP" },
-        { code: "EUR" as const, label: "EUR" },
-      ] as const,
+    () => ["AED", "EUR", "GBP", "USD"] as const,
     [],
   );
 
@@ -88,11 +69,9 @@ export function TopBarPreferencesPopover({
   const [language, setLanguage] = useState<LanguageCode>("en");
   const [currency, setCurrency] = useState<Currency>("AED");
 
-  // IMPORTANT: Select content renders in a portal, so hover-leave would close the popover.
-  // Track select-open state and block the close timer while a select is open.
+  // Select content renders in a portal — keep popover open while select is open.
   const [languageSelectOpen, setLanguageSelectOpen] = useState(false);
-  const [currencySelectOpen, setCurrencySelectOpen] = useState(false);
-  const anySelectOpen = languageSelectOpen || currencySelectOpen;
+  const anySelectOpen = languageSelectOpen;
 
   const closeTimer = useRef<number | null>(null);
 
@@ -105,7 +84,6 @@ export function TopBarPreferencesPopover({
     cancelClose();
     if (anySelectOpen) return;
     closeTimer.current = window.setTimeout(() => {
-      // re-check in case a select opened while waiting
       if (!anySelectOpen) setOpen(false);
     }, 160);
   };
@@ -114,7 +92,6 @@ export function TopBarPreferencesPopover({
     <Popover
       open={open}
       onOpenChange={(v) => {
-        // never auto-close while a select is open
         if (!v && anySelectOpen) return;
         setOpen(v);
       }}
@@ -184,7 +161,6 @@ export function TopBarPreferencesPopover({
                     cancelClose();
                     setOpen(true);
                   } else {
-                    // when closing the select, don't immediately close popover unless mouse actually left
                     cancelClose();
                   }
                 }}
@@ -210,35 +186,33 @@ export function TopBarPreferencesPopover({
 
             <div>
               <div className="text-sm font-semibold text-[#111827]">Currency</div>
-              <Select
-                open={currencySelectOpen}
-                onOpenChange={(v) => {
-                  setCurrencySelectOpen(v);
-                  if (v) {
-                    cancelClose();
-                    setOpen(true);
-                  } else {
-                    cancelClose();
-                  }
-                }}
-                value={currency}
-                onValueChange={(v) => setCurrency(v as Currency)}
-              >
-                <SelectTrigger className="mt-3 h-12 rounded-full bg-muted/40 px-5 text-sm font-semibold text-[#111827] ring-1 ring-black/10 focus:ring-2 focus:ring-black/10">
-                  <SelectValue placeholder="Select currency" />
-                </SelectTrigger>
-                <SelectContent className="rounded-2xl p-2">
-                  {currencies.map((c) => (
-                    <SelectItem
-                      key={c.code}
-                      value={c.code}
-                      className="rounded-xl"
+              <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+                {currencies.map((code) => {
+                  const active = currency === code;
+                  return (
+                    <button
+                      key={code}
+                      type="button"
+                      onClick={() => setCurrency(code)}
+                      className={cn(
+                        "h-11 rounded-full px-5 text-sm font-semibold transition",
+                        "ring-1 ring-black/10",
+                        active
+                          ? "bg-[#111827] text-white ring-transparent"
+                          : "bg-white text-[#111827] hover:bg-muted/40",
+                        "focus:outline-none focus-visible:ring-2 focus-visible:ring-black/10",
+                      )}
+                      aria-pressed={active}
                     >
-                      {c.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                      {code}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="mt-3 text-center text-[11px] font-semibold text-muted-foreground">
+                Selected: {currency}
+              </div>
             </div>
 
             <Button
@@ -253,7 +227,7 @@ export function TopBarPreferencesPopover({
 
             <div className="text-center text-[11px] text-muted-foreground">
               Unit: {unit.toUpperCase()} · Language: {langLabel(language)} ·
-              Currency: {currencyLabel(currency)}
+              Currency: {currency}
             </div>
           </div>
         </PopoverContent>
