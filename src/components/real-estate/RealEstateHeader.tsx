@@ -43,11 +43,11 @@ function useActiveSection(ids: string[]) {
         const visible = entries
           .filter((e) => e.isIntersecting)
           .sort(
-            (a, b) => (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0),
+            (a, b) => (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0)
           )[0];
         if (visible?.target?.id) setActive(visible.target.id);
       },
-      { rootMargin: "-30% 0px -60% 0px", threshold: [0.1, 0.25, 0.5] },
+      { rootMargin: "-30% 0px -60% 0px", threshold: [0.1, 0.25, 0.5] }
     );
 
     sections.forEach((s) => obs.observe(s));
@@ -74,6 +74,16 @@ type NavItem =
     }
   | { label: string; type: "noop"; hasChevron?: boolean };
 
+type MobileSectionKey =
+  | "buy"
+  | "rent"
+  | "communities"
+  | "developers"
+  | "marketTrends"
+  | "services"
+  | "more"
+  | null;
+
 function MobileMenuSection({
   title,
   open,
@@ -86,19 +96,22 @@ function MobileMenuSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl bg-muted/35 ring-1 ring-black/5">
+    <div className="rounded-[5px] bg-muted/35 ring-1 ring-black/5">
       <button
         type="button"
         onClick={onToggle}
         className={cn(
           "flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-semibold",
-          "hover:bg-muted/50 rounded-2xl",
+          "hover:bg-muted/50 rounded-[5px]"
         )}
         aria-expanded={open}
       >
         <span>{title}</span>
         <ChevronDown
-          className={cn("h-4 w-4 opacity-70 transition-transform", open && "rotate-180")}
+          className={cn(
+            "h-4 w-4 opacity-70 transition-transform",
+            open && "rotate-180"
+          )}
         />
       </button>
       {open ? <div className="px-3 pb-3">{children}</div> : null}
@@ -118,9 +131,9 @@ function MobileMenuItem({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold",
+        "flex w-full items-center justify-between rounded-[5px] px-3 py-3 text-left text-sm font-semibold",
         "bg-white/70 ring-1 ring-black/5 hover:bg-white",
-        "text-[#11124a]",
+        "text-[#11124a]"
       )}
     >
       <span>{label}</span>
@@ -147,13 +160,9 @@ export function RealEstateHeader() {
   const [servicesOpen, setServicesOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
 
-  const [mobileBuyOpen, setMobileBuyOpen] = useState(false);
-  const [mobileRentOpen, setMobileRentOpen] = useState(false);
-  const [mobileCommunitiesOpen, setMobileCommunitiesOpen] = useState(false);
-  const [mobileDevelopersOpen, setMobileDevelopersOpen] = useState(false);
-  const [mobileMarketTrendsOpen, setMobileMarketTrendsOpen] = useState(false);
-  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
-  const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
+  const [mobileOpenSection, setMobileOpenSection] = useState<MobileSectionKey>(
+    null
+  );
 
   const [mobileLanguage, setMobileLanguage] = useState("en");
   const [mobileCurrency, setMobileCurrency] = useState("AED");
@@ -231,7 +240,7 @@ export function RealEstateHeader() {
         mega: "more",
       },
     ],
-    [],
+    []
   );
 
   const activeId = active;
@@ -254,7 +263,7 @@ export function RealEstateHeader() {
         "shadow-sm ring-1 ring-black/10",
         "hover:bg-white/95",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
-        className,
+        className
       )}
     >
       {children}
@@ -275,7 +284,7 @@ export function RealEstateHeader() {
         "inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold leading-none",
         "bg-white text-[#111827] ring-1 ring-black/10",
         "hover:bg-white/95",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
       )}
     >
       <Phone className="h-4 w-4" />
@@ -317,17 +326,14 @@ export function RealEstateHeader() {
 
             <div className="hidden items-center gap-3 md:flex">
               <PhonePill label="Free Property Valuation" />
-              <PhonePill
-                label="Contact Us"
-                onClick={() => scrollTo("#contact")}
-              />
+              <PhonePill label="Contact Us" onClick={() => scrollTo("#contact")} />
               <button
                 type="button"
                 className={cn(
                   "inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold leading-none",
                   "bg-white text-[#111827] ring-1 ring-black/10",
                   "hover:bg-white/95",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
                 )}
               >
                 <User className="h-4 w-4" />
@@ -335,21 +341,12 @@ export function RealEstateHeader() {
               </button>
             </div>
 
-            {/* Mobile */}
             <div className="md:hidden">
               <Sheet
                 open={mobileOpen}
                 onOpenChange={(v) => {
                   setMobileOpen(v);
-                  if (!v) {
-                    setMobileBuyOpen(false);
-                    setMobileRentOpen(false);
-                    setMobileCommunitiesOpen(false);
-                    setMobileDevelopersOpen(false);
-                    setMobileMarketTrendsOpen(false);
-                    setMobileServicesOpen(false);
-                    setMobileMoreOpen(false);
-                  }
+                  if (!v) setMobileOpenSection(null);
                 }}
               >
                 <SheetTrigger asChild>
@@ -362,273 +359,302 @@ export function RealEstateHeader() {
                   </Button>
                 </SheetTrigger>
 
-                <SheetContent side="right" className="w-[340px]">
-                  <SheetHeader>
-                    <SheetTitle className="text-left">Menu</SheetTitle>
-                  </SheetHeader>
+                <SheetContent side="right" className="w-[340px] p-0">
+                  <div className="flex h-full flex-col">
+                    <div className="px-4 pt-4">
+                      <SheetHeader>
+                        <SheetTitle className="text-left">Menu</SheetTitle>
+                      </SheetHeader>
+                    </div>
 
-                  <div className="mt-4 grid gap-3">
-                    <MobileMenuSection
-                      title="Buy"
-                      open={mobileBuyOpen}
-                      onToggle={() => setMobileBuyOpen((v) => !v)}
-                    >
-                      <div className="grid gap-2">
-                        {["Apartments", "Townhouses", "Penthouses", "Villas", "View All"].map(
-                          (label) => (
-                            <MobileMenuItem
-                              key={label}
-                              label={label}
-                              onClick={() => {
-                                scrollTo("#listings");
-                                setMobileOpen(false);
-                                toast({
-                                  title: `Buy · ${label}`,
-                                  description:
-                                    "Showing listings — we can wire these to filters next.",
-                                });
-                              }}
-                            />
-                          ),
-                        )}
-                      </div>
-                    </MobileMenuSection>
-
-                    <MobileMenuSection
-                      title="Rent"
-                      open={mobileRentOpen}
-                      onToggle={() => setMobileRentOpen((v) => !v)}
-                    >
-                      <div className="grid gap-2">
-                        {["Apartments", "Offices", "Townhouses", "Villas", "Commercial"].map(
-                          (label) => (
-                            <MobileMenuItem
-                              key={label}
-                              label={label}
-                              onClick={() => {
-                                scrollTo("#listings");
-                                setMobileOpen(false);
-                                toast({
-                                  title: `Rent · ${label}`,
-                                  description:
-                                    "Showing listings — we can wire these to filters next.",
-                                });
-                              }}
-                            />
-                          ),
-                        )}
-                      </div>
-                    </MobileMenuSection>
-
-                    <MobileMenuSection
-                      title="Communities"
-                      open={mobileCommunitiesOpen}
-                      onToggle={() => setMobileCommunitiesOpen((v) => !v)}
-                    >
-                      <div className="grid gap-2">
-                        {[
-                          "Dubai Marina",
-                          "Dubai Creek Harbour",
-                          "Jumeirah Village Circle (JVC)",
-                          "Dubai Hills Estate",
-                          "Jumeirah Beach Residence (JBR)",
-                          "Palm Jebel Ali",
-                          "Downtown Dubai",
-                          "Palm Jumeirah",
-                        ].map((label) => (
-                          <MobileMenuItem
-                            key={label}
-                            label={label}
-                            onClick={() => {
-                              scrollTo("#projects");
-                              setMobileOpen(false);
-                              toast({
-                                title: `Community · ${label}`,
-                                description:
-                                  "Opened communities section — we can wire this to filters next.",
-                              });
-                            }}
-                          />
-                        ))}
-                      </div>
-                    </MobileMenuSection>
-
-                    <MobileMenuSection
-                      title="Developers"
-                      open={mobileDevelopersOpen}
-                      onToggle={() => setMobileDevelopersOpen((v) => !v)}
-                    >
-                      <div className="grid gap-2">
-                        {["Emaar", "Nakheel", "Danube", "Select Group", "View All Developers"].map(
-                          (label) => (
-                            <MobileMenuItem
-                              key={label}
-                              label={label}
-                              onClick={() => {
-                                scrollTo("#projects");
-                                setMobileOpen(false);
-                                toast({
-                                  title: `Developer · ${label}`,
-                                  description:
-                                    "Opened projects section — we can wire this to a developer filter next.",
-                                });
-                              }}
-                            />
-                          ),
-                        )}
-                      </div>
-                    </MobileMenuSection>
-
-                    <MobileMenuSection
-                      title="Market Trends"
-                      open={mobileMarketTrendsOpen}
-                      onToggle={() => setMobileMarketTrendsOpen((v) => !v)}
-                    >
-                      <div className="grid gap-2">
-                        {[
-                          "Daily Transaction",
-                          "Rental Transaction",
-                          "Sale Transaction",
-                          "Market Guide",
-                        ].map((label) => (
-                          <MobileMenuItem
-                            key={label}
-                            label={label}
-                            onClick={() => {
-                              scrollTo("#about");
-                              setMobileOpen(false);
-                              toast({
-                                title: `Market Trends · ${label}`,
-                                description:
-                                  "We can create these pages/sections next.",
-                              });
-                            }}
-                          />
-                        ))}
-                      </div>
-                    </MobileMenuSection>
-
-                    <MobileMenuSection
-                      title="Services"
-                      open={mobileServicesOpen}
-                      onToggle={() => setMobileServicesOpen((v) => !v)}
-                    >
-                      <div className="grid gap-2">
-                        {[
-                          "Asset Management",
-                          "Holiday Homes",
-                          "Commercial",
-                          "Investment Advisory",
-                          "Luxury",
-                          "Property Valuation",
-                          "List Your Property",
-                          "Mortgage Advisory",
-                        ].map((label) => (
-                          <MobileMenuItem
-                            key={label}
-                            label={label}
-                            onClick={() => {
-                              scrollTo("#contact");
-                              setMobileOpen(false);
-                              toast({
-                                title: `Services · ${label}`,
-                                description:
-                                  "We can create a dedicated service page next.",
-                              });
-                            }}
-                          />
-                        ))}
-                      </div>
-                    </MobileMenuSection>
-
-                    <MobileMenuSection
-                      title="More"
-                      open={mobileMoreOpen}
-                      onToggle={() => setMobileMoreOpen((v) => !v)}
-                    >
-                      <div className="grid gap-2">
-                        {["About Us", "Careers", "Reports", "News", "Blogs", "Media"].map(
-                          (label) => (
-                            <MobileMenuItem
-                              key={label}
-                              label={label}
-                              onClick={() => {
-                                scrollTo("#about");
-                                setMobileOpen(false);
-                                toast({
-                                  title: `More · ${label}`,
-                                  description:
-                                    "We can create these pages/sections next.",
-                                });
-                              }}
-                            />
-                          ),
-                        )}
-                      </div>
-                    </MobileMenuSection>
-
-                    <div className="rounded-2xl bg-muted/35 p-4 ring-1 ring-black/5">
-                      <div className="text-xs font-semibold text-muted-foreground">
-                        Preferences
-                      </div>
-
-                      <div className="mt-3 grid gap-3">
-                        <div>
-                          <div className="text-xs font-semibold text-foreground">
-                            Language
-                          </div>
-                          <Select
-                            value={mobileLanguage}
-                            onValueChange={(v) => setMobileLanguage(v)}
-                          >
-                            <SelectTrigger className="mt-2 h-11 rounded-xl bg-white/70 ring-1 ring-black/5">
-                              <SelectValue placeholder="Select language" />
-                            </SelectTrigger>
-                            <SelectContent className="rounded-xl">
-                              <SelectItem value="en">English</SelectItem>
-                              <SelectItem value="ar">العربية</SelectItem>
-                              <SelectItem value="zh">中文</SelectItem>
-                              <SelectItem value="ru">Русский</SelectItem>
-                              <SelectItem value="de">Deutsch</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        <div>
-                          <div className="text-xs font-semibold text-foreground">
-                            Currency
-                          </div>
-                          <Select
-                            value={mobileCurrency}
-                            onValueChange={(v) => setMobileCurrency(v)}
-                          >
-                            <SelectTrigger className="mt-2 h-11 rounded-xl bg-white/70 ring-1 ring-black/5">
-                              <SelectValue placeholder="Select currency" />
-                            </SelectTrigger>
-                            <SelectContent className="rounded-xl">
-                              <SelectItem value="AED">AED</SelectItem>
-                              <SelectItem value="USD">USD</SelectItem>
-                              <SelectItem value="USDT">USDT</SelectItem>
-                              <SelectItem value="BTC">BTC</SelectItem>
-                              <SelectItem value="ETH">ETH</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        <Separator className="my-1" />
-
-                        <Button
-                          className="h-11 rounded-xl bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
-                          onClick={() => {
-                            toast({
-                              title: "Saved",
-                              description: `Language: ${mobileLanguage.toUpperCase()} · Currency: ${mobileCurrency}`,
-                            });
-                            setMobileOpen(false);
-                          }}
+                    {/* Scrollable navbar content only */}
+                    <div className="flex-1 overflow-y-auto px-4 pb-6 pt-4">
+                      <div className="grid gap-3">
+                        <MobileMenuSection
+                          title="Buy"
+                          open={mobileOpenSection === "buy"}
+                          onToggle={() =>
+                            setMobileOpenSection((k) => (k === "buy" ? null : "buy"))
+                          }
                         >
-                          Save preferences
-                        </Button>
+                          <div className="grid gap-2">
+                            {["Apartments", "Townhouses", "Penthouses", "Villas", "View All"].map(
+                              (label) => (
+                                <MobileMenuItem
+                                  key={label}
+                                  label={label}
+                                  onClick={() => {
+                                    scrollTo("#listings");
+                                    setMobileOpen(false);
+                                    toast({
+                                      title: `Buy · ${label}`,
+                                      description:
+                                        "Showing listings — we can wire these to filters next.",
+                                    });
+                                  }}
+                                />
+                              )
+                            )}
+                          </div>
+                        </MobileMenuSection>
+
+                        <MobileMenuSection
+                          title="Rent"
+                          open={mobileOpenSection === "rent"}
+                          onToggle={() =>
+                            setMobileOpenSection((k) => (k === "rent" ? null : "rent"))
+                          }
+                        >
+                          <div className="grid gap-2">
+                            {["Apartments", "Offices", "Townhouses", "Villas", "Commercial"].map(
+                              (label) => (
+                                <MobileMenuItem
+                                  key={label}
+                                  label={label}
+                                  onClick={() => {
+                                    scrollTo("#listings");
+                                    setMobileOpen(false);
+                                    toast({
+                                      title: `Rent · ${label}`,
+                                      description:
+                                        "Showing listings — we can wire these to filters next.",
+                                    });
+                                  }}
+                                />
+                              )
+                            )}
+                          </div>
+                        </MobileMenuSection>
+
+                        <MobileMenuSection
+                          title="Communities"
+                          open={mobileOpenSection === "communities"}
+                          onToggle={() =>
+                            setMobileOpenSection((k) =>
+                              k === "communities" ? null : "communities"
+                            )
+                          }
+                        >
+                          <div className="grid gap-2">
+                            {[
+                              "Dubai Marina",
+                              "Dubai Creek Harbour",
+                              "Jumeirah Village Circle (JVC)",
+                              "Dubai Hills Estate",
+                              "Jumeirah Beach Residence (JBR)",
+                              "Palm Jebel Ali",
+                              "Downtown Dubai",
+                              "Palm Jumeirah",
+                            ].map((label) => (
+                              <MobileMenuItem
+                                key={label}
+                                label={label}
+                                onClick={() => {
+                                  scrollTo("#projects");
+                                  setMobileOpen(false);
+                                  toast({
+                                    title: `Community · ${label}`,
+                                    description:
+                                      "Opened communities section — we can wire this to filters next.",
+                                  });
+                                }}
+                              />
+                            ))}
+                          </div>
+                        </MobileMenuSection>
+
+                        <MobileMenuSection
+                          title="Developers"
+                          open={mobileOpenSection === "developers"}
+                          onToggle={() =>
+                            setMobileOpenSection((k) =>
+                              k === "developers" ? null : "developers"
+                            )
+                          }
+                        >
+                          <div className="grid gap-2">
+                            {["Emaar", "Nakheel", "Danube", "Select Group", "View All Developers"].map(
+                              (label) => (
+                                <MobileMenuItem
+                                  key={label}
+                                  label={label}
+                                  onClick={() => {
+                                    scrollTo("#projects");
+                                    setMobileOpen(false);
+                                    toast({
+                                      title: `Developer · ${label}`,
+                                      description:
+                                        "Opened projects section — we can wire this to a developer filter next.",
+                                    });
+                                  }}
+                                />
+                              )
+                            )}
+                          </div>
+                        </MobileMenuSection>
+
+                        <MobileMenuSection
+                          title="Market Trends"
+                          open={mobileOpenSection === "marketTrends"}
+                          onToggle={() =>
+                            setMobileOpenSection((k) =>
+                              k === "marketTrends" ? null : "marketTrends"
+                            )
+                          }
+                        >
+                          <div className="grid gap-2">
+                            {[
+                              "Daily Transaction",
+                              "Rental Transaction",
+                              "Sale Transaction",
+                              "Market Guide",
+                            ].map((label) => (
+                              <MobileMenuItem
+                                key={label}
+                                label={label}
+                                onClick={() => {
+                                  scrollTo("#about");
+                                  setMobileOpen(false);
+                                  toast({
+                                    title: `Market Trends · ${label}`,
+                                    description:
+                                      "We can create these pages/sections next.",
+                                  });
+                                }}
+                              />
+                            ))}
+                          </div>
+                        </MobileMenuSection>
+
+                        <MobileMenuSection
+                          title="Services"
+                          open={mobileOpenSection === "services"}
+                          onToggle={() =>
+                            setMobileOpenSection((k) =>
+                              k === "services" ? null : "services"
+                            )
+                          }
+                        >
+                          <div className="grid gap-2">
+                            {[
+                              "Asset Management",
+                              "Holiday Homes",
+                              "Commercial",
+                              "Investment Advisory",
+                              "Luxury",
+                              "Property Valuation",
+                              "List Your Property",
+                              "Mortgage Advisory",
+                            ].map((label) => (
+                              <MobileMenuItem
+                                key={label}
+                                label={label}
+                                onClick={() => {
+                                  scrollTo("#contact");
+                                  setMobileOpen(false);
+                                  toast({
+                                    title: `Services · ${label}`,
+                                    description:
+                                      "We can create a dedicated service page next.",
+                                  });
+                                }}
+                              />
+                            ))}
+                          </div>
+                        </MobileMenuSection>
+
+                        <MobileMenuSection
+                          title="More"
+                          open={mobileOpenSection === "more"}
+                          onToggle={() =>
+                            setMobileOpenSection((k) => (k === "more" ? null : "more"))
+                          }
+                        >
+                          <div className="grid gap-2">
+                            {["About Us", "Careers", "Reports", "News", "Blogs", "Media"].map(
+                              (label) => (
+                                <MobileMenuItem
+                                  key={label}
+                                  label={label}
+                                  onClick={() => {
+                                    scrollTo("#about");
+                                    setMobileOpen(false);
+                                    toast({
+                                      title: `More · ${label}`,
+                                      description:
+                                        "We can create these pages/sections next.",
+                                    });
+                                  }}
+                                />
+                              )
+                            )}
+                          </div>
+                        </MobileMenuSection>
+
+                        <div className="rounded-[5px] bg-muted/35 p-4 ring-1 ring-black/5">
+                          <div className="text-xs font-semibold text-muted-foreground">
+                            Preferences
+                          </div>
+
+                          <div className="mt-3 grid gap-3">
+                            <div>
+                              <div className="text-xs font-semibold text-foreground">
+                                Language
+                              </div>
+                              <Select
+                                value={mobileLanguage}
+                                onValueChange={(v) => setMobileLanguage(v)}
+                              >
+                                <SelectTrigger className="mt-2 h-11 rounded-[5px] bg-white/70 ring-1 ring-black/5">
+                                  <SelectValue placeholder="Select language" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-[5px]">
+                                  <SelectItem value="en">English</SelectItem>
+                                  <SelectItem value="ar">العربية</SelectItem>
+                                  <SelectItem value="zh">中文</SelectItem>
+                                  <SelectItem value="ru">Русский</SelectItem>
+                                  <SelectItem value="de">Deutsch</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            <div>
+                              <div className="text-xs font-semibold text-foreground">
+                                Currency
+                              </div>
+                              <Select
+                                value={mobileCurrency}
+                                onValueChange={(v) => setMobileCurrency(v)}
+                              >
+                                <SelectTrigger className="mt-2 h-11 rounded-[5px] bg-white/70 ring-1 ring-black/5">
+                                  <SelectValue placeholder="Select currency" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-[5px]">
+                                  <SelectItem value="AED">AED</SelectItem>
+                                  <SelectItem value="USD">USD</SelectItem>
+                                  <SelectItem value="USDT">USDT</SelectItem>
+                                  <SelectItem value="BTC">BTC</SelectItem>
+                                  <SelectItem value="ETH">ETH</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            <Separator className="my-1" />
+
+                            <Button
+                              className="h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
+                              onClick={() => {
+                                toast({
+                                  title: "Saved",
+                                  description: `Language: ${mobileLanguage.toUpperCase()} · Currency: ${mobileCurrency}`,
+                                });
+                                setMobileOpen(false);
+                              }}
+                            >
+                              Save preferences
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -678,13 +704,14 @@ export function RealEstateHeader() {
                   ? activeId === item.href.replace("#", "")
                   : false;
 
-              const isBuy = item.mega === "buy";
-              const isRent = item.mega === "rent";
-              const isCommunities = item.mega === "communities";
-              const isDevelopers = item.mega === "developers";
-              const isMarketTrends = item.mega === "marketTrends";
-              const isServices = item.mega === "services";
-              const isMore = item.mega === "more";
+              const mega = item.type === "scroll" ? item.mega : undefined;
+              const isBuy = mega === "buy";
+              const isRent = mega === "rent";
+              const isCommunities = mega === "communities";
+              const isDevelopers = mega === "developers";
+              const isMarketTrends = mega === "marketTrends";
+              const isServices = mega === "services";
+              const isMore = mega === "more";
 
               const expanded = isBuy
                 ? buyOpen
@@ -707,6 +734,16 @@ export function RealEstateHeader() {
                   key={item.label}
                   type="button"
                   onClick={() => {
+                    const closeAllAnd = () => {
+                      setBuyOpen(false);
+                      setRentOpen(false);
+                      setCommunitiesOpen(false);
+                      setDevelopersOpen(false);
+                      setMarketTrendsOpen(false);
+                      setServicesOpen(false);
+                      setMoreOpen(false);
+                    };
+
                     if (isBuy) {
                       setBuyOpen((v) => !v);
                       setRentOpen(false);
@@ -778,7 +815,7 @@ export function RealEstateHeader() {
                       return;
                     }
 
-                    closeMegas();
+                    closeAllAnd();
                     if (item.type === "scroll") scrollTo(item.href);
                   }}
                   onMouseEnter={() => {
@@ -857,7 +894,7 @@ export function RealEstateHeader() {
                       !isMarketTrends &&
                       !isServices &&
                       !isMore &&
-                      "underline underline-offset-8 decoration-black/30",
+                      "underline underline-offset-8 decoration-black/30"
                   )}
                   aria-expanded={expanded}
                 >
@@ -873,7 +910,7 @@ export function RealEstateHeader() {
                           (isMarketTrends && marketTrendsOpen) ||
                           (isServices && servicesOpen) ||
                           (isMore && moreOpen)) &&
-                          "rotate-180",
+                          "rotate-180"
                       )}
                     />
                   ) : null}
@@ -888,7 +925,7 @@ export function RealEstateHeader() {
               "hidden lg:inline-flex",
               "h-11 w-11 items-center justify-center rounded-xl",
               "bg-[#111827] text-white shadow-sm hover:bg-[#111827]/90",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35"
             )}
             aria-label="Calculator"
             onClick={() =>
@@ -907,7 +944,7 @@ export function RealEstateHeader() {
               "lg:hidden hidden sm:inline-flex",
               "h-11 w-11 items-center justify-center rounded-xl",
               "bg-[#111827] text-white shadow-sm hover:bg-[#111827]/90",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35"
             )}
             aria-label="Calculator"
             onClick={() =>
@@ -925,10 +962,7 @@ export function RealEstateHeader() {
   );
 
   return (
-    <header
-      className="fixed inset-x-0 top-0 z-50"
-      onMouseLeave={() => closeMegas()}
-    >
+    <header className="fixed inset-x-0 top-0 z-50" onMouseLeave={closeMegas}>
       <TopBar />
       <MainBar />
 
