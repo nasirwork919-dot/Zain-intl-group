@@ -34,7 +34,7 @@ function SegTab({
         "h-11 min-w-[110px] rounded-[5px] px-5 text-sm font-semibold transition",
         "ring-1 ring-black/10",
         active
-          ? "bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))]"
+          ? "bg-[hsl(var(--brand))]/12 text-[hsl(var(--brand-ink))] ring-[hsl(var(--brand))]/25"
           : "bg-white text-[hsl(var(--brand-ink))]/80 hover:bg-muted/40 hover:text-[hsl(var(--brand-ink))]",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
       )}
@@ -62,7 +62,7 @@ function Pill({
         "h-10 rounded-[5px] px-5 text-sm font-semibold transition",
         "ring-1 ring-black/10",
         active
-          ? "bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))]"
+          ? "bg-[hsl(var(--brand))]/12 text-[hsl(var(--brand-ink))] ring-[hsl(var(--brand))]/25"
           : "bg-white text-[hsl(var(--brand-ink))]/80 hover:bg-muted/40 hover:text-[hsl(var(--brand-ink))]",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
       )}
@@ -133,7 +133,7 @@ export function HeroSearchBarLayout({
           <Button
             onClick={onSubmit}
             className={cn(
-              "h-11 rounded-[5px] bg-emerald-600 text-white hover:bg-emerald-600/92",
+              "h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92",
               "font-semibold",
             )}
           >
@@ -145,7 +145,10 @@ export function HeroSearchBarLayout({
         <div className="mt-3 grid gap-3 lg:grid-cols-[1fr_180px_200px_200px]">
           {/* Pills */}
           <div className="flex flex-wrap gap-2">
-            <Pill active={value.query.toLowerCase() === "all"} onClick={() => onChange({ ...value, query: "all" })}>
+            <Pill
+              active={value.query.toLowerCase() === "all"}
+              onClick={() => onChange({ ...value, query: "all" })}
+            >
               All
             </Pill>
             <Pill
@@ -166,10 +169,13 @@ export function HeroSearchBarLayout({
           <Select
             value={value.propertyType}
             onValueChange={(v) =>
-              onChange({ ...value, propertyType: v as HeroSearchBarLayoutValue["propertyType"] })
+              onChange({
+                ...value,
+                propertyType: v as HeroSearchBarLayoutValue["propertyType"],
+              })
             }
           >
-            <SelectTrigger className="h-10 rounded-[5px] border border-black/10 bg-white px-4 text-sm font-semibold text-[hsl(var(--brand-ink))] shadow-none">
+            <SelectTrigger className="h-10 rounded-[5px] border border-black/10 bg-white px-4 text-sm font-semibold text-[hsl(var(--brand-ink))] shadow-none focus:ring-[hsl(var(--brand))]/25">
               <SelectValue placeholder="Residential" />
             </SelectTrigger>
             <SelectContent className="rounded-[5px]">
@@ -181,7 +187,7 @@ export function HeroSearchBarLayout({
 
           {/* Beds & Baths (visual only for now) */}
           <Select value="any" onValueChange={() => {}}>
-            <SelectTrigger className="h-10 rounded-[5px] border border-black/10 bg-white px-4 text-sm font-semibold text-[hsl(var(--brand-ink))] shadow-none">
+            <SelectTrigger className="h-10 rounded-[5px] border border-black/10 bg-white px-4 text-sm font-semibold text-[hsl(var(--brand-ink))] shadow-none focus:ring-[hsl(var(--brand))]/25">
               <SelectValue placeholder="Beds & Baths" />
             </SelectTrigger>
             <SelectContent className="rounded-[5px]">
@@ -196,7 +202,7 @@ export function HeroSearchBarLayout({
 
           {/* Price (AED) (visual only for now) */}
           <Select value="any" onValueChange={() => {}}>
-            <SelectTrigger className="h-10 rounded-[5px] border border-black/10 bg-white px-4 text-sm font-semibold text-[hsl(var(--brand-ink))] shadow-none">
+            <SelectTrigger className="h-10 rounded-[5px] border border-black/10 bg-white px-4 text-sm font-semibold text-[hsl(var(--brand-ink))] shadow-none focus:ring-[hsl(var(--brand))]/25">
               <SelectValue placeholder="Price (AED)" />
             </SelectTrigger>
             <SelectContent className="rounded-[5px]">
