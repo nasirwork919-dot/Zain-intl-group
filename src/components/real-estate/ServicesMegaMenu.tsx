@@ -55,7 +55,7 @@ export function ServicesMegaMenu({
     <>
       <button
         type="button"
-        className="fixed inset-0 z-40 cursor-default bg-transparent"
+        className="fixed inset-x-0 bottom-0 top-[calc(56px+76px)] z-40 cursor-default bg-transparent"
         aria-label="Close services menu"
         onClick={onClose}
       />

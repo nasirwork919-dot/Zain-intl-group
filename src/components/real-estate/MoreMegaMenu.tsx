@@ -24,7 +24,12 @@ export function MoreMegaMenu({
       },
       {
         title: "Guides",
-        items: [{ label: "Reports" }, { label: "News" }, { label: "Blogs" }, { label: "Media" }],
+        items: [
+          { label: "Reports" },
+          { label: "News" },
+          { label: "Blogs" },
+          { label: "Media" },
+        ],
       },
     ],
     [],
@@ -57,7 +62,7 @@ export function MoreMegaMenu({
     <>
       <button
         type="button"
-        className="fixed inset-0 z-40 cursor-default bg-transparent"
+        className="fixed inset-x-0 bottom-0 top-[calc(56px+76px)] z-40 cursor-default bg-transparent"
         aria-label="Close more menu"
         onClick={onClose}
       />

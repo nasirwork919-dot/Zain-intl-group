@@ -48,10 +48,10 @@ export function RentMegaMenu({
 
   return (
     <>
-      {/* click-away overlay */}
+      {/* click-away overlay (ONLY below header so it doesn't block nav clicks) */}
       <button
         type="button"
-        className="fixed inset-0 z-40 cursor-default bg-transparent"
+        className="fixed inset-x-0 bottom-0 top-[calc(56px+76px)] z-40 cursor-default bg-transparent"
         aria-label="Close rent menu"
         onClick={onClose}
       />
