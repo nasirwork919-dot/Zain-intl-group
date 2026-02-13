@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Calculator, ChevronDown, Menu, Phone, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -175,13 +175,28 @@ export function RealEstateHeader() {
   const [mobileCurrency, setMobileCurrency] = useState("AED");
   const [topCurrency, setTopCurrency] = useState<CurrencyCode>("AED");
 
-  const scrollTo = (hash: string) => {
-    const id = hash.replace("#", "");
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  const closeTimerRef = useRef<number | null>(null);
+
+  const cancelClose = () => {
+    if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = null;
+  };
+
+  const scheduleClose = (ms = 140) => {
+    cancelClose();
+    closeTimerRef.current = window.setTimeout(() => {
+      setBuyOpen(false);
+      setRentOpen(false);
+      setCommunitiesOpen(false);
+      setDevelopersOpen(false);
+      setFeaturedProjectsOpen(false);
+      setServicesOpen(false);
+      setMoreOpen(false);
+    }, ms);
   };
 
   const closeMegas = () => {
+    cancelClose();
     setBuyOpen(false);
     setRentOpen(false);
     setCommunitiesOpen(false);
@@ -189,6 +204,32 @@ export function RealEstateHeader() {
     setFeaturedProjectsOpen(false);
     setServicesOpen(false);
     setMoreOpen(false);
+  };
+
+  const openOnly = (
+    key:
+      | "buy"
+      | "rent"
+      | "communities"
+      | "developers"
+      | "featured-projects"
+      | "services"
+      | "more",
+  ) => {
+    cancelClose();
+    setBuyOpen(key === "buy");
+    setRentOpen(key === "rent");
+    setCommunitiesOpen(key === "communities");
+    setDevelopersOpen(key === "developers");
+    setFeaturedProjectsOpen(key === "featured-projects");
+    setServicesOpen(key === "services");
+    setMoreOpen(key === "more");
+  };
+
+  const scrollTo = (hash: string) => {
+    const id = hash.replace("#", "");
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const navItems: NavItem[] = useMemo(
@@ -644,118 +685,51 @@ export function RealEstateHeader() {
                   : false;
 
               const mega = item.type !== "noop" ? item.mega : undefined;
-              const isBuy = mega === "buy";
-              const isRent = mega === "rent";
-              const isCommunities = mega === "communities";
-              const isDevelopers = mega === "developers";
-              const isFeaturedProjects = mega === "featured-projects";
-              const isServices = mega === "services";
-              const isMore = mega === "more";
 
-              const expanded = isBuy
-                ? buyOpen
-                : isRent
-                  ? rentOpen
-                  : isCommunities
-                    ? communitiesOpen
-                    : isDevelopers
-                      ? developersOpen
-                      : isFeaturedProjects
-                        ? featuredProjectsOpen
-                        : isServices
-                          ? servicesOpen
-                          : isMore
-                            ? moreOpen
-                            : undefined;
+              const expanded =
+                mega === "buy"
+                  ? buyOpen
+                  : mega === "rent"
+                    ? rentOpen
+                    : mega === "communities"
+                      ? communitiesOpen
+                      : mega === "developers"
+                        ? developersOpen
+                        : mega === "featured-projects"
+                          ? featuredProjectsOpen
+                          : mega === "services"
+                            ? servicesOpen
+                            : mega === "more"
+                              ? moreOpen
+                              : undefined;
 
               const baseLinkClass = cn(
                 "inline-flex items-center gap-1 text-sm font-semibold",
                 "text-[#111827] hover:text-[#111827]/80",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35 rounded-[5px] px-2 py-1",
                 isActive &&
-                  !isBuy &&
-                  !isRent &&
-                  !isCommunities &&
-                  !isDevelopers &&
-                  !isFeaturedProjects &&
-                  !isServices &&
-                  !isMore &&
+                  !mega &&
                   "underline underline-offset-8 decoration-black/30",
               );
 
               const onHoverOpen = () => {
-                if (isBuy) {
-                  setBuyOpen(true);
-                  setRentOpen(false);
-                  setCommunitiesOpen(false);
-                  setDevelopersOpen(false);
-                  setFeaturedProjectsOpen(false);
-                  setServicesOpen(false);
-                  setMoreOpen(false);
-                }
-                if (isRent) {
-                  setRentOpen(true);
-                  setBuyOpen(false);
-                  setCommunitiesOpen(false);
-                  setDevelopersOpen(false);
-                  setFeaturedProjectsOpen(false);
-                  setServicesOpen(false);
-                  setMoreOpen(false);
-                }
-                if (isCommunities) {
-                  setCommunitiesOpen(true);
-                  setBuyOpen(false);
-                  setRentOpen(false);
-                  setDevelopersOpen(false);
-                  setFeaturedProjectsOpen(false);
-                  setServicesOpen(false);
-                  setMoreOpen(false);
-                }
-                if (isDevelopers) {
-                  setDevelopersOpen(true);
-                  setBuyOpen(false);
-                  setRentOpen(false);
-                  setCommunitiesOpen(false);
-                  setFeaturedProjectsOpen(false);
-                  setServicesOpen(false);
-                  setMoreOpen(false);
-                }
-                if (isFeaturedProjects) {
-                  setFeaturedProjectsOpen(true);
-                  setBuyOpen(false);
-                  setRentOpen(false);
-                  setCommunitiesOpen(false);
-                  setDevelopersOpen(false);
-                  setServicesOpen(false);
-                  setMoreOpen(false);
-                }
-                if (isServices) {
-                  setServicesOpen(true);
-                  setBuyOpen(false);
-                  setRentOpen(false);
-                  setCommunitiesOpen(false);
-                  setDevelopersOpen(false);
-                  setFeaturedProjectsOpen(false);
-                  setMoreOpen(false);
-                }
-                if (isMore) {
-                  setMoreOpen(true);
-                  setBuyOpen(false);
-                  setRentOpen(false);
-                  setCommunitiesOpen(false);
-                  setDevelopersOpen(false);
-                  setFeaturedProjectsOpen(false);
-                  setServicesOpen(false);
-                }
+                if (!mega) return;
+                openOnly(mega);
               };
 
-              // ROUTE ITEMS: make them real links so they are always clickable.
               if (item.type === "route") {
                 return (
                   <Link
                     key={item.label}
                     to={item.href}
-                    onMouseEnter={onHoverOpen}
+                    onMouseEnter={() => {
+                      onHoverOpen();
+                      cancelClose();
+                    }}
+                    onMouseLeave={() => {
+                      // only close if they didn't enter the menu area
+                      scheduleClose(140);
+                    }}
                     onClick={() => closeMegas()}
                     className={baseLinkClass}
                     aria-expanded={expanded}
@@ -765,14 +739,7 @@ export function RealEstateHeader() {
                       <ChevronDown
                         className={cn(
                           "h-4 w-4 opacity-70 transition-transform",
-                          ((isBuy && buyOpen) ||
-                            (isRent && rentOpen) ||
-                            (isCommunities && communitiesOpen) ||
-                            (isDevelopers && developersOpen) ||
-                            (isFeaturedProjects && featuredProjectsOpen) ||
-                            (isServices && servicesOpen) ||
-                            (isMore && moreOpen)) &&
-                            "rotate-180",
+                          expanded && "rotate-180",
                         )}
                       />
                     ) : null}
@@ -780,13 +747,16 @@ export function RealEstateHeader() {
                 );
               }
 
-              // SCROLL ITEMS (not currently used, but keep existing behavior)
               if (item.type === "scroll") {
                 return (
                   <button
                     key={item.label}
                     type="button"
-                    onMouseEnter={onHoverOpen}
+                    onMouseEnter={() => {
+                      onHoverOpen();
+                      cancelClose();
+                    }}
+                    onMouseLeave={() => scheduleClose(140)}
                     onClick={() => {
                       closeMegas();
                       scrollTo(item.href);
@@ -799,14 +769,7 @@ export function RealEstateHeader() {
                       <ChevronDown
                         className={cn(
                           "h-4 w-4 opacity-70 transition-transform",
-                          ((isBuy && buyOpen) ||
-                            (isRent && rentOpen) ||
-                            (isCommunities && communitiesOpen) ||
-                            (isDevelopers && developersOpen) ||
-                            (isFeaturedProjects && featuredProjectsOpen) ||
-                            (isServices && servicesOpen) ||
-                            (isMore && moreOpen)) &&
-                            "rotate-180",
+                          expanded && "rotate-180",
                         )}
                       />
                     ) : null}
@@ -841,12 +804,31 @@ export function RealEstateHeader() {
     </div>
   );
 
+  const anyOpen =
+    buyOpen ||
+    rentOpen ||
+    communitiesOpen ||
+    developersOpen ||
+    featuredProjectsOpen ||
+    servicesOpen ||
+    moreOpen;
+
   return (
-    <header className="fixed inset-x-0 top-0 z-50" onMouseLeave={closeMegas}>
+    <header
+      className="fixed inset-x-0 top-0 z-50"
+      onMouseLeave={() => {
+        if (anyOpen) scheduleClose(140);
+      }}
+    >
       <TopBar />
       <MainBar />
 
-      <div className="hidden lg:block">
+      {/* Desktop mega menus: keep open while hovering the menu area */}
+      <div
+        className="hidden lg:block"
+        onMouseEnter={() => cancelClose()}
+        onMouseLeave={() => scheduleClose(140)}
+      >
         <BuyMegaMenu
           open={buyOpen}
           onClose={() => setBuyOpen(false)}
