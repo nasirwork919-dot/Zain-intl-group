@@ -673,82 +673,15 @@ export function RealEstateHeader() {
                       setMoreOpen(false);
                     };
 
-                    if (isBuy) {
-                      setBuyOpen((v) => !v);
-                      setRentOpen(false);
-                      setCommunitiesOpen(false);
-                      setDevelopersOpen(false);
-                      setFeaturedProjectsOpen(false);
-                      setServicesOpen(false);
-                      setMoreOpen(false);
-                      return;
-                    }
-                    if (isRent) {
-                      setRentOpen((v) => !v);
-                      setBuyOpen(false);
-                      setCommunitiesOpen(false);
-                      setDevelopersOpen(false);
-                      setFeaturedProjectsOpen(false);
-                      setServicesOpen(false);
-                      setMoreOpen(false);
-                      return;
-                    }
-                    if (isCommunities) {
-                      setCommunitiesOpen((v) => !v);
-                      setBuyOpen(false);
-                      setRentOpen(false);
-                      setDevelopersOpen(false);
-                      setFeaturedProjectsOpen(false);
-                      setServicesOpen(false);
-                      setMoreOpen(false);
-                      return;
-                    }
-                    if (isDevelopers) {
-                      setDevelopersOpen((v) => !v);
-                      setBuyOpen(false);
-                      setRentOpen(false);
-                      setCommunitiesOpen(false);
-                      setFeaturedProjectsOpen(false);
-                      setServicesOpen(false);
-                      setMoreOpen(false);
-                      return;
-                    }
-                    if (isFeaturedProjects) {
-                      setFeaturedProjectsOpen((v) => !v);
-                      setBuyOpen(false);
-                      setRentOpen(false);
-                      setCommunitiesOpen(false);
-                      setDevelopersOpen(false);
-                      setServicesOpen(false);
-                      setMoreOpen(false);
-                      return;
-                    }
-                    if (isServices) {
-                      setServicesOpen((v) => !v);
-                      setBuyOpen(false);
-                      setRentOpen(false);
-                      setCommunitiesOpen(false);
-                      setDevelopersOpen(false);
-                      setFeaturedProjectsOpen(false);
-                      setMoreOpen(false);
-                      return;
-                    }
-                    if (isMore) {
-                      setMoreOpen((v) => !v);
-                      setBuyOpen(false);
-                      setRentOpen(false);
-                      setCommunitiesOpen(false);
-                      setDevelopersOpen(false);
-                      setFeaturedProjectsOpen(false);
-                      setServicesOpen(false);
-                      return;
-                    }
-
+                    // Main nav items should NAVIGATE to their landing pages on click.
+                    // Dropdown mega menus remain available on hover.
                     closeAllAnd();
                     if (item.type === "route") navigate(item.href);
                     if (item.type === "scroll") scrollTo(item.href);
+
                   }}
                   onMouseEnter={() => {
+                    // Mega menus open on hover (desktop)
                     if (isBuy) {
                       setBuyOpen(true);
                       setRentOpen(false);
@@ -813,6 +746,7 @@ export function RealEstateHeader() {
                       setServicesOpen(false);
                     }
                   }}
+
                   className={cn(
                     "inline-flex items-center gap-1 text-sm font-semibold",
                     "text-[#111827] hover:text-[#111827]/80",
