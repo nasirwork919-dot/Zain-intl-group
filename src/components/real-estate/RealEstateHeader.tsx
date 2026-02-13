@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Calculator, ChevronDown, Menu, Phone, User } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -349,7 +349,10 @@ export function RealEstateHeader() {
 
             <div className="hidden items-center gap-3 md:flex">
               <PhonePill label="Free Property Valuation" />
-              <PhonePill label="Contact Us" onClick={() => navigate("/nav/services")} />
+              <PhonePill
+                label="Contact Us"
+                onClick={() => navigate("/nav/services")}
+              />
               <button
                 type="button"
                 className={cn(
@@ -419,7 +422,9 @@ export function RealEstateHeader() {
                           title="Rent"
                           open={mobileOpenSection === "rent"}
                           onToggle={() =>
-                            setMobileOpenSection((k) => (k === "rent" ? null : "rent"))
+                            setMobileOpenSection((k) =>
+                              k === "rent" ? null : "rent",
+                            )
                           }
                         >
                           <div className="grid gap-2">
@@ -487,7 +492,9 @@ export function RealEstateHeader() {
                           open={mobileOpenSection === "featured-projects"}
                           onToggle={() =>
                             setMobileOpenSection((k) =>
-                              k === "featured-projects" ? null : "featured-projects",
+                              k === "featured-projects"
+                                ? null
+                                : "featured-projects",
                             )
                           }
                         >
@@ -532,7 +539,9 @@ export function RealEstateHeader() {
                           title="More"
                           open={mobileOpenSection === "more"}
                           onToggle={() =>
-                            setMobileOpenSection((k) => (k === "more" ? null : "more"))
+                            setMobileOpenSection((k) =>
+                              k === "more" ? null : "more",
+                            )
                           }
                         >
                           <div className="grid gap-2">
@@ -659,133 +668,153 @@ export function RealEstateHeader() {
                             ? moreOpen
                             : undefined;
 
-              return (
-                <button
-                  key={item.label}
-                  type="button"
-                  onClick={() => {
-                    const closeAllAnd = () => {
-                      setBuyOpen(false);
-                      setRentOpen(false);
-                      setCommunitiesOpen(false);
-                      setDevelopersOpen(false);
-                      setFeaturedProjectsOpen(false);
-                      setServicesOpen(false);
-                      setMoreOpen(false);
-                    };
-
-                    // Main nav items NAVIGATE on click.
-                    // Mega menus are hover-only.
-                    closeAllAnd();
-                    if (item.type === "route") {
-                      navigate(item.href);
-                      return;
-                    }
-                    if (item.type === "scroll") {
-                      scrollTo(item.href);
-                      return;
-                    }
-                  }}
-                  onMouseEnter={() => {
-                    // Mega menus open on hover (desktop)
-                    if (isBuy) {
-                      setBuyOpen(true);
-                      setRentOpen(false);
-                      setCommunitiesOpen(false);
-                      setDevelopersOpen(false);
-                      setFeaturedProjectsOpen(false);
-                      setServicesOpen(false);
-                      setMoreOpen(false);
-                    }
-                    if (isRent) {
-                      setRentOpen(true);
-                      setBuyOpen(false);
-                      setCommunitiesOpen(false);
-                      setDevelopersOpen(false);
-                      setFeaturedProjectsOpen(false);
-                      setServicesOpen(false);
-                      setMoreOpen(false);
-                    }
-                    if (isCommunities) {
-                      setCommunitiesOpen(true);
-                      setBuyOpen(false);
-                      setRentOpen(false);
-                      setDevelopersOpen(false);
-                      setFeaturedProjectsOpen(false);
-                      setServicesOpen(false);
-                      setMoreOpen(false);
-                    }
-                    if (isDevelopers) {
-                      setDevelopersOpen(true);
-                      setBuyOpen(false);
-                      setRentOpen(false);
-                      setCommunitiesOpen(false);
-                      setFeaturedProjectsOpen(false);
-                      setServicesOpen(false);
-                      setMoreOpen(false);
-                    }
-                    if (isFeaturedProjects) {
-                      setFeaturedProjectsOpen(true);
-                      setBuyOpen(false);
-                      setRentOpen(false);
-                      setCommunitiesOpen(false);
-                      setDevelopersOpen(false);
-                      setServicesOpen(false);
-                      setMoreOpen(false);
-                    }
-                    if (isServices) {
-                      setServicesOpen(true);
-                      setBuyOpen(false);
-                      setRentOpen(false);
-                      setCommunitiesOpen(false);
-                      setDevelopersOpen(false);
-                      setFeaturedProjectsOpen(false);
-                      setMoreOpen(false);
-                    }
-                    if (isMore) {
-                      setMoreOpen(true);
-                      setBuyOpen(false);
-                      setRentOpen(false);
-                      setCommunitiesOpen(false);
-                      setDevelopersOpen(false);
-                      setFeaturedProjectsOpen(false);
-                      setServicesOpen(false);
-                    }
-                  }}
-
-                  className={cn(
-                    "inline-flex items-center gap-1 text-sm font-semibold",
-                    "text-[#111827] hover:text-[#111827]/80",
-                    isActive &&
-                      !isBuy &&
-                      !isRent &&
-                      !isCommunities &&
-                      !isDevelopers &&
-                      !isFeaturedProjects &&
-                      !isServices &&
-                      !isMore &&
-                      "underline underline-offset-8 decoration-black/30",
-                  )}
-                  aria-expanded={expanded}
-                >
-                  <span>{item.label}</span>
-                  {item.hasChevron ? (
-                    <ChevronDown
-                      className={cn(
-                        "h-4 w-4 opacity-70 transition-transform",
-                        ((isBuy && buyOpen) ||
-                          (isRent && rentOpen) ||
-                          (isCommunities && communitiesOpen) ||
-                          (isDevelopers && developersOpen) ||
-                          (isFeaturedProjects && featuredProjectsOpen) ||
-                          (isServices && servicesOpen) ||
-                          (isMore && moreOpen)) &&
-                          "rotate-180",
-                      )}
-                    />
-                  ) : null}
-                </button>
+              const baseLinkClass = cn(
+                "inline-flex items-center gap-1 text-sm font-semibold",
+                "text-[#111827] hover:text-[#111827]/80",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35 rounded-[5px] px-2 py-1",
+                isActive &&
+                  !isBuy &&
+                  !isRent &&
+                  !isCommunities &&
+                  !isDevelopers &&
+                  !isFeaturedProjects &&
+                  !isServices &&
+                  !isMore &&
+                  "underline underline-offset-8 decoration-black/30",
               );
+
+              const onHoverOpen = () => {
+                if (isBuy) {
+                  setBuyOpen(true);
+                  setRentOpen(false);
+                  setCommunitiesOpen(false);
+                  setDevelopersOpen(false);
+                  setFeaturedProjectsOpen(false);
+                  setServicesOpen(false);
+                  setMoreOpen(false);
+                }
+                if (isRent) {
+                  setRentOpen(true);
+                  setBuyOpen(false);
+                  setCommunitiesOpen(false);
+                  setDevelopersOpen(false);
+                  setFeaturedProjectsOpen(false);
+                  setServicesOpen(false);
+                  setMoreOpen(false);
+                }
+                if (isCommunities) {
+                  setCommunitiesOpen(true);
+                  setBuyOpen(false);
+                  setRentOpen(false);
+                  setDevelopersOpen(false);
+                  setFeaturedProjectsOpen(false);
+                  setServicesOpen(false);
+                  setMoreOpen(false);
+                }
+                if (isDevelopers) {
+                  setDevelopersOpen(true);
+                  setBuyOpen(false);
+                  setRentOpen(false);
+                  setCommunitiesOpen(false);
+                  setFeaturedProjectsOpen(false);
+                  setServicesOpen(false);
+                  setMoreOpen(false);
+                }
+                if (isFeaturedProjects) {
+                  setFeaturedProjectsOpen(true);
+                  setBuyOpen(false);
+                  setRentOpen(false);
+                  setCommunitiesOpen(false);
+                  setDevelopersOpen(false);
+                  setServicesOpen(false);
+                  setMoreOpen(false);
+                }
+                if (isServices) {
+                  setServicesOpen(true);
+                  setBuyOpen(false);
+                  setRentOpen(false);
+                  setCommunitiesOpen(false);
+                  setDevelopersOpen(false);
+                  setFeaturedProjectsOpen(false);
+                  setMoreOpen(false);
+                }
+                if (isMore) {
+                  setMoreOpen(true);
+                  setBuyOpen(false);
+                  setRentOpen(false);
+                  setCommunitiesOpen(false);
+                  setDevelopersOpen(false);
+                  setFeaturedProjectsOpen(false);
+                  setServicesOpen(false);
+                }
+              };
+
+              // ROUTE ITEMS: make them real links so they are always clickable.
+              if (item.type === "route") {
+                return (
+                  <Link
+                    key={item.label}
+                    to={item.href}
+                    onMouseEnter={onHoverOpen}
+                    onClick={() => closeMegas()}
+                    className={baseLinkClass}
+                    aria-expanded={expanded}
+                  >
+                    <span>{item.label}</span>
+                    {item.hasChevron ? (
+                      <ChevronDown
+                        className={cn(
+                          "h-4 w-4 opacity-70 transition-transform",
+                          ((isBuy && buyOpen) ||
+                            (isRent && rentOpen) ||
+                            (isCommunities && communitiesOpen) ||
+                            (isDevelopers && developersOpen) ||
+                            (isFeaturedProjects && featuredProjectsOpen) ||
+                            (isServices && servicesOpen) ||
+                            (isMore && moreOpen)) &&
+                            "rotate-180",
+                        )}
+                      />
+                    ) : null}
+                  </Link>
+                );
+              }
+
+              // SCROLL ITEMS (not currently used, but keep existing behavior)
+              if (item.type === "scroll") {
+                return (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onMouseEnter={onHoverOpen}
+                    onClick={() => {
+                      closeMegas();
+                      scrollTo(item.href);
+                    }}
+                    className={baseLinkClass}
+                    aria-expanded={expanded}
+                  >
+                    <span>{item.label}</span>
+                    {item.hasChevron ? (
+                      <ChevronDown
+                        className={cn(
+                          "h-4 w-4 opacity-70 transition-transform",
+                          ((isBuy && buyOpen) ||
+                            (isRent && rentOpen) ||
+                            (isCommunities && communitiesOpen) ||
+                            (isDevelopers && developersOpen) ||
+                            (isFeaturedProjects && featuredProjectsOpen) ||
+                            (isServices && servicesOpen) ||
+                            (isMore && moreOpen)) &&
+                            "rotate-180",
+                        )}
+                      />
+                    ) : null}
+                  </button>
+                );
+              }
+
+              return null;
             })}
           </nav>
 
