@@ -396,9 +396,10 @@ export function RealEstateHeader() {
                         <MobileMenuSection
                           title="Buy"
                           open={mobileOpenSection === "buy"}
-                          onToggle={() =>
-                            setMobileOpenSection((k) => (k === "buy" ? null : "buy"))
-                          }
+                          onToggle={() => {
+                            navigate("/nav/buy");
+                            setMobileOpen(false);
+                          }}
                         >
                           <div className="grid gap-2">
                             {NAV_OPTIONS.buy.map((o) => (
@@ -673,12 +674,17 @@ export function RealEstateHeader() {
                       setMoreOpen(false);
                     };
 
-                    // Main nav items should NAVIGATE to their landing pages on click.
-                    // Dropdown mega menus remain available on hover.
+                    // Main nav items NAVIGATE on click.
+                    // Mega menus are hover-only.
                     closeAllAnd();
-                    if (item.type === "route") navigate(item.href);
-                    if (item.type === "scroll") scrollTo(item.href);
-
+                    if (item.type === "route") {
+                      navigate(item.href);
+                      return;
+                    }
+                    if (item.type === "scroll") {
+                      scrollTo(item.href);
+                      return;
+                    }
                   }}
                   onMouseEnter={() => {
                     // Mega menus open on hover (desktop)
