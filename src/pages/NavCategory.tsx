@@ -162,6 +162,31 @@ export default function NavCategoryPage() {
   const category = (params.category as NavCategoryKey) ?? "buy";
   const option = (params.option as string | undefined) ?? undefined;
 
+  // If someone opens /nav/:category without an option, send them to the landing page with cards.
+  if (!option) {
+    return (
+      <div className="min-h-screen bg-[hsl(var(--page))]">
+        <RealEstateHeader />
+        <div className="mx-auto max-w-6xl px-4 pb-16 pt-32">
+          <div className="rounded-[5px] border border-black/5 bg-white/70 p-6 text-center ring-1 ring-black/10">
+            <div className="text-lg font-extrabold tracking-tight">
+              Choose an option
+            </div>
+            <div className="mt-2 text-sm text-muted-foreground">
+              Redirecting you to the {category} options.
+            </div>
+            <Button
+              className="mt-5 h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
+              onClick={() => navigate(`/nav/${category}`)}
+            >
+              Go to options
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const config = CONFIG[category];
 
   const [activeProperty, setActiveProperty] = useState<Property | null>(null);
