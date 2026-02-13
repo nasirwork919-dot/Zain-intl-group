@@ -50,7 +50,7 @@ export function MarketTrendsMegaMenu({
       <button
         type="button"
         className="fixed inset-0 z-40 cursor-default bg-transparent"
-        aria-label="Close market trends menu"
+        aria-label="Close featured projects menu"
         onClick={onClose}
       />
 
@@ -65,7 +65,7 @@ export function MarketTrendsMegaMenu({
           >
             <div className="px-10 py-9">
               <div className="text-2xl font-bold tracking-tight text-[#111827]">
-                Market Trends
+                Featured Projects
               </div>
 
               <div className="mt-7 grid gap-16 md:grid-cols-2">

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Calculator, ChevronDown, Menu, Phone, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +28,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { BrandLogo } from "@/components/brand/BrandLogo";
+import {
+  NAV_OPTIONS,
+  slugifyNavLabel,
+  type NavCategoryKey,
+} from "@/components/real-estate/nav-config";
 
 function useActiveSection(ids: string[]) {
   const [active, setActive] = useState<string>(ids[0] ?? "");
@@ -60,7 +66,7 @@ function useActiveSection(ids: string[]) {
 type NavItem =
   | {
       label: string;
-      type: "scroll";
+      type: "route" | "scroll";
       href: string;
       hasChevron?: boolean;
       mega?:
@@ -68,7 +74,7 @@ type NavItem =
         | "rent"
         | "communities"
         | "developers"
-        | "marketTrends"
+        | "featured-projects"
         | "services"
         | "more";
     }
@@ -79,7 +85,7 @@ type MobileSectionKey =
   | "rent"
   | "communities"
   | "developers"
-  | "marketTrends"
+  | "featured-projects"
   | "services"
   | "more"
   | null;
@@ -119,7 +125,13 @@ function MobileMenuSection({
   );
 }
 
-function MobileMenuItem({ label, onClick }: { label: string; onClick: () => void }) {
+function MobileMenuItem({
+  label,
+  onClick,
+}: {
+  label: string;
+  onClick: () => void;
+}) {
   return (
     <button
       type="button"
@@ -138,6 +150,7 @@ function MobileMenuItem({ label, onClick }: { label: string; onClick: () => void
 type CurrencyCode = "AED" | "EUR" | "GBP" | "USD";
 
 export function RealEstateHeader() {
+  const navigate = useNavigate();
   const active = useActiveSection([
     "top",
     "projects",
@@ -152,14 +165,13 @@ export function RealEstateHeader() {
   const [rentOpen, setRentOpen] = useState(false);
   const [communitiesOpen, setCommunitiesOpen] = useState(false);
   const [developersOpen, setDevelopersOpen] = useState(false);
-  const [marketTrendsOpen, setMarketTrendsOpen] = useState(false);
+  const [featuredProjectsOpen, setFeaturedProjectsOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
 
   const [mobileOpenSection, setMobileOpenSection] =
     useState<MobileSectionKey>(null);
 
-  const [mobileLanguage, setMobileLanguage] = useState("en");
   const [mobileCurrency, setMobileCurrency] = useState("AED");
   const [topCurrency, setTopCurrency] = useState<CurrencyCode>("AED");
 
@@ -174,7 +186,7 @@ export function RealEstateHeader() {
     setRentOpen(false);
     setCommunitiesOpen(false);
     setDevelopersOpen(false);
-    setMarketTrendsOpen(false);
+    setFeaturedProjectsOpen(false);
     setServicesOpen(false);
     setMoreOpen(false);
   };
@@ -183,50 +195,50 @@ export function RealEstateHeader() {
     () => [
       {
         label: "Buy",
-        type: "scroll",
-        href: "#listings",
+        type: "route",
+        href: "/nav/buy",
         hasChevron: true,
         mega: "buy",
       },
       {
         label: "Rent",
-        type: "scroll",
-        href: "#listings",
+        type: "route",
+        href: "/nav/rent",
         hasChevron: true,
         mega: "rent",
       },
       {
         label: "Communities",
-        type: "scroll",
-        href: "#projects",
+        type: "route",
+        href: "/nav/communities",
         hasChevron: true,
         mega: "communities",
       },
       {
         label: "Developers",
-        type: "scroll",
-        href: "#projects",
+        type: "route",
+        href: "/nav/developers",
         hasChevron: true,
         mega: "developers",
       },
       {
         label: "Featured Projects",
-        type: "scroll",
-        href: "#about",
+        type: "route",
+        href: "/nav/featured-projects",
         hasChevron: true,
-        mega: "marketTrends",
+        mega: "featured-projects",
       },
       {
         label: "Services",
-        type: "scroll",
-        href: "#contact",
+        type: "route",
+        href: "/nav/services",
         hasChevron: true,
         mega: "services",
       },
       {
         label: "More",
-        type: "scroll",
-        href: "#about",
+        type: "route",
+        href: "/nav/more",
         hasChevron: true,
         mega: "more",
       },
@@ -261,7 +273,13 @@ export function RealEstateHeader() {
     </button>
   );
 
-  const PhonePill = ({ label, onClick }: { label: string; onClick?: () => void }) => (
+  const PhonePill = ({
+    label,
+    onClick,
+  }: {
+    label: string;
+    onClick?: () => void;
+  }) => (
     <button
       type="button"
       onClick={onClick}
@@ -331,7 +349,7 @@ export function RealEstateHeader() {
 
             <div className="hidden items-center gap-3 md:flex">
               <PhonePill label="Free Property Valuation" />
-              <PhonePill label="Contact Us" onClick={() => scrollTo("#contact")} />
+              <PhonePill label="Contact Us" onClick={() => navigate("/nav/services")} />
               <button
                 type="button"
                 className={cn(
@@ -383,23 +401,16 @@ export function RealEstateHeader() {
                           }
                         >
                           <div className="grid gap-2">
-                            {["Apartments", "Townhouses", "Penthouses", "Villas", "View All"].map(
-                              (label) => (
-                                <MobileMenuItem
-                                  key={label}
-                                  label={label}
-                                  onClick={() => {
-                                    scrollTo("#listings");
-                                    setMobileOpen(false);
-                                    toast({
-                                      title: `Buy · ${label}`,
-                                      description:
-                                        "Showing listings — we can wire these to filters next.",
-                                    });
-                                  }}
-                                />
-                              ),
-                            )}
+                            {NAV_OPTIONS.buy.map((o) => (
+                              <MobileMenuItem
+                                key={o.slug}
+                                label={o.label}
+                                onClick={() => {
+                                  navigate(`/nav/buy/${o.slug}`);
+                                  setMobileOpen(false);
+                                }}
+                              />
+                            ))}
                           </div>
                         </MobileMenuSection>
 
@@ -411,23 +422,16 @@ export function RealEstateHeader() {
                           }
                         >
                           <div className="grid gap-2">
-                            {["Apartments", "Offices", "Townhouses", "Villas", "Commercial"].map(
-                              (label) => (
-                                <MobileMenuItem
-                                  key={label}
-                                  label={label}
-                                  onClick={() => {
-                                    scrollTo("#listings");
-                                    setMobileOpen(false);
-                                    toast({
-                                      title: `Rent · ${label}`,
-                                      description:
-                                        "Showing listings — we can wire these to filters next.",
-                                    });
-                                  }}
-                                />
-                              ),
-                            )}
+                            {NAV_OPTIONS.rent.map((o) => (
+                              <MobileMenuItem
+                                key={o.slug}
+                                label={o.label}
+                                onClick={() => {
+                                  navigate(`/nav/rent/${o.slug}`);
+                                  setMobileOpen(false);
+                                }}
+                              />
+                            ))}
                           </div>
                         </MobileMenuSection>
 
@@ -441,27 +445,13 @@ export function RealEstateHeader() {
                           }
                         >
                           <div className="grid gap-2">
-                            {[
-                              "Dubai Marina",
-                              "Dubai Creek Harbour",
-                              "Jumeirah Village Circle (JVC)",
-                              "Dubai Hills Estate",
-                              "Jumeirah Beach Residence (JBR)",
-                              "Palm Jebel Ali",
-                              "Downtown Dubai",
-                              "Palm Jumeirah",
-                            ].map((label) => (
+                            {NAV_OPTIONS.communities.map((o) => (
                               <MobileMenuItem
-                                key={label}
-                                label={label}
+                                key={o.slug}
+                                label={o.label}
                                 onClick={() => {
-                                  scrollTo("#projects");
+                                  navigate(`/nav/communities/${o.slug}`);
                                   setMobileOpen(false);
-                                  toast({
-                                    title: `Community · ${label}`,
-                                    description:
-                                      "Opened communities section — we can wire this to filters next.",
-                                  });
                                 }}
                               />
                             ))}
@@ -478,53 +468,36 @@ export function RealEstateHeader() {
                           }
                         >
                           <div className="grid gap-2">
-                            {["Emaar", "Nakheel", "Danube", "Select Group", "View All Developers"].map(
-                              (label) => (
-                                <MobileMenuItem
-                                  key={label}
-                                  label={label}
-                                  onClick={() => {
-                                    scrollTo("#projects");
-                                    setMobileOpen(false);
-                                    toast({
-                                      title: `Developer · ${label}`,
-                                      description:
-                                        "Opened projects section — we can wire this to a developer filter next.",
-                                    });
-                                  }}
-                                />
-                              ),
-                            )}
+                            {NAV_OPTIONS.developers.map((o) => (
+                              <MobileMenuItem
+                                key={o.slug}
+                                label={o.label}
+                                onClick={() => {
+                                  navigate(`/nav/developers/${o.slug}`);
+                                  setMobileOpen(false);
+                                }}
+                              />
+                            ))}
                           </div>
                         </MobileMenuSection>
 
                         <MobileMenuSection
                           title="Featured Projects"
-                          open={mobileOpenSection === "marketTrends"}
+                          open={mobileOpenSection === "featured-projects"}
                           onToggle={() =>
                             setMobileOpenSection((k) =>
-                              k === "marketTrends" ? null : "marketTrends",
+                              k === "featured-projects" ? null : "featured-projects",
                             )
                           }
                         >
                           <div className="grid gap-2">
-                            {[
-                              "Daily Transaction",
-                              "Rental Transaction",
-                              "Sale Transaction",
-                              "Market Guide",
-                            ].map((label) => (
+                            {NAV_OPTIONS["featured-projects"].map((o) => (
                               <MobileMenuItem
-                                key={label}
-                                label={label}
+                                key={o.slug}
+                                label={o.label}
                                 onClick={() => {
-                                  scrollTo("#about");
+                                  navigate(`/nav/featured-projects/${o.slug}`);
                                   setMobileOpen(false);
-                                  toast({
-                                    title: `Featured Projects · ${label}`,
-                                    description:
-                                      "We can create these pages/sections next.",
-                                  });
                                 }}
                               />
                             ))}
@@ -541,25 +514,13 @@ export function RealEstateHeader() {
                           }
                         >
                           <div className="grid gap-2">
-                            {[
-                              "Selling",
-                              "Buying",
-                              "Leasing",
-                              "Management",
-                              "Legal Assistance",
-                              "Property Maintenance",
-                            ].map((label) => (
+                            {NAV_OPTIONS.services.map((o) => (
                               <MobileMenuItem
-                                key={label}
-                                label={label}
+                                key={o.slug}
+                                label={o.label}
                                 onClick={() => {
-                                  scrollTo("#contact");
+                                  navigate(`/nav/services/${o.slug}`);
                                   setMobileOpen(false);
-                                  toast({
-                                    title: `Services · ${label}`,
-                                    description:
-                                      "We can create a dedicated service page next.",
-                                  });
                                 }}
                               />
                             ))}
@@ -574,81 +535,48 @@ export function RealEstateHeader() {
                           }
                         >
                           <div className="grid gap-2">
-                            {["About Us", "Careers", "Reports", "News", "Blogs", "Media"].map(
-                              (label) => (
-                                <MobileMenuItem
-                                  key={label}
-                                  label={label}
-                                  onClick={() => {
-                                    scrollTo("#about");
-                                    setMobileOpen(false);
-                                    toast({
-                                      title: `More · ${label}`,
-                                      description:
-                                        "We can create these pages/sections next.",
-                                    });
-                                  }}
-                                />
-                              ),
-                            )}
+                            {NAV_OPTIONS.more.map((o) => (
+                              <MobileMenuItem
+                                key={o.slug}
+                                label={o.label}
+                                onClick={() => {
+                                  navigate(`/nav/more/${o.slug}`);
+                                  setMobileOpen(false);
+                                }}
+                              />
+                            ))}
                           </div>
                         </MobileMenuSection>
 
                         <div className="rounded-[5px] bg-muted/35 p-4 ring-1 ring-black/5">
                           <div className="text-xs font-semibold text-muted-foreground">
-                            Preferences
+                            Currency
                           </div>
 
-                          <div className="mt-3 grid gap-3">
-                            <div>
-                              <div className="text-xs font-semibold text-foreground">
-                                Language
-                              </div>
-                              <Select
-                                value={mobileLanguage}
-                                onValueChange={(v) => setMobileLanguage(v)}
-                              >
-                                <SelectTrigger className="mt-2 h-11 rounded-[5px] bg-white/70 ring-1 ring-black/5">
-                                  <SelectValue placeholder="Select language" />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-[5px]">
-                                  <SelectItem value="en">English</SelectItem>
-                                  <SelectItem value="ar">العربية</SelectItem>
-                                  <SelectItem value="zh">中文</SelectItem>
-                                  <SelectItem value="ru">Русский</SelectItem>
-                                  <SelectItem value="de">Deutsch</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
+                          <div className="mt-3">
+                            <Select
+                              value={mobileCurrency}
+                              onValueChange={(v) => setMobileCurrency(v)}
+                            >
+                              <SelectTrigger className="h-11 rounded-[5px] bg-white/70 ring-1 ring-black/5">
+                                <SelectValue placeholder="Select currency" />
+                              </SelectTrigger>
+                              <SelectContent className="rounded-[5px]">
+                                <SelectItem value="AED">AED</SelectItem>
+                                <SelectItem value="EUR">EUR</SelectItem>
+                                <SelectItem value="GBP">GBP</SelectItem>
+                                <SelectItem value="USD">USD</SelectItem>
+                              </SelectContent>
+                            </Select>
 
-                            <div>
-                              <div className="text-xs font-semibold text-foreground">
-                                Currency
-                              </div>
-                              <Select
-                                value={mobileCurrency}
-                                onValueChange={(v) => setMobileCurrency(v)}
-                              >
-                                <SelectTrigger className="mt-2 h-11 rounded-[5px] bg-white/70 ring-1 ring-black/5">
-                                  <SelectValue placeholder="Select currency" />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-[5px]">
-                                  <SelectItem value="AED">AED</SelectItem>
-                                  <SelectItem value="USD">USD</SelectItem>
-                                  <SelectItem value="GBP">GBP</SelectItem>
-                                  <SelectItem value="EUR">EUR</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-
-                            <Separator className="my-1" />
+                            <Separator className="my-4" />
 
                             <Button
-                              className="h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
+                              className="h-11 w-full rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
                               onClick={() => {
                                 toast({
                                   title: "Saved",
-                                  description: `Language: ${mobileLanguage.toUpperCase()} · Currency: ${mobileCurrency}`,
+                                  description: `Currency: ${mobileCurrency}`,
                                 });
                                 setMobileOpen(false);
                               }}
@@ -675,9 +603,9 @@ export function RealEstateHeader() {
         <div className="flex h-[76px] items-center justify-between gap-4">
           <button
             type="button"
-            onClick={() => scrollTo("#top")}
+            onClick={() => navigate("/")}
             className="flex items-center gap-3 rounded-xl px-1 py-1 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35"
-            aria-label="Go to top"
+            aria-label="Go to home"
           >
             <div className="flex items-center gap-3">
               <div className="grid h-11 w-11 place-items-center overflow-hidden rounded-xl bg-white ring-1 ring-black/10">
@@ -705,12 +633,12 @@ export function RealEstateHeader() {
                   ? activeId === item.href.replace("#", "")
                   : false;
 
-              const mega = item.type === "scroll" ? item.mega : undefined;
+              const mega = item.type !== "noop" ? item.mega : undefined;
               const isBuy = mega === "buy";
               const isRent = mega === "rent";
               const isCommunities = mega === "communities";
               const isDevelopers = mega === "developers";
-              const isMarketTrends = mega === "marketTrends";
+              const isFeaturedProjects = mega === "featured-projects";
               const isServices = mega === "services";
               const isMore = mega === "more";
 
@@ -722,8 +650,8 @@ export function RealEstateHeader() {
                     ? communitiesOpen
                     : isDevelopers
                       ? developersOpen
-                      : isMarketTrends
-                        ? marketTrendsOpen
+                      : isFeaturedProjects
+                        ? featuredProjectsOpen
                         : isServices
                           ? servicesOpen
                           : isMore
@@ -740,7 +668,7 @@ export function RealEstateHeader() {
                       setRentOpen(false);
                       setCommunitiesOpen(false);
                       setDevelopersOpen(false);
-                      setMarketTrendsOpen(false);
+                      setFeaturedProjectsOpen(false);
                       setServicesOpen(false);
                       setMoreOpen(false);
                     };
@@ -750,7 +678,7 @@ export function RealEstateHeader() {
                       setRentOpen(false);
                       setCommunitiesOpen(false);
                       setDevelopersOpen(false);
-                      setMarketTrendsOpen(false);
+                      setFeaturedProjectsOpen(false);
                       setServicesOpen(false);
                       setMoreOpen(false);
                       return;
@@ -760,7 +688,7 @@ export function RealEstateHeader() {
                       setBuyOpen(false);
                       setCommunitiesOpen(false);
                       setDevelopersOpen(false);
-                      setMarketTrendsOpen(false);
+                      setFeaturedProjectsOpen(false);
                       setServicesOpen(false);
                       setMoreOpen(false);
                       return;
@@ -770,7 +698,7 @@ export function RealEstateHeader() {
                       setBuyOpen(false);
                       setRentOpen(false);
                       setDevelopersOpen(false);
-                      setMarketTrendsOpen(false);
+                      setFeaturedProjectsOpen(false);
                       setServicesOpen(false);
                       setMoreOpen(false);
                       return;
@@ -780,13 +708,13 @@ export function RealEstateHeader() {
                       setBuyOpen(false);
                       setRentOpen(false);
                       setCommunitiesOpen(false);
-                      setMarketTrendsOpen(false);
+                      setFeaturedProjectsOpen(false);
                       setServicesOpen(false);
                       setMoreOpen(false);
                       return;
                     }
-                    if (isMarketTrends) {
-                      setMarketTrendsOpen((v) => !v);
+                    if (isFeaturedProjects) {
+                      setFeaturedProjectsOpen((v) => !v);
                       setBuyOpen(false);
                       setRentOpen(false);
                       setCommunitiesOpen(false);
@@ -801,7 +729,7 @@ export function RealEstateHeader() {
                       setRentOpen(false);
                       setCommunitiesOpen(false);
                       setDevelopersOpen(false);
-                      setMarketTrendsOpen(false);
+                      setFeaturedProjectsOpen(false);
                       setMoreOpen(false);
                       return;
                     }
@@ -811,12 +739,13 @@ export function RealEstateHeader() {
                       setRentOpen(false);
                       setCommunitiesOpen(false);
                       setDevelopersOpen(false);
-                      setMarketTrendsOpen(false);
+                      setFeaturedProjectsOpen(false);
                       setServicesOpen(false);
                       return;
                     }
 
                     closeAllAnd();
+                    if (item.type === "route") navigate(item.href);
                     if (item.type === "scroll") scrollTo(item.href);
                   }}
                   onMouseEnter={() => {
@@ -825,7 +754,7 @@ export function RealEstateHeader() {
                       setRentOpen(false);
                       setCommunitiesOpen(false);
                       setDevelopersOpen(false);
-                      setMarketTrendsOpen(false);
+                      setFeaturedProjectsOpen(false);
                       setServicesOpen(false);
                       setMoreOpen(false);
                     }
@@ -834,7 +763,7 @@ export function RealEstateHeader() {
                       setBuyOpen(false);
                       setCommunitiesOpen(false);
                       setDevelopersOpen(false);
-                      setMarketTrendsOpen(false);
+                      setFeaturedProjectsOpen(false);
                       setServicesOpen(false);
                       setMoreOpen(false);
                     }
@@ -843,7 +772,7 @@ export function RealEstateHeader() {
                       setBuyOpen(false);
                       setRentOpen(false);
                       setDevelopersOpen(false);
-                      setMarketTrendsOpen(false);
+                      setFeaturedProjectsOpen(false);
                       setServicesOpen(false);
                       setMoreOpen(false);
                     }
@@ -852,12 +781,12 @@ export function RealEstateHeader() {
                       setBuyOpen(false);
                       setRentOpen(false);
                       setCommunitiesOpen(false);
-                      setMarketTrendsOpen(false);
+                      setFeaturedProjectsOpen(false);
                       setServicesOpen(false);
                       setMoreOpen(false);
                     }
-                    if (isMarketTrends) {
-                      setMarketTrendsOpen(true);
+                    if (isFeaturedProjects) {
+                      setFeaturedProjectsOpen(true);
                       setBuyOpen(false);
                       setRentOpen(false);
                       setCommunitiesOpen(false);
@@ -871,7 +800,7 @@ export function RealEstateHeader() {
                       setRentOpen(false);
                       setCommunitiesOpen(false);
                       setDevelopersOpen(false);
-                      setMarketTrendsOpen(false);
+                      setFeaturedProjectsOpen(false);
                       setMoreOpen(false);
                     }
                     if (isMore) {
@@ -880,7 +809,7 @@ export function RealEstateHeader() {
                       setRentOpen(false);
                       setCommunitiesOpen(false);
                       setDevelopersOpen(false);
-                      setMarketTrendsOpen(false);
+                      setFeaturedProjectsOpen(false);
                       setServicesOpen(false);
                     }
                   }}
@@ -892,7 +821,7 @@ export function RealEstateHeader() {
                       !isRent &&
                       !isCommunities &&
                       !isDevelopers &&
-                      !isMarketTrends &&
+                      !isFeaturedProjects &&
                       !isServices &&
                       !isMore &&
                       "underline underline-offset-8 decoration-black/30",
@@ -908,7 +837,7 @@ export function RealEstateHeader() {
                           (isRent && rentOpen) ||
                           (isCommunities && communitiesOpen) ||
                           (isDevelopers && developersOpen) ||
-                          (isMarketTrends && marketTrendsOpen) ||
+                          (isFeaturedProjects && featuredProjectsOpen) ||
                           (isServices && servicesOpen) ||
                           (isMore && moreOpen)) &&
                           "rotate-180",
@@ -938,25 +867,6 @@ export function RealEstateHeader() {
           >
             <Calculator className="h-5 w-5" />
           </button>
-
-          <button
-            type="button"
-            className={cn(
-              "lg:hidden hidden sm:inline-flex",
-              "h-11 w-11 items-center justify-center rounded-xl",
-              "bg-[#111827] text-white shadow-sm hover:bg-[#111827]/90",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35",
-            )}
-            aria-label="Calculator"
-            onClick={() =>
-              toast({
-                title: "Calculator",
-                description: "We can add a mortgage calculator next.",
-              })
-            }
-          >
-            <Calculator className="h-5 w-5" />
-          </button>
         </div>
       </div>
     </div>
@@ -972,11 +882,8 @@ export function RealEstateHeader() {
           open={buyOpen}
           onClose={() => setBuyOpen(false)}
           onNavigate={(label) => {
-            scrollTo("#listings");
-            toast({
-              title: `Buy · ${label}`,
-              description: "Showing listings — we can wire these to filters next.",
-            });
+            const slug = slugifyNavLabel(label);
+            navigate(`/nav/buy/${slug}`);
           }}
         />
 
@@ -984,11 +891,8 @@ export function RealEstateHeader() {
           open={rentOpen}
           onClose={() => setRentOpen(false)}
           onNavigate={(label) => {
-            scrollTo("#listings");
-            toast({
-              title: `Rent · ${label}`,
-              description: "Showing listings — we can wire these to filters next.",
-            });
+            const slug = slugifyNavLabel(label);
+            navigate(`/nav/rent/${slug}`);
           }}
         />
 
@@ -996,12 +900,8 @@ export function RealEstateHeader() {
           open={communitiesOpen}
           onClose={() => setCommunitiesOpen(false)}
           onNavigate={(label) => {
-            scrollTo("#projects");
-            toast({
-              title: `Community · ${label}`,
-              description:
-                "Opened communities section — we can wire this to filters next.",
-            });
+            const slug = slugifyNavLabel(label);
+            navigate(`/nav/communities/${slug}`);
           }}
         />
 
@@ -1009,23 +909,17 @@ export function RealEstateHeader() {
           open={developersOpen}
           onClose={() => setDevelopersOpen(false)}
           onNavigate={(label) => {
-            scrollTo("#projects");
-            toast({
-              title: `Developer · ${label}`,
-              description:
-                "Opened projects section — we can wire this to a developer filter next.",
-            });
+            const slug = slugifyNavLabel(label);
+            navigate(`/nav/developers/${slug}`);
           }}
         />
 
         <MarketTrendsMegaMenu
-          open={marketTrendsOpen}
-          onClose={() => setMarketTrendsOpen(false)}
+          open={featuredProjectsOpen}
+          onClose={() => setFeaturedProjectsOpen(false)}
           onNavigate={(label) => {
-            toast({
-              title: `Featured Projects · ${label}`,
-              description: "We can build these pages/sections next.",
-            });
+            const slug = slugifyNavLabel(label);
+            navigate(`/nav/featured-projects/${slug}`);
           }}
         />
 
@@ -1033,10 +927,8 @@ export function RealEstateHeader() {
           open={servicesOpen}
           onClose={() => setServicesOpen(false)}
           onNavigate={(label) => {
-            toast({
-              title: `Services · ${label}`,
-              description: "We can build these pages/sections next.",
-            });
+            const slug = slugifyNavLabel(label);
+            navigate(`/nav/services/${slug}`);
           }}
         />
 
@@ -1044,10 +936,8 @@ export function RealEstateHeader() {
           open={moreOpen}
           onClose={() => setMoreOpen(false)}
           onNavigate={(label) => {
-            toast({
-              title: `More · ${label}`,
-              description: "We can build these pages/sections next.",
-            });
+            const slug = slugifyNavLabel(label);
+            navigate(`/nav/more/${slug}`);
           }}
         />
       </div>
