@@ -31,7 +31,6 @@ import { BrandLogo } from "@/components/brand/BrandLogo";
 import {
   NAV_OPTIONS,
   slugifyNavLabel,
-  type NavCategoryKey,
 } from "@/components/real-estate/nav-config";
 
 function useActiveSection(ids: string[]) {
@@ -434,7 +433,6 @@ export function RealEstateHeader() {
                       </SheetHeader>
                     </div>
 
-                    {/* Scrollable navbar content only */}
                     <div className="flex-1 overflow-y-auto px-4 pb-6 pt-4">
                       <div className="grid gap-3">
                         <MobileMenuSection
@@ -451,7 +449,7 @@ export function RealEstateHeader() {
                                 key={o.slug}
                                 label={o.label}
                                 onClick={() => {
-                                  navigate(`/nav/buy/${o.slug}`);
+                                  navigate(`/nav/buy/option/${o.slug}`);
                                   setMobileOpen(false);
                                 }}
                               />
@@ -462,11 +460,10 @@ export function RealEstateHeader() {
                         <MobileMenuSection
                           title="Rent"
                           open={mobileOpenSection === "rent"}
-                          onToggle={() =>
-                            setMobileOpenSection((k) =>
-                              k === "rent" ? null : "rent",
-                            )
-                          }
+                          onToggle={() => {
+                            navigate("/nav/rent");
+                            setMobileOpen(false);
+                          }}
                         >
                           <div className="grid gap-2">
                             {NAV_OPTIONS.rent.map((o) => (
@@ -474,7 +471,7 @@ export function RealEstateHeader() {
                                 key={o.slug}
                                 label={o.label}
                                 onClick={() => {
-                                  navigate(`/nav/rent/${o.slug}`);
+                                  navigate(`/nav/rent/option/${o.slug}`);
                                   setMobileOpen(false);
                                 }}
                               />
@@ -485,11 +482,10 @@ export function RealEstateHeader() {
                         <MobileMenuSection
                           title="Communities"
                           open={mobileOpenSection === "communities"}
-                          onToggle={() =>
-                            setMobileOpenSection((k) =>
-                              k === "communities" ? null : "communities",
-                            )
-                          }
+                          onToggle={() => {
+                            navigate("/nav/communities");
+                            setMobileOpen(false);
+                          }}
                         >
                           <div className="grid gap-2">
                             {NAV_OPTIONS.communities.map((o) => (
@@ -497,7 +493,7 @@ export function RealEstateHeader() {
                                 key={o.slug}
                                 label={o.label}
                                 onClick={() => {
-                                  navigate(`/nav/communities/${o.slug}`);
+                                  navigate(`/nav/communities/option/${o.slug}`);
                                   setMobileOpen(false);
                                 }}
                               />
@@ -508,11 +504,10 @@ export function RealEstateHeader() {
                         <MobileMenuSection
                           title="Developers"
                           open={mobileOpenSection === "developers"}
-                          onToggle={() =>
-                            setMobileOpenSection((k) =>
-                              k === "developers" ? null : "developers",
-                            )
-                          }
+                          onToggle={() => {
+                            navigate("/nav/developers");
+                            setMobileOpen(false);
+                          }}
                         >
                           <div className="grid gap-2">
                             {NAV_OPTIONS.developers.map((o) => (
@@ -520,7 +515,7 @@ export function RealEstateHeader() {
                                 key={o.slug}
                                 label={o.label}
                                 onClick={() => {
-                                  navigate(`/nav/developers/${o.slug}`);
+                                  navigate(`/nav/developers/option/${o.slug}`);
                                   setMobileOpen(false);
                                 }}
                               />
@@ -531,13 +526,10 @@ export function RealEstateHeader() {
                         <MobileMenuSection
                           title="Featured Projects"
                           open={mobileOpenSection === "featured-projects"}
-                          onToggle={() =>
-                            setMobileOpenSection((k) =>
-                              k === "featured-projects"
-                                ? null
-                                : "featured-projects",
-                            )
-                          }
+                          onToggle={() => {
+                            navigate("/nav/featured-projects");
+                            setMobileOpen(false);
+                          }}
                         >
                           <div className="grid gap-2">
                             {NAV_OPTIONS["featured-projects"].map((o) => (
@@ -545,7 +537,9 @@ export function RealEstateHeader() {
                                 key={o.slug}
                                 label={o.label}
                                 onClick={() => {
-                                  navigate(`/nav/featured-projects/${o.slug}`);
+                                  navigate(
+                                    `/nav/featured-projects/option/${o.slug}`,
+                                  );
                                   setMobileOpen(false);
                                 }}
                               />
@@ -556,11 +550,10 @@ export function RealEstateHeader() {
                         <MobileMenuSection
                           title="Services"
                           open={mobileOpenSection === "services"}
-                          onToggle={() =>
-                            setMobileOpenSection((k) =>
-                              k === "services" ? null : "services",
-                            )
-                          }
+                          onToggle={() => {
+                            navigate("/nav/services");
+                            setMobileOpen(false);
+                          }}
                         >
                           <div className="grid gap-2">
                             {NAV_OPTIONS.services.map((o) => (
@@ -568,7 +561,7 @@ export function RealEstateHeader() {
                                 key={o.slug}
                                 label={o.label}
                                 onClick={() => {
-                                  navigate(`/nav/services/${o.slug}`);
+                                  navigate(`/nav/services/option/${o.slug}`);
                                   setMobileOpen(false);
                                 }}
                               />
@@ -579,11 +572,10 @@ export function RealEstateHeader() {
                         <MobileMenuSection
                           title="More"
                           open={mobileOpenSection === "more"}
-                          onToggle={() =>
-                            setMobileOpenSection((k) =>
-                              k === "more" ? null : "more",
-                            )
-                          }
+                          onToggle={() => {
+                            navigate("/nav/more");
+                            setMobileOpen(false);
+                          }}
                         >
                           <div className="grid gap-2">
                             {NAV_OPTIONS.more.map((o) => (
@@ -591,7 +583,7 @@ export function RealEstateHeader() {
                                 key={o.slug}
                                 label={o.label}
                                 onClick={() => {
-                                  navigate(`/nav/more/${o.slug}`);
+                                  navigate(`/nav/more/option/${o.slug}`);
                                   setMobileOpen(false);
                                 }}
                               />
@@ -727,7 +719,6 @@ export function RealEstateHeader() {
                       cancelClose();
                     }}
                     onMouseLeave={() => {
-                      // only close if they didn't enter the menu area
                       scheduleClose(140);
                     }}
                     onClick={() => closeMegas()}
@@ -823,7 +814,6 @@ export function RealEstateHeader() {
       <TopBar />
       <MainBar />
 
-      {/* Desktop mega menus: keep open while hovering the menu area */}
       <div
         className="hidden lg:block"
         onMouseEnter={() => cancelClose()}
@@ -834,7 +824,7 @@ export function RealEstateHeader() {
           onClose={() => setBuyOpen(false)}
           onNavigate={(label) => {
             const slug = slugifyNavLabel(label);
-            navigate(`/nav/buy/${slug}`);
+            navigate(`/nav/buy/option/${slug}`);
           }}
         />
 
@@ -843,7 +833,7 @@ export function RealEstateHeader() {
           onClose={() => setRentOpen(false)}
           onNavigate={(label) => {
             const slug = slugifyNavLabel(label);
-            navigate(`/nav/rent/${slug}`);
+            navigate(`/nav/rent/option/${slug}`);
           }}
         />
 
@@ -852,7 +842,7 @@ export function RealEstateHeader() {
           onClose={() => setCommunitiesOpen(false)}
           onNavigate={(label) => {
             const slug = slugifyNavLabel(label);
-            navigate(`/nav/communities/${slug}`);
+            navigate(`/nav/communities/option/${slug}`);
           }}
         />
 
@@ -861,7 +851,7 @@ export function RealEstateHeader() {
           onClose={() => setDevelopersOpen(false)}
           onNavigate={(label) => {
             const slug = slugifyNavLabel(label);
-            navigate(`/nav/developers/${slug}`);
+            navigate(`/nav/developers/option/${slug}`);
           }}
         />
 
@@ -870,7 +860,7 @@ export function RealEstateHeader() {
           onClose={() => setFeaturedProjectsOpen(false)}
           onNavigate={(label) => {
             const slug = slugifyNavLabel(label);
-            navigate(`/nav/featured-projects/${slug}`);
+            navigate(`/nav/featured-projects/option/${slug}`);
           }}
         />
 
@@ -879,7 +869,7 @@ export function RealEstateHeader() {
           onClose={() => setServicesOpen(false)}
           onNavigate={(label) => {
             const slug = slugifyNavLabel(label);
-            navigate(`/nav/services/${slug}`);
+            navigate(`/nav/services/option/${slug}`);
           }}
         />
 
@@ -888,7 +878,7 @@ export function RealEstateHeader() {
           onClose={() => setMoreOpen(false)}
           onNavigate={(label) => {
             const slug = slugifyNavLabel(label);
-            navigate(`/nav/more/${slug}`);
+            navigate(`/nav/more/option/${slug}`);
           }}
         />
       </div>

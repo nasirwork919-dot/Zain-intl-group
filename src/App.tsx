@@ -4,11 +4,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import NavCategoryLandingPage from "./pages/NavCategoryLanding";
-import NavCategoryPage from "./pages/NavCategory";
 import NotFound from "./pages/NotFound";
 import BuyLanding from "./pages/BuyLanding";
 import BuyFeaturePage from "./pages/BuyFeature";
+import NavFeatureLandingPage from "./pages/NavFeatureLanding";
+import NavFeatureOptionsPage from "./pages/NavFeatureOptions";
+import NavCategoryPage from "./pages/NavCategory";
 
 const queryClient = new QueryClient();
 
@@ -25,8 +26,16 @@ const App = () => (
           <Route path="/nav/buy" element={<BuyLanding />} />
           <Route path="/nav/buy/:feature" element={<BuyFeaturePage />} />
 
-          <Route path="/nav/:category" element={<NavCategoryLandingPage />} />
-          <Route path="/nav/:category/:option" element={<NavCategoryPage />} />
+          {/* All other categories: 2-step flow */}
+          <Route path="/nav/:category" element={<NavFeatureLandingPage />} />
+          <Route
+            path="/nav/:category/:feature"
+            element={<NavFeatureOptionsPage />}
+          />
+
+          {/* Results/listings route (moved to avoid conflicts with feature route) */}
+          <Route path="/nav/:category/option/:option" element={<NavCategoryPage />} />
+
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
