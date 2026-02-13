@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { HeaderCurrencyHoverMenu } from "@/components/real-estate/header/HeaderCurrencyHoverMenu";
 
 type CurrencyCode = "AED" | "EUR" | "GBP" | "USD";
 
@@ -57,45 +58,6 @@ function PhonePill({
   );
 }
 
-function TopCurrencyTabs({
-  value,
-  onChange,
-}: {
-  value: CurrencyCode;
-  onChange: (next: CurrencyCode) => void;
-}) {
-  const codes: CurrencyCode[] = ["AED", "EUR", "GBP", "USD"];
-
-  const tabClass = (active: boolean) =>
-    cn(
-      "rounded-full px-3 py-1.5 text-xs font-semibold transition",
-      "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/35",
-      active ? "text-white" : "text-white/80 hover:text-white",
-    );
-
-  return (
-    <div className="inline-flex items-center gap-4">
-      {codes.map((code) => (
-        <button
-          key={code}
-          type="button"
-          onClick={() => {
-            onChange(code);
-            toast({
-              title: "Currency updated",
-              description: `Selected ${code}.`,
-            });
-          }}
-          className={tabClass(value === code)}
-          aria-pressed={value === code}
-        >
-          {code}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 export function HeaderTopBar({
   onContact,
   mobileMenuTrigger,
@@ -121,7 +83,10 @@ export function HeaderTopBar({
                 <UtilityPill>List Your Property</UtilityPill>
               </div>
 
-              <TopCurrencyTabs value={topCurrency} onChange={setTopCurrency} />
+              <HeaderCurrencyHoverMenu
+                value={topCurrency}
+                onChange={setTopCurrency}
+              />
             </div>
 
             <div className="hidden items-center gap-3 md:flex">
