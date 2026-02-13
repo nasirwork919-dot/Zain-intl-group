@@ -1,4 +1,3 @@
-feature -> options, using lightweight local images for fast loads.">
 export type NavCategoryKey =
   | "buy"
   | "rent"
