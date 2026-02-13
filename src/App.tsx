@@ -10,6 +10,7 @@ import BuyFeaturePage from "./pages/BuyFeature";
 import NavFeatureLandingPage from "./pages/NavFeatureLanding";
 import NavFeatureOptionsPage from "./pages/NavFeatureOptions";
 import NavCategoryPage from "./pages/NavCategory";
+import ListYourPropertyPage from "./pages/ListYourProperty";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+
+          <Route path="/list-your-property" element={<ListYourPropertyPage />} />
 
           {/* Buy: 2-step landing (features -> options) */}
           <Route path="/nav/buy" element={<BuyLanding />} />
@@ -34,7 +37,10 @@ const App = () => (
           />
 
           {/* Results/listings route (moved to avoid conflicts with feature route) */}
-          <Route path="/nav/:category/option/:option" element={<NavCategoryPage />} />
+          <Route
+            path="/nav/:category/option/:option"
+            element={<NavCategoryPage />}
+          />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
