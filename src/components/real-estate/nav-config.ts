@@ -7,62 +7,262 @@ export type NavCategoryKey =
   | "services"
   | "more";
 
-export type NavOption = { label: string; slug: string };
+export type NavOption = { label: string; slug: string; image?: string };
 
 export const NAV_OPTIONS: Record<NavCategoryKey, NavOption[]> = {
   buy: [
-    { label: "Apartments", slug: "apartments" },
-    { label: "Townhouses", slug: "townhouses" },
-    { label: "Penthouses", slug: "penthouses" },
-    { label: "Villas", slug: "villas" },
-    { label: "Offices", slug: "offices" },
-    { label: "View All", slug: "all" },
+    {
+      label: "Apartments",
+      slug: "apartments",
+      image:
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Townhouses",
+      slug: "townhouses",
+      image:
+        "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Penthouses",
+      slug: "penthouses",
+      image:
+        "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Villas",
+      slug: "villas",
+      image:
+        "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Offices",
+      slug: "offices",
+      image:
+        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "View All",
+      slug: "all",
+      image:
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=2200&q=82",
+    },
   ],
   rent: [
-    { label: "Apartments", slug: "apartments" },
-    { label: "Offices", slug: "offices" },
-    { label: "Townhouses", slug: "townhouses" },
-    { label: "Villas", slug: "villas" },
-    { label: "Commercial", slug: "commercial" },
+    {
+      label: "Apartments",
+      slug: "apartments",
+      image:
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Offices",
+      slug: "offices",
+      image:
+        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Townhouses",
+      slug: "townhouses",
+      image:
+        "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Villas",
+      slug: "villas",
+      image:
+        "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Commercial",
+      slug: "commercial",
+      image:
+        "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=2200&q=82",
+    },
   ],
   communities: [
-    { label: "Dubai Marina", slug: "dubai-marina" },
-    { label: "Dubai Creek Harbour", slug: "dubai-creek-harbour" },
-    { label: "Jumeirah Village Circle (JVC)", slug: "jvc" },
-    { label: "Dubai Hills Estate", slug: "dubai-hills" },
-    { label: "Jumeirah Beach Residence (JBR)", slug: "jbr" },
-    { label: "Palm Jebel Ali", slug: "palm-jebel-ali" },
-    { label: "Downtown Dubai", slug: "downtown" },
-    { label: "Palm Jumeirah", slug: "palm-jumeirah" },
+    {
+      label: "Dubai Marina",
+      slug: "dubai-marina",
+      image:
+        "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Dubai Creek Harbour",
+      slug: "dubai-creek-harbour",
+      image:
+        "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Jumeirah Village Circle (JVC)",
+      slug: "jvc",
+      image:
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Dubai Hills Estate",
+      slug: "dubai-hills",
+      image:
+        "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Jumeirah Beach Residence (JBR)",
+      slug: "jbr",
+      image:
+        "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Palm Jebel Ali",
+      slug: "palm-jebel-ali",
+      image:
+        "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Downtown Dubai",
+      slug: "downtown",
+      image:
+        "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Palm Jumeirah",
+      slug: "palm-jumeirah",
+      image:
+        "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=2200&q=82",
+    },
   ],
   developers: [
-    { label: "Emaar", slug: "emaar" },
-    { label: "Nakheel", slug: "nakheel" },
-    { label: "Danube", slug: "danube" },
-    { label: "Select Group", slug: "select-group" },
-    { label: "View All Developers", slug: "all" },
+    {
+      label: "Emaar",
+      slug: "emaar",
+      image:
+        "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Nakheel",
+      slug: "nakheel",
+      image:
+        "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Danube",
+      slug: "danube",
+      image:
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Select Group",
+      slug: "select-group",
+      image:
+        "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "View All Developers",
+      slug: "all",
+      image:
+        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2200&q=82",
+    },
   ],
   "featured-projects": [
-    { label: "Daily Transaction", slug: "daily-transaction" },
-    { label: "Rental Transaction", slug: "rental-transaction" },
-    { label: "Sale Transaction", slug: "sale-transaction" },
-    { label: "Market Guide", slug: "market-guide" },
+    {
+      label: "Daily Transaction",
+      slug: "daily-transaction",
+      image:
+        "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Rental Transaction",
+      slug: "rental-transaction",
+      image:
+        "https://images.unsplash.com/photo-1450101215322-bf5cd27642fc?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Sale Transaction",
+      slug: "sale-transaction",
+      image:
+        "https://images.unsplash.com/photo-1560472355-536de3962603?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Market Guide",
+      slug: "market-guide",
+      image:
+        "https://images.unsplash.com/photo-1553729459-efe14ef6055d?auto=format&fit=crop&w=2200&q=82",
+    },
   ],
   services: [
-    { label: "Selling", slug: "selling" },
-    { label: "Buying", slug: "buying" },
-    { label: "Leasing", slug: "leasing" },
-    { label: "Management", slug: "management" },
-    { label: "Legal Assistance", slug: "legal-assistance" },
-    { label: "Property Maintenance", slug: "property-maintenance" },
+    {
+      label: "Selling",
+      slug: "selling",
+      image:
+        "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Buying",
+      slug: "buying",
+      image:
+        "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Leasing",
+      slug: "leasing",
+      image:
+        "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Management",
+      slug: "management",
+      image:
+        "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Legal Assistance",
+      slug: "legal-assistance",
+      image:
+        "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Property Maintenance",
+      slug: "property-maintenance",
+      image:
+        "https://images.unsplash.com/photo-1581579188871-936a3fce3fce?auto=format&fit=crop&w=2200&q=82",
+    },
   ],
   more: [
-    { label: "About Us", slug: "about" },
-    { label: "Careers", slug: "careers" },
-    { label: "Reports", slug: "reports" },
-    { label: "News", slug: "news" },
-    { label: "Blogs", slug: "blogs" },
-    { label: "Media", slug: "media" },
+    {
+      label: "About Us",
+      slug: "about",
+      image:
+        "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Careers",
+      slug: "careers",
+      image:
+        "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Reports",
+      slug: "reports",
+      image:
+        "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "News",
+      slug: "news",
+      image:
+        "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Blogs",
+      slug: "blogs",
+      image:
+        "https://images.unsplash.com/photo-1450101215322-bf5cd27642fc?auto=format&fit=crop&w=2200&q=82",
+    },
+    {
+      label: "Media",
+      slug: "media",
+      image:
+        "https://images.unsplash.com/photo-1553729459-efe14ef6055d?auto=format&fit=crop&w=2200&q=82",
+    },
   ],
 };
 
