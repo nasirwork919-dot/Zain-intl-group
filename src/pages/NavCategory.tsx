@@ -319,8 +319,10 @@ export default function NavCategoryPage() {
         topOffsetPx={132}
       />
 
-      {/* Increased top padding so the section below doesn't sit under the filters rail */}
-      <main className="mx-auto max-w-7xl px-4 pb-16 pt-14 sm:pt-16">
+      <main className="mx-auto max-w-7xl px-4 pb-16">
+        {/* margin-top ~100px below the sticky rail */}
+        <div className="mt-[100px]" />
+
         <section className="rounded-[5px] border border-white/40 bg-white/55 p-5 ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/45">
           <div className="text-xs font-semibold text-[hsl(var(--brand-ink))]/70">
             For {rail.operation === "rent" ? "Rent" : "Sale"} ·{" "}
