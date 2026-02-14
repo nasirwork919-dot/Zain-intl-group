@@ -8,7 +8,6 @@ import {
   type Property,
 } from "@/components/real-estate/site-data";
 import { FeaturedPropertyLaunchCard } from "@/components/real-estate/FeaturedPropertyLaunchCard";
-import { FeaturedListingsMobileSlider } from "@/components/real-estate/FeaturedListingsMobileSlider";
 import { PropertyDialog } from "@/components/real-estate/PropertyDialog";
 import { LeadCapture } from "@/components/real-estate/LeadCapture";
 import { ScrollUpButton } from "@/components/ScrollUpButton";
@@ -168,7 +167,6 @@ function matchesSegment(p: Property, segment: Segment) {
   const tag = (p.tag ?? "").trim().toLowerCase();
   const hay = `${p.title} ${p.location} ${p.description} ${(p.tag ?? "")} ${p.amenities.join(" ")}`.toLowerCase();
 
-  // Existing behavior
   if (segment === "ready") {
     return tag.includes("ready") || hay.includes("ready") || hay.includes("vacant");
   }
@@ -184,11 +182,16 @@ function matchesSegment(p: Property, segment: Segment) {
     );
   }
 
-  // NEW: map to your actual tags
   if (segment === "new") return tag === "new" || tag.includes("new");
   if (segment === "hot-deal") return tag === "hot deal" || tag.includes("hot");
   if (segment === "investor-pick")
     return tag === "investor pick" || tag.includes("investor");
+
+  // These are present in your tags dataset too; keep behavior consistent.
+  if (segment === "waterfront") return tag.includes("waterfront");
+  if (segment === "family") return tag.includes("family");
+  if (segment === "prime") return tag.includes("prime");
+  if (segment === "luxury") return tag.includes("luxury");
 
   return true;
 }
@@ -258,7 +261,8 @@ export default function NavCategoryPage() {
       const matchesQuery = !q || hay.includes(q);
       const matchesKeywords = !kw || hay.includes(kw);
 
-      const matchesOption = !option || option === "all" || hay.includes(optNeedle);
+      const matchesOption =
+        !option || option === "all" || hay.includes(optNeedle);
 
       const matchesSeg = matchesSegment(p, rail.segment);
 
@@ -302,9 +306,10 @@ export default function NavCategoryPage() {
   };
 
   const optionLabel =
-    config.options.find((o) => o.slug === option)?.label ?? titleCaseSlug(option);
+    config.options.find((o) => o.slug === option)?.label ??
+    titleCaseSlug(option);
 
-  const pageTitle = `${config.title} · ${optionLabel}`;
+  const _pageTitle = `${config.title} · ${optionLabel}`;
 
   return (
     <div className="min-h-screen bg-[hsl(var(--page))]">
@@ -346,7 +351,9 @@ export default function NavCategoryPage() {
 
             <div className="rounded-[5px] border border-black/5 bg-white/70 px-4 py-2 text-sm text-muted-foreground ring-1 ring-black/10">
               Showing{" "}
-              <span className="font-semibold text-foreground">{results.length}</span>{" "}
+              <span className="font-semibold text-foreground">
+                {results.length}
+              </span>{" "}
               of {featuredProperties.length}
             </div>
           </div>
@@ -360,20 +367,27 @@ export default function NavCategoryPage() {
                   Featured listings
                 </div>
                 <h2 className="mt-2 text-2xl font-extrabold tracking-tight">
-                  Properties {rail.operation === "rent" ? "for rent" : "for sale"} in{" "}
+                  Properties{" "}
+                  {rail.operation === "rent" ? "for rent" : "for sale"} in{" "}
                   {optionLabel}
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
                   Click any card for full details.
                 </p>
 
-                <div className="mt-6">
-                  <FeaturedListingsMobileSlider
-                    properties={results}
-                    onOpenProperty={openProperty}
-                  />
+                {/* Mobile: STACKED list (no slider/pager) */}
+                <div className="mt-6 grid gap-4 md:hidden">
+                  {results.map((p) => (
+                    <div key={p.id} className="h-[520px]">
+                      <FeaturedPropertyLaunchCard
+                        property={p}
+                        onOpen={() => openProperty(p)}
+                      />
+                    </div>
+                  ))}
                 </div>
 
+                {/* Desktop/tablet: grid */}
                 <div className="mt-6 hidden gap-4 md:grid md:grid-cols-2">
                   {results.map((p) => (
                     <div key={p.id} className="h-[520px]">
@@ -433,7 +447,9 @@ export default function NavCategoryPage() {
 
                   <Separator className="my-4" />
 
-                  <LeadCapture defaultMessage={`Hi! I’m interested in ${optionLabel}. My budget is…`} />
+                  <LeadCapture
+                    defaultMessage={`Hi! I’m interested in ${optionLabel}. My budget is…`}
+                  />
 
                   <div className="mt-4 grid gap-2 sm:grid-cols-2">
                     <Button
