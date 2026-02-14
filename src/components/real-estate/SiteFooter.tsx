@@ -7,6 +7,7 @@ import {
   ArrowRight,
   Mail,
   ChevronUp,
+  Sparkles,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -141,7 +142,7 @@ export function SiteFooter({
 
   return (
     <footer className={cn("w-full", className)}>
-      {/* Full-width CTA strip */}
+      {/* Full-width CTA strip (softened to avoid repeating the Contact section) */}
       <section className="relative overflow-hidden border-t border-white/10">
         <img
           src={ctaBg}
@@ -149,36 +150,49 @@ export function SiteFooter({
           className="absolute inset-0 h-full w-full object-cover"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-[#0b1220]/60" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0b1220]/80 via-[#0b1220]/55 to-[#0b1220]/10" />
+        <div className="absolute inset-0 bg-[#0b1220]/64" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0b1220]/82 via-[#0b1220]/65 to-[#0b1220]/18" />
 
         <div className="relative z-[2]">
-          <div className={cn(containerClass, "py-12 sm:py-14 lg:py-16")}>
-            <div className="grid gap-10 md:grid-cols-12 md:items-center">
+          <div className={cn(containerClass, "py-10 sm:py-12 lg:py-14")}>
+            <div className="grid gap-8 md:grid-cols-12 md:items-center">
               <div className="md:col-span-8">
-                <div className="text-xs font-semibold tracking-[0.18em] text-white/80">
-                  ZAIN INTERNATIONAL GROUP
+                <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.18em] text-white/80">
+                  <span>ZAIN INTERNATIONAL GROUP</span>
+                  <span className="hidden sm:inline">•</span>
+                  <span className="hidden sm:inline">DUBAI REAL ESTATE</span>
                 </div>
-                <h3 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-                  Our Expert Will Help You
+
+                <h3 className="mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                  Get a weekly shortlist worth opening
                 </h3>
+
                 <p className="mt-3 max-w-xl text-sm font-medium text-white/85">
-                  Feel free to contact us at any time — we’re online 24/7 for
-                  shortlists, payment plans, and viewings.
+                  New launches, ready units, and community highlights — curated
+                  into a quick, buyer-friendly update.
                 </p>
 
-                <div className="mt-5 text-[11px] font-semibold text-white/75">
-                  Trusted guidance · Clear next steps · Premium communities
+                <div className="mt-5 inline-flex items-center gap-2 rounded-[5px] bg-white/10 px-3 py-2 text-[11px] font-semibold text-white/80 ring-1 ring-white/15 backdrop-blur">
+                  <Sparkles className="h-4 w-4" />
+                  No spam · unsubscribe anytime
                 </div>
               </div>
 
               <div className="md:col-span-4 md:flex md:justify-end">
-                <div className="grid w-full gap-3 sm:max-w-[360px]">
+                <div className="grid w-full gap-3 sm:max-w-[380px]">
                   <Button
-                    onClick={onGetInTouch}
+                    onClick={() => {
+                      toast({
+                        title: "Newsletter",
+                        description:
+                          "Use the Newsletter box below to subscribe — we’ll wire it to your email tool next.",
+                      });
+                      const el = document.getElementById("footer-newsletter");
+                      el?.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }}
                     className="h-11 w-full rounded-[5px] bg-white px-7 font-semibold text-[#111827] hover:bg-white/95"
                   >
-                    Get In Touch
+                    Subscribe below
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
 
@@ -190,15 +204,9 @@ export function SiteFooter({
                       "ring-1 ring-white/15",
                       "hover:bg-white/10 hover:text-white",
                     )}
-                    onClick={() =>
-                      toast({
-                        title: "Quick shortlist",
-                        description:
-                          "Tell us your area + budget and we’ll send a curated list.",
-                      })
-                    }
+                    onClick={onGetInTouch}
                   >
-                    Request shortlist
+                    Need help now? Contact us
                   </Button>
                 </div>
               </div>
@@ -212,7 +220,7 @@ export function SiteFooter({
         <div className={cn(containerClass, "py-12 sm:py-14 lg:py-16")}>
           <div className="grid gap-10 lg:grid-cols-12 lg:items-start lg:gap-12">
             {/* Newsletter */}
-            <div className="lg:col-span-5">
+            <div className="lg:col-span-5" id="footer-newsletter">
               <Card className="rounded-[5px] border border-black/10 bg-white p-6 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.35)] sm:p-7">
                 <div className="text-2xl font-extrabold tracking-tight text-[#0b1025]">
                   Newsletter
