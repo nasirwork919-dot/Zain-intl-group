@@ -18,7 +18,6 @@ import {
   featuredProperties,
   type Property,
 } from "@/components/real-estate/site-data";
-import { PropertyCard } from "@/components/real-estate/PropertyCard";
 import { PropertyDialog } from "@/components/real-estate/PropertyDialog";
 import { LeadCapture } from "@/components/real-estate/LeadCapture";
 import { CuratedOpportunities } from "@/components/real-estate/CuratedOpportunities";
@@ -135,6 +134,11 @@ const Index = () => {
               Let’s Find Your Perfect Haven Together
             </h1>
 
+            <p className="mx-auto mt-4 max-w-2xl text-sm font-semibold leading-relaxed text-white/85 sm:text-base">
+              Your Efficient Partner in Real Estate Since{" "}
+              <span className="text-white">2011</span>
+            </p>
+
             <div className="mx-auto mt-7 max-w-5xl">
               <HeroSearchBar
                 value={heroBar}
@@ -147,7 +151,6 @@ const Index = () => {
                 }}
               />
             </div>
-
           </div>
 
           <style>{`

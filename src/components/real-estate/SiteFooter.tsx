@@ -164,10 +164,12 @@ export function SiteFooter({
           >
             <div className="grid gap-8 md:grid-cols-12 md:items-center">
               <div className="md:col-span-8">
-                <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.18em] text-white/80">
-                  <span>ZAIN INTERNATIONAL GROUP</span>
+                <div className="inline-flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold tracking-[0.18em] text-white/80">
+                  <span>ZAIN AVENUE REALITY REAL ESTATE</span>
                   <span className="hidden sm:inline">•</span>
-                  <span className="hidden sm:inline">DUBAI REAL ESTATE</span>
+                  <span className="text-white/70">
+                    Your Efficient Partner in Real Estate Since 2011
+                  </span>
                 </div>
 
                 <h3 className="mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
