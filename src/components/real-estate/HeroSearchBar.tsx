@@ -28,7 +28,7 @@ export function HeroSearchBar({
         value={value}
         onChange={onChange}
         onSubmit={onSubmit}
-        onOpenFilters={() => setFiltersOpen(true)}
+        onOpenFilters={() => setFiltersOpen((v) => !v)}
       />
     </HeroFiltersDropdown>
   );
