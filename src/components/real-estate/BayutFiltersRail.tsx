@@ -19,7 +19,7 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
 
 type Operation = "buy" | "rent";
-type Segment = "all" | "ready" | "off-plan";
+export type Segment = "all" | "ready" | "off-plan";
 
 function Pill({
   active,
@@ -168,6 +168,8 @@ function SelectGrid({
   );
 }
 
+type TourType = "floor-plans" | "video-tours" | "360-tours";
+
 export type BayutRailValue = {
   operation: Operation;
   query: string;
@@ -187,6 +189,15 @@ export type BayutRailValue = {
 
   beds: string; // "Any" | "Studio" | "1" ... "8+"
   baths: string; // "Any" | "1" ... "6+"
+
+  // More filters (functional for price/area/keywords; agent/tours are UI-state until data exists)
+  priceMin: string;
+  priceMax: string;
+  areaMin: string;
+  areaMax: string;
+  keywords: string;
+  agent: string;
+  tourTypes: TourType[];
 };
 
 const DEFAULT_VALUE: BayutRailValue = {
@@ -197,7 +208,332 @@ const DEFAULT_VALUE: BayutRailValue = {
   residentialType: "Any",
   beds: "Any",
   baths: "Any",
+
+  priceMin: "",
+  priceMax: "",
+  areaMin: "",
+  areaMax: "",
+  keywords: "",
+  agent: "",
+  tourTypes: [],
 };
+
+function numOrNull(v: string) {
+  const n = Number(String(v).replace(/[^0-9.]/g, ""));
+  if (!Number.isFinite(n)) return null;
+  return n;
+}
+
+function TourPill({
+  active,
+  label,
+  onClick,
+}: {
+  active: boolean;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "h-9 rounded-full px-4 text-xs font-semibold transition",
+        "ring-1 ring-black/10",
+        active
+          ? "bg-[hsl(var(--brand-ink))] text-white ring-transparent"
+          : "bg-white text-[hsl(var(--brand-ink))] hover:bg-muted/30",
+      )}
+      aria-pressed={active}
+    >
+      {label}
+    </button>
+  );
+}
+
+function MoreFiltersPopover({
+  value,
+  onChange,
+}: {
+  value: BayutRailValue;
+  onChange: (next: BayutRailValue) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState(() => ({
+    priceMin: value.priceMin,
+    priceMax: value.priceMax,
+    areaMin: value.areaMin,
+    areaMax: value.areaMax,
+    keywords: value.keywords,
+    agent: value.agent,
+    tourTypes: value.tourTypes,
+  }));
+
+  const apply = () => {
+    onChange({
+      ...value,
+      ...draft,
+    });
+    setOpen(false);
+
+    toast({
+      title: "Filters applied",
+      description: "Your advanced filters have been updated.",
+    });
+  };
+
+  const reset = () => {
+    setDraft({
+      priceMin: "",
+      priceMax: "",
+      areaMin: "",
+      areaMax: "",
+      keywords: "",
+      agent: "",
+      tourTypes: [],
+    });
+  };
+
+  const activeCount = useMemo(() => {
+    let c = 0;
+    if (draft.priceMin.trim() || draft.priceMax.trim()) c += 1;
+    if (draft.areaMin.trim() || draft.areaMax.trim()) c += 1;
+    if (draft.keywords.trim()) c += 1;
+    if (draft.agent.trim()) c += 1;
+    if (draft.tourTypes.length) c += 1;
+    return c;
+  }, [draft]);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          className="h-10 rounded-[10px] bg-white px-4 text-xs font-semibold"
+          aria-label="More filters"
+        >
+          <SlidersHorizontal className="mr-2 h-4 w-4" />
+          More Filters
+          {activeCount ? (
+            <span className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[hsl(var(--brand))]/14 px-1.5 text-[11px] font-extrabold text-[hsl(var(--brand-ink))] ring-1 ring-[hsl(var(--brand))]/25">
+              {activeCount}
+            </span>
+          ) : null}
+        </Button>
+      </PopoverTrigger>
+
+      <PopoverContent
+        align="start"
+        className="w-[340px] rounded-[12px] p-4"
+      >
+        <div className="grid gap-4">
+          {/* Price */}
+          <div>
+            <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+              Price (AED)
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              <div className="grid gap-1">
+                <div className="text-xs font-semibold text-muted-foreground">
+                  Minimum
+                </div>
+                <Input
+                  value={draft.priceMin}
+                  onChange={(e) =>
+                    setDraft((p) => ({ ...p, priceMin: e.target.value }))
+                  }
+                  inputMode="numeric"
+                  placeholder="0"
+                  className="h-10 rounded-[10px]"
+                />
+              </div>
+              <div className="grid gap-1">
+                <div className="text-xs font-semibold text-muted-foreground">
+                  Maximum
+                </div>
+                <Input
+                  value={draft.priceMax}
+                  onChange={(e) =>
+                    setDraft((p) => ({ ...p, priceMax: e.target.value }))
+                  }
+                  inputMode="numeric"
+                  placeholder="Any"
+                  className="h-10 rounded-[10px]"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Area */}
+          <div>
+            <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+              Area (sqft)
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              <div className="grid gap-1">
+                <div className="text-xs font-semibold text-muted-foreground">
+                  Minimum
+                </div>
+                <Input
+                  value={draft.areaMin}
+                  onChange={(e) =>
+                    setDraft((p) => ({ ...p, areaMin: e.target.value }))
+                  }
+                  inputMode="numeric"
+                  placeholder="0"
+                  className="h-10 rounded-[10px]"
+                />
+              </div>
+              <div className="grid gap-1">
+                <div className="text-xs font-semibold text-muted-foreground">
+                  Maximum
+                </div>
+                <Input
+                  value={draft.areaMax}
+                  onChange={(e) =>
+                    setDraft((p) => ({ ...p, areaMax: e.target.value }))
+                  }
+                  inputMode="numeric"
+                  placeholder="Any"
+                  className="h-10 rounded-[10px]"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Keywords */}
+          <div>
+            <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+              Keywords
+            </div>
+            <Input
+              value={draft.keywords}
+              onChange={(e) =>
+                setDraft((p) => ({ ...p, keywords: e.target.value }))
+              }
+              placeholder="Add relevant keywords"
+              className="mt-3 h-10 rounded-[10px]"
+            />
+          </div>
+
+          {/* Agent */}
+          <div>
+            <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+              Agent or Agency
+            </div>
+            <Input
+              value={draft.agent}
+              onChange={(e) => setDraft((p) => ({ ...p, agent: e.target.value }))}
+              placeholder="Select an agent or agency"
+              className="mt-3 h-10 rounded-[10px]"
+            />
+            <div className="mt-2 text-xs font-semibold text-muted-foreground">
+              Note: agent filtering becomes real once listings include agent data.
+            </div>
+          </div>
+
+          {/* Tour type */}
+          <div>
+            <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+              Tour Type
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <TourPill
+                active={draft.tourTypes.includes("floor-plans")}
+                label="Floor plans"
+                onClick={() =>
+                  setDraft((p) => ({
+                    ...p,
+                    tourTypes: p.tourTypes.includes("floor-plans")
+                      ? p.tourTypes.filter((t) => t !== "floor-plans")
+                      : [...p.tourTypes, "floor-plans"],
+                  }))
+                }
+              />
+              <TourPill
+                active={draft.tourTypes.includes("video-tours")}
+                label="Video tours"
+                onClick={() =>
+                  setDraft((p) => ({
+                    ...p,
+                    tourTypes: p.tourTypes.includes("video-tours")
+                      ? p.tourTypes.filter((t) => t !== "video-tours")
+                      : [...p.tourTypes, "video-tours"],
+                  }))
+                }
+              />
+              <TourPill
+                active={draft.tourTypes.includes("360-tours")}
+                label="360° tours"
+                onClick={() =>
+                  setDraft((p) => ({
+                    ...p,
+                    tourTypes: p.tourTypes.includes("360-tours")
+                      ? p.tourTypes.filter((t) => t !== "360-tours")
+                      : [...p.tourTypes, "360-tours"],
+                  }))
+                }
+              />
+            </div>
+
+            <div className="mt-2 text-xs font-semibold text-muted-foreground">
+              Note: tour filtering becomes real once listings include tour flags.
+            </div>
+          </div>
+
+          <div className="flex gap-2 pt-1">
+            <Button
+              variant="outline"
+              className="h-10 flex-1 rounded-[10px]"
+              onClick={reset}
+            >
+              Reset
+            </Button>
+            <Button
+              className="h-10 flex-1 rounded-[10px] bg-[hsl(var(--brand))] text-white hover:bg-[hsl(var(--brand))]/90"
+              onClick={() => {
+                // basic guard: if min/max swapped, keep the input but still allow applying
+                const pMin = numOrNull(draft.priceMin);
+                const pMax = numOrNull(draft.priceMax);
+                const aMin = numOrNull(draft.areaMin);
+                const aMax = numOrNull(draft.areaMax);
+
+                if (
+                  pMin !== null &&
+                  pMax !== null &&
+                  pMax > 0 &&
+                  pMin > pMax
+                ) {
+                  toast({
+                    title: "Check price range",
+                    description: "Minimum price is higher than maximum.",
+                  });
+                  return;
+                }
+                if (
+                  aMin !== null &&
+                  aMax !== null &&
+                  aMax > 0 &&
+                  aMin > aMax
+                ) {
+                  toast({
+                    title: "Check area range",
+                    description: "Minimum area is higher than maximum.",
+                  });
+                  return;
+                }
+
+                apply();
+              }}
+            >
+              Done
+            </Button>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 export function BayutFiltersRail({
   value,
@@ -220,7 +556,12 @@ export function BayutFiltersRail({
     value.residentialType !== "Any" ||
     value.beds !== "Any" ||
     value.baths !== "Any" ||
-    value.operation !== "buy";
+    value.operation !== "buy" ||
+    value.priceMin.trim() ||
+    value.priceMax.trim() ||
+    value.areaMin.trim() ||
+    value.areaMax.trim() ||
+    value.keywords.trim();
 
   const railBg =
     "bg-white/92 backdrop-blur supports-[backdrop-filter]:bg-white/75";
@@ -257,10 +598,7 @@ export function BayutFiltersRail({
   );
 
   return (
-    <div
-      className={cn("sticky z-40", className)}
-      style={{ top: topOffsetPx }}
-    >
+    <div className={cn("sticky z-40", className)} style={{ top: topOffsetPx }}>
       <div className={cn("w-full border-b border-black/10", railBg)}>
         <div className="mx-auto max-w-7xl px-4">
           {/* Row 1 */}
@@ -288,14 +626,16 @@ export function BayutFiltersRail({
                 </Button>
                 <Button
                   className="h-10 flex-1 rounded-[10px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
-                  onClick={() => toast({ title: "Saved", description: "Operation updated." })}
+                  onClick={() =>
+                    toast({ title: "Saved", description: "Operation updated." })
+                  }
                 >
                   Done
                 </Button>
               </div>
             </DropdownButton>
 
-            {/* Query input (with chip) */}
+            {/* Query input */}
             <div
               className={cn(
                 "flex min-w-[260px] flex-1 items-center gap-2",
@@ -388,7 +728,12 @@ export function BayutFiltersRail({
                   </Button>
                   <Button
                     className="h-10 flex-1 rounded-[10px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
-                    onClick={() => toast({ title: "Done", description: "Property type updated." })}
+                    onClick={() =>
+                      toast({
+                        title: "Done",
+                        description: "Property type updated.",
+                      })
+                    }
                   >
                     Done
                   </Button>
@@ -414,11 +759,25 @@ export function BayutFiltersRail({
                 </button>
               </PopoverTrigger>
 
-              <PopoverContent className="w-[360px] rounded-[12px] p-4" align="start">
+              <PopoverContent
+                className="w-[360px] rounded-[12px] p-4"
+                align="start"
+              >
                 <div className="grid gap-4">
                   <SelectGrid
                     title="Beds"
-                    items={["Any", "Studio", "1", "2", "3", "4", "5", "6", "7", "8+"]}
+                    items={[
+                      "Any",
+                      "Studio",
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                      "6",
+                      "7",
+                      "8+",
+                    ]}
                     value={value.beds}
                     onChange={(beds) => onChange({ ...value, beds })}
                   />
@@ -434,7 +793,9 @@ export function BayutFiltersRail({
                     <Button
                       variant="outline"
                       className="h-10 flex-1 rounded-[10px]"
-                      onClick={() => onChange({ ...value, beds: "Any", baths: "Any" })}
+                      onClick={() =>
+                        onChange({ ...value, beds: "Any", baths: "Any" })
+                      }
                     >
                       Reset
                     </Button>
@@ -449,20 +810,7 @@ export function BayutFiltersRail({
               </PopoverContent>
             </Popover>
 
-            <Button
-              variant="outline"
-              className="h-10 rounded-[10px] bg-white px-4 text-xs font-semibold"
-              onClick={() =>
-                toast({
-                  title: "More filters",
-                  description:
-                    "If you want, I’ll add the right-side panel (price, area, keywords, tours) exactly like your screenshot.",
-                })
-              }
-            >
-              <SlidersHorizontal className="mr-2 h-4 w-4" />
-              More Filters
-            </Button>
+            <MoreFiltersPopover value={value} onChange={onChange} />
           </div>
 
           {/* Row 2 */}
@@ -472,7 +820,8 @@ export function BayutFiltersRail({
                 onClick={() =>
                   toast({
                     title: "TruBroker",
-                    description: "We can wire these badges to sorting/flags next.",
+                    description:
+                      "We can wire these badges to sorting/flags next.",
                   })
                 }
               >
@@ -482,7 +831,8 @@ export function BayutFiltersRail({
                 onClick={() =>
                   toast({
                     title: "TruCheck",
-                    description: "We can wire these badges to sorting/flags next.",
+                    description:
+                      "We can wire these badges to sorting/flags next.",
                   })
                 }
               >
@@ -492,7 +842,8 @@ export function BayutFiltersRail({
                 onClick={() =>
                   toast({
                     title: "Floor plans",
-                    description: "We can filter by floor plan availability next.",
+                    description:
+                      "We can filter by floor plan availability next.",
                   })
                 }
               >

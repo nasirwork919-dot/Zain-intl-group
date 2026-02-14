@@ -22,6 +22,7 @@ import {
   BayutFiltersRail,
   type BayutRailValue,
   BAYUT_RAIL_DEFAULT_VALUE,
+  type Segment,
 } from "@/components/real-estate/BayutFiltersRail";
 
 export type NavCategoryKey =
@@ -155,6 +156,37 @@ function titleCaseSlug(slug?: string) {
     .join(" ");
 }
 
+function toNumberOrNull(v: string) {
+  const n = Number(String(v).replace(/[^0-9.]/g, ""));
+  if (!Number.isFinite(n)) return null;
+  return n;
+}
+
+function matchesSegment(p: Property, segment: Segment) {
+  if (segment === "all") return true;
+
+  const hay = `${p.title} ${p.location} ${p.description} ${(p.tag ?? "")} ${p.amenities.join(" ")}`.toLowerCase();
+
+  if (segment === "ready") {
+    return (
+      (p.tag ?? "").toLowerCase().includes("ready") ||
+      hay.includes("ready") ||
+      hay.includes("vacant")
+    );
+  }
+
+  // off-plan
+  return (
+    (p.tag ?? "").toLowerCase().includes("new") ||
+    (p.tag ?? "").toLowerCase().includes("off") ||
+    hay.includes("off-plan") ||
+    hay.includes("launch") ||
+    hay.includes("handover") ||
+    hay.includes("completion") ||
+    hay.includes("payment plan")
+  );
+}
+
 export default function NavCategoryPage() {
   const params = useParams();
   const navigate = useNavigate();
@@ -202,6 +234,12 @@ export default function NavCategoryPage() {
 
   const results = useMemo(() => {
     const q = rail.query.trim().toLowerCase();
+    const kw = rail.keywords.trim().toLowerCase();
+
+    const priceMin = toNumberOrNull(rail.priceMin);
+    const priceMax = toNumberOrNull(rail.priceMax);
+    const areaMin = toNumberOrNull(rail.areaMin);
+    const areaMax = toNumberOrNull(rail.areaMax);
 
     const base = featuredProperties;
 
@@ -210,12 +248,47 @@ export default function NavCategoryPage() {
 
     return base.filter((p) => {
       const hay = `${p.title} ${p.location} ${p.description} ${(p.tag ?? "")} ${p.amenities.join(" ")}`.toLowerCase();
+
       const matchesQuery = !q || hay.includes(q);
+      const matchesKeywords = !kw || hay.includes(kw);
+
       const matchesOption =
         !option || option === "all" || hay.includes(optNeedle);
-      return matchesQuery && matchesOption;
+
+      const matchesSeg = matchesSegment(p, rail.segment);
+
+      const matchesPriceMin =
+        priceMin === null || priceMin <= 0 ? true : p.price >= priceMin;
+      const matchesPriceMax =
+        priceMax === null || priceMax <= 0 ? true : p.price <= priceMax;
+
+      const matchesAreaMin =
+        areaMin === null || areaMin <= 0 ? true : p.areaSqFt >= areaMin;
+      const matchesAreaMax =
+        areaMax === null || areaMax <= 0 ? true : p.areaSqFt <= areaMax;
+
+      return (
+        matchesQuery &&
+        matchesKeywords &&
+        matchesOption &&
+        matchesSeg &&
+        matchesPriceMin &&
+        matchesPriceMax &&
+        matchesAreaMin &&
+        matchesAreaMax
+      );
     });
-  }, [rail.query, option, config.options]);
+  }, [
+    config.options,
+    option,
+    rail.areaMax,
+    rail.areaMin,
+    rail.keywords,
+    rail.priceMax,
+    rail.priceMin,
+    rail.query,
+    rail.segment,
+  ]);
 
   const openProperty = (p: Property) => {
     setActiveProperty(p);
@@ -224,7 +297,8 @@ export default function NavCategoryPage() {
   };
 
   const optionLabel =
-    config.options.find((o) => o.slug === option)?.label ?? titleCaseSlug(option);
+    config.options.find((o) => o.slug === option)?.label ??
+    titleCaseSlug(option);
 
   const pageTitle = `${config.title} · ${optionLabel}`;
 
@@ -284,7 +358,8 @@ export default function NavCategoryPage() {
                   Featured listings
                 </div>
                 <h2 className="mt-2 text-2xl font-extrabold tracking-tight">
-                  Properties {rail.operation === "rent" ? "for rent" : "for sale"} in {optionLabel}
+                  Properties {rail.operation === "rent" ? "for rent" : "for sale"}{" "}
+                  in {optionLabel}
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
                   Click any card for full details.
@@ -314,14 +389,28 @@ export default function NavCategoryPage() {
                       No matches yet
                     </div>
                     <div className="mt-1 text-sm text-muted-foreground">
-                      Try a broader keyword.
+                      Try a broader keyword or remove advanced filters.
                     </div>
-                    <Button
-                      className="mt-4 h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
-                      onClick={() => setRail((p) => ({ ...p, query: "" }))}
-                    >
-                      Clear keyword
-                    </Button>
+                    <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-center">
+                      <Button
+                        variant="outline"
+                        className="h-11 rounded-[5px]"
+                        onClick={() => setRail((p) => ({ ...p, query: "" }))}
+                      >
+                        Clear query
+                      </Button>
+                      <Button
+                        className="h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
+                        onClick={() =>
+                          setRail({
+                            ...BAYUT_RAIL_DEFAULT_VALUE,
+                            operation: category === "rent" ? "rent" : "buy",
+                          })
+                        }
+                      >
+                        Reset all filters
+                      </Button>
+                    </div>
                   </div>
                 ) : null}
               </div>
