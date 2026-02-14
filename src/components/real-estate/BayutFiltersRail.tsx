@@ -1,5 +1,11 @@
 import { useMemo, useState } from "react";
-import { ChevronDown, MapPin, SlidersHorizontal, X, Bookmark } from "lucide-react";
+import {
+  Bookmark,
+  ChevronDown,
+  MapPin,
+  SlidersHorizontal,
+  X,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -11,9 +17,20 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 type Operation = "buy" | "rent";
-export type Segment = "all" | "ready" | "off-plan" | "new" | "hot-deal" | "investor-pick";
+export type Segment =
+  | "all"
+  | "ready"
+  | "off-plan"
+  | "new"
+  | "hot-deal"
+  | "investor-pick"
+  | "waterfront"
+  | "family"
+  | "prime"
+  | "luxury";
 
 function Pill({
   active,
@@ -245,6 +262,210 @@ function TourPill({
   );
 }
 
+function MoreFiltersPanel({
+  draft,
+  setDraft,
+  onReset,
+  onApply,
+}: {
+  draft: {
+    priceMin: string;
+    priceMax: string;
+    areaMin: string;
+    areaMax: string;
+    keywords: string;
+    agent: string;
+    tourTypes: TourType[];
+  };
+  setDraft: React.Dispatch<
+    React.SetStateAction<{
+      priceMin: string;
+      priceMax: string;
+      areaMin: string;
+      areaMax: string;
+      keywords: string;
+      agent: string;
+      tourTypes: TourType[];
+    }>
+  >;
+  onReset: () => void;
+  onApply: () => void;
+}) {
+  return (
+    <div className="grid gap-4">
+      {/* Price */}
+      <div>
+        <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+          Price (AED)
+        </div>
+        <div className="mt-3 grid grid-cols-2 gap-3">
+          <div className="grid gap-1">
+            <div className="text-xs font-semibold text-muted-foreground">
+              Minimum
+            </div>
+            <Input
+              value={draft.priceMin}
+              onChange={(e) =>
+                setDraft((p) => ({ ...p, priceMin: e.target.value }))
+              }
+              inputMode="numeric"
+              placeholder="0"
+              className="h-10 rounded-[10px]"
+            />
+          </div>
+          <div className="grid gap-1">
+            <div className="text-xs font-semibold text-muted-foreground">
+              Maximum
+            </div>
+            <Input
+              value={draft.priceMax}
+              onChange={(e) =>
+                setDraft((p) => ({ ...p, priceMax: e.target.value }))
+              }
+              inputMode="numeric"
+              placeholder="Any"
+              className="h-10 rounded-[10px]"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Area */}
+      <div>
+        <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+          Area (sqft)
+        </div>
+        <div className="mt-3 grid grid-cols-2 gap-3">
+          <div className="grid gap-1">
+            <div className="text-xs font-semibold text-muted-foreground">
+              Minimum
+            </div>
+            <Input
+              value={draft.areaMin}
+              onChange={(e) =>
+                setDraft((p) => ({ ...p, areaMin: e.target.value }))
+              }
+              inputMode="numeric"
+              placeholder="0"
+              className="h-10 rounded-[10px]"
+            />
+          </div>
+          <div className="grid gap-1">
+            <div className="text-xs font-semibold text-muted-foreground">
+              Maximum
+            </div>
+            <Input
+              value={draft.areaMax}
+              onChange={(e) =>
+                setDraft((p) => ({ ...p, areaMax: e.target.value }))
+              }
+              inputMode="numeric"
+              placeholder="Any"
+              className="h-10 rounded-[10px]"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Keywords */}
+      <div>
+        <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+          Keywords
+        </div>
+        <Input
+          value={draft.keywords}
+          onChange={(e) =>
+            setDraft((p) => ({ ...p, keywords: e.target.value }))
+          }
+          placeholder="Add relevant keywords"
+          className="mt-3 h-10 rounded-[10px]"
+        />
+      </div>
+
+      {/* Agent */}
+      <div>
+        <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+          Agent or Agency
+        </div>
+        <Input
+          value={draft.agent}
+          onChange={(e) => setDraft((p) => ({ ...p, agent: e.target.value }))}
+          placeholder="Select an agent or agency"
+          className="mt-3 h-10 rounded-[10px]"
+        />
+        <div className="mt-2 text-xs font-semibold text-muted-foreground">
+          Note: agent filtering becomes real once listings include agent data.
+        </div>
+      </div>
+
+      {/* Tour type (kept UI for later) */}
+      <div>
+        <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+          Tour Type
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <TourPill
+            active={draft.tourTypes.includes("floor-plans")}
+            label="Floor plans"
+            onClick={() =>
+              setDraft((p) => ({
+                ...p,
+                tourTypes: p.tourTypes.includes("floor-plans")
+                  ? p.tourTypes.filter((t) => t !== "floor-plans")
+                  : [...p.tourTypes, "floor-plans"],
+              }))
+            }
+          />
+          <TourPill
+            active={draft.tourTypes.includes("video-tours")}
+            label="Video tours"
+            onClick={() =>
+              setDraft((p) => ({
+                ...p,
+                tourTypes: p.tourTypes.includes("video-tours")
+                  ? p.tourTypes.filter((t) => t !== "video-tours")
+                  : [...p.tourTypes, "video-tours"],
+              }))
+            }
+          />
+          <TourPill
+            active={draft.tourTypes.includes("360-tours")}
+            label="360° tours"
+            onClick={() =>
+              setDraft((p) => ({
+                ...p,
+                tourTypes: p.tourTypes.includes("360-tours")
+                  ? p.tourTypes.filter((t) => t !== "360-tours")
+                  : [...p.tourTypes, "360-tours"],
+              }))
+            }
+          />
+        </div>
+
+        <div className="mt-2 text-xs font-semibold text-muted-foreground">
+          Note: tour filtering becomes real once listings include tour flags.
+        </div>
+      </div>
+
+      <div className="flex gap-2 pt-1">
+        <Button
+          variant="outline"
+          className="h-10 flex-1 rounded-[10px]"
+          onClick={onReset}
+        >
+          Reset
+        </Button>
+        <Button
+          className="h-10 flex-1 rounded-[10px] bg-[hsl(var(--brand))] text-white hover:bg-[hsl(var(--brand))]/90"
+          onClick={onApply}
+        >
+          Done
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 function MoreFiltersPopover({
   value,
   onChange,
@@ -253,6 +474,8 @@ function MoreFiltersPopover({
   onChange: (next: BayutRailValue) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const [draft, setDraft] = useState(() => ({
     priceMin: value.priceMin,
     priceMax: value.priceMax,
@@ -262,19 +485,6 @@ function MoreFiltersPopover({
     agent: value.agent,
     tourTypes: value.tourTypes,
   }));
-
-  const apply = () => {
-    onChange({
-      ...value,
-      ...draft,
-    });
-    setOpen(false);
-
-    toast({
-      title: "Filters applied",
-      description: "Your advanced filters have been updated.",
-    });
-  };
 
   const reset = () => {
     setDraft({
@@ -288,6 +498,37 @@ function MoreFiltersPopover({
     });
   };
 
+  const apply = (close: () => void) => {
+    const pMin = numOrNull(draft.priceMin);
+    const pMax = numOrNull(draft.priceMax);
+    const aMin = numOrNull(draft.areaMin);
+    const aMax = numOrNull(draft.areaMax);
+
+    if (pMin !== null && pMax !== null && pMax > 0 && pMin > pMax) {
+      toast({
+        title: "Check price range",
+        description: "Minimum price is higher than maximum.",
+      });
+      return;
+    }
+    if (aMin !== null && aMax !== null && aMax > 0 && aMin > aMax) {
+      toast({
+        title: "Check area range",
+        description: "Minimum area is higher than maximum.",
+      });
+      return;
+    }
+
+    onChange({ ...value, ...draft });
+
+    toast({
+      title: "Filters applied",
+      description: "Your advanced filters have been updated.",
+    });
+
+    close();
+  };
+
   const activeCount = useMemo(() => {
     let c = 0;
     if (draft.priceMin.trim() || draft.priceMax.trim()) c += 1;
@@ -299,12 +540,14 @@ function MoreFiltersPopover({
   }, [draft]);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+    <>
+      {/* Mobile: full-screen sheet */}
+      <div className="md:hidden">
         <Button
           variant="outline"
           className="h-10 rounded-[10px] bg-white px-4 text-xs font-semibold"
           aria-label="More filters"
+          onClick={() => setMobileOpen(true)}
         >
           <SlidersHorizontal className="mr-2 h-4 w-4" />
           More Filters
@@ -314,201 +557,140 @@ function MoreFiltersPopover({
             </span>
           ) : null}
         </Button>
-      </PopoverTrigger>
 
-      <PopoverContent align="start" className="w-[340px] rounded-[12px] p-4">
-        <div className="grid gap-4">
-          {/* Price */}
-          <div>
-            <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
-              Price (AED)
-            </div>
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              <div className="grid gap-1">
-                <div className="text-xs font-semibold text-muted-foreground">
-                  Minimum
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <SheetContent
+            side="bottom"
+            className={cn(
+              "h-[92vh] p-0",
+              "rounded-t-[5px] border border-white/60 bg-[hsl(var(--page))]",
+              "shadow-[0_30px_100px_-70px_rgba(15,23,42,0.9)]",
+              "[&>button]:hidden",
+            )}
+          >
+            <div className="flex h-full flex-col">
+              <div className="flex items-center justify-between gap-3 border-b border-black/10 bg-white/75 px-4 py-3 backdrop-blur">
+                <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+                  More Filters
                 </div>
-                <Input
-                  value={draft.priceMin}
-                  onChange={(e) =>
-                    setDraft((p) => ({ ...p, priceMin: e.target.value }))
-                  }
-                  inputMode="numeric"
-                  placeholder="0"
-                  className="h-10 rounded-[10px]"
-                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10 rounded-full hover:bg-black/5"
+                  onClick={() => setMobileOpen(false)}
+                  aria-label="Close"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
               </div>
-              <div className="grid gap-1">
-                <div className="text-xs font-semibold text-muted-foreground">
-                  Maximum
-                </div>
-                <Input
-                  value={draft.priceMax}
-                  onChange={(e) =>
-                    setDraft((p) => ({ ...p, priceMax: e.target.value }))
-                  }
-                  inputMode="numeric"
-                  placeholder="Any"
-                  className="h-10 rounded-[10px]"
-                />
-              </div>
-            </div>
-          </div>
 
-          {/* Area */}
-          <div>
-            <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
-              Area (sqft)
-            </div>
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              <div className="grid gap-1">
-                <div className="text-xs font-semibold text-muted-foreground">
-                  Minimum
+              <div className="flex-1 overflow-y-auto px-4 py-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                <div
+                  className={cn(
+                    "rounded-[5px] border border-white/60 bg-white/75",
+                    "shadow-[0_26px_70px_-55px_rgba(15,23,42,0.55)]",
+                    "ring-1 ring-black/10",
+                    "backdrop-blur supports-[backdrop-filter]:bg-white/65",
+                    "p-4",
+                  )}
+                >
+                  <MoreFiltersPanel
+                    draft={draft}
+                    setDraft={setDraft}
+                    onReset={reset}
+                    onApply={() => apply(() => setMobileOpen(false))}
+                  />
                 </div>
-                <Input
-                  value={draft.areaMin}
-                  onChange={(e) =>
-                    setDraft((p) => ({ ...p, areaMin: e.target.value }))
-                  }
-                  inputMode="numeric"
-                  placeholder="0"
-                  className="h-10 rounded-[10px]"
-                />
-              </div>
-              <div className="grid gap-1">
-                <div className="text-xs font-semibold text-muted-foreground">
-                  Maximum
-                </div>
-                <Input
-                  value={draft.areaMax}
-                  onChange={(e) =>
-                    setDraft((p) => ({ ...p, areaMax: e.target.value }))
-                  }
-                  inputMode="numeric"
-                  placeholder="Any"
-                  className="h-10 rounded-[10px]"
-                />
               </div>
             </div>
-          </div>
+          </SheetContent>
+        </Sheet>
+      </div>
 
-          {/* Keywords */}
-          <div>
-            <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
-              Keywords
-            </div>
-            <Input
-              value={draft.keywords}
-              onChange={(e) =>
-                setDraft((p) => ({ ...p, keywords: e.target.value }))
-              }
-              placeholder="Add relevant keywords"
-              className="mt-3 h-10 rounded-[10px]"
-            />
-          </div>
-
-          {/* Agent */}
-          <div>
-            <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
-              Agent or Agency
-            </div>
-            <Input
-              value={draft.agent}
-              onChange={(e) => setDraft((p) => ({ ...p, agent: e.target.value }))}
-              placeholder="Select an agent or agency"
-              className="mt-3 h-10 rounded-[10px]"
-            />
-            <div className="mt-2 text-xs font-semibold text-muted-foreground">
-              Note: agent filtering becomes real once listings include agent data.
-            </div>
-          </div>
-
-          {/* Tour type (kept UI for later) */}
-          <div>
-            <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
-              Tour Type
-            </div>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <TourPill
-                active={draft.tourTypes.includes("floor-plans")}
-                label="Floor plans"
-                onClick={() =>
-                  setDraft((p) => ({
-                    ...p,
-                    tourTypes: p.tourTypes.includes("floor-plans")
-                      ? p.tourTypes.filter((t) => t !== "floor-plans")
-                      : [...p.tourTypes, "floor-plans"],
-                  }))
-                }
-              />
-              <TourPill
-                active={draft.tourTypes.includes("video-tours")}
-                label="Video tours"
-                onClick={() =>
-                  setDraft((p) => ({
-                    ...p,
-                    tourTypes: p.tourTypes.includes("video-tours")
-                      ? p.tourTypes.filter((t) => t !== "video-tours")
-                      : [...p.tourTypes, "video-tours"],
-                  }))
-                }
-              />
-              <TourPill
-                active={draft.tourTypes.includes("360-tours")}
-                label="360° tours"
-                onClick={() =>
-                  setDraft((p) => ({
-                    ...p,
-                    tourTypes: p.tourTypes.includes("360-tours")
-                      ? p.tourTypes.filter((t) => t !== "360-tours")
-                      : [...p.tourTypes, "360-tours"],
-                  }))
-                }
-              />
-            </div>
-
-            <div className="mt-2 text-xs font-semibold text-muted-foreground">
-              Note: tour filtering becomes real once listings include tour flags.
-            </div>
-          </div>
-
-          <div className="flex gap-2 pt-1">
+      {/* Desktop: popover */}
+      <div className="hidden md:block">
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className="h-10 flex-1 rounded-[10px]"
-              onClick={reset}
+              className="h-10 rounded-[10px] bg-white px-4 text-xs font-semibold"
+              aria-label="More filters"
             >
-              Reset
+              <SlidersHorizontal className="mr-2 h-4 w-4" />
+              More Filters
+              {activeCount ? (
+                <span className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[hsl(var(--brand))]/14 px-1.5 text-[11px] font-extrabold text-[hsl(var(--brand-ink))] ring-1 ring-[hsl(var(--brand))]/25">
+                  {activeCount}
+                </span>
+              ) : null}
             </Button>
-            <Button
-              className="h-10 flex-1 rounded-[10px] bg-[hsl(var(--brand))] text-white hover:bg-[hsl(var(--brand))]/90"
-              onClick={() => {
-                const pMin = numOrNull(draft.priceMin);
-                const pMax = numOrNull(draft.priceMax);
-                const aMin = numOrNull(draft.areaMin);
-                const aMax = numOrNull(draft.areaMax);
+          </PopoverTrigger>
 
-                if (pMin !== null && pMax !== null && pMax > 0 && pMin > pMax) {
-                  toast({
-                    title: "Check price range",
-                    description: "Minimum price is higher than maximum.",
-                  });
-                  return;
-                }
-                if (aMin !== null && aMax !== null && aMax > 0 && aMin > aMax) {
-                  toast({
-                    title: "Check area range",
-                    description: "Minimum area is higher than maximum.",
-                  });
-                  return;
-                }
+          <PopoverContent align="start" className="w-[340px] rounded-[12px] p-4">
+            <MoreFiltersPanel
+              draft={draft}
+              setDraft={setDraft}
+              onReset={reset}
+              onApply={() => apply(() => setOpen(false))}
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+    </>
+  );
+}
 
-                apply();
-              }}
+function MoreTagsPopover({
+  active,
+  onSelect,
+}: {
+  active: Segment;
+  onSelect: (seg: Segment) => void;
+}) {
+  const moreTags = useMemo(
+    () =>
+      [
+        { label: "Waterfront", value: "waterfront" as const },
+        { label: "Family", value: "family" as const },
+        { label: "Prime", value: "prime" as const },
+        { label: "Luxury", value: "luxury" as const },
+      ] as const,
+    [],
+  );
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Pill>More…</Pill>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-[360px] rounded-[12px] p-4">
+        <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+          More tags
+        </div>
+        <div className="mt-2 text-xs font-semibold text-muted-foreground">
+          Tap a tag to filter listings.
+        </div>
+
+        <div
+          className={cn(
+            "mt-4 flex items-center gap-2 overflow-x-auto pb-1",
+            "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
+          )}
+        >
+          {moreTags.map((t) => (
+            <Pill
+              key={t.value}
+              active={active === t.value}
+              onClick={() => onSelect(active === t.value ? "all" : t.value)}
+              className="h-10 px-5 text-sm"
             >
-              Done
-            </Button>
-          </div>
+              {t.label}
+            </Pill>
+          ))}
+        </div>
+
+        <div className="mt-4 rounded-[10px] bg-muted/30 p-3 text-xs font-semibold text-muted-foreground ring-1 ring-black/5">
+          These match your existing listing tags (like “Waterfront”, “Family”, etc.).
         </div>
       </PopoverContent>
     </Popover>
@@ -543,7 +725,8 @@ export function BayutFiltersRail({
     value.areaMax.trim() ||
     value.keywords.trim();
 
-  const railBg = "bg-white/92 backdrop-blur supports-[backdrop-filter]:bg-white/75";
+  const railBg =
+    "bg-white/92 backdrop-blur supports-[backdrop-filter]:bg-white/75";
 
   const opLabel = value.operation === "buy" ? "Buy" : "Rent";
 
@@ -685,14 +868,18 @@ export function BayutFiltersRail({
                   <div className="flex items-center justify-between gap-2">
                     <Pill
                       active={value.category === "Residential"}
-                      onClick={() => onChange({ ...value, category: "Residential" })}
+                      onClick={() =>
+                        onChange({ ...value, category: "Residential" })
+                      }
                       className="flex-1"
                     >
                       Residential
                     </Pill>
                     <Pill
                       active={value.category === "Commercial"}
-                      onClick={() => onChange({ ...value, category: "Commercial" })}
+                      onClick={() =>
+                        onChange({ ...value, category: "Commercial" })
+                      }
                       className="flex-1"
                     >
                       Commercial
@@ -707,13 +894,15 @@ export function BayutFiltersRail({
                       onChange={(v) =>
                         onChange({
                           ...value,
-                          residentialType: v as BayutRailValue["residentialType"],
+                          residentialType:
+                            v as BayutRailValue["residentialType"],
                         })
                       }
                     />
                   ) : (
                     <div className="rounded-[12px] bg-muted/30 p-3 text-sm text-muted-foreground ring-1 ring-black/5">
-                      Commercial filters can be added next (offices, retail, warehouses, etc.).
+                      Commercial filters can be added next (offices, retail,
+                      warehouses, etc.).
                     </div>
                   )}
 
@@ -766,7 +955,10 @@ export function BayutFiltersRail({
                   </button>
                 </PopoverTrigger>
 
-                <PopoverContent className="w-[360px] rounded-[12px] p-4" align="start">
+                <PopoverContent
+                  className="w-[360px] rounded-[12px] p-4"
+                  align="start"
+                >
                   <div className="grid gap-4">
                     <SelectGrid
                       title="Beds"
@@ -797,7 +989,9 @@ export function BayutFiltersRail({
                       <Button
                         variant="outline"
                         className="h-10 flex-1 rounded-[10px]"
-                        onClick={() => onChange({ ...value, beds: "Any", baths: "Any" })}
+                        onClick={() =>
+                          onChange({ ...value, beds: "Any", baths: "Any" })
+                        }
                       >
                         Reset
                       </Button>
@@ -818,7 +1012,7 @@ export function BayutFiltersRail({
             </div>
           </div>
 
-          {/* Row 2: REAL tag chips (not generic Bayut badges) */}
+          {/* Row 2: Tags + actions */}
           <div className="flex flex-wrap items-center justify-between gap-3 pb-3">
             <div className="flex flex-wrap items-center gap-2">
               {tagChips.map((t) => (
@@ -836,17 +1030,10 @@ export function BayutFiltersRail({
                 </Pill>
               ))}
 
-              <Pill
-                onClick={() =>
-                  toast({
-                    title: "More tags",
-                    description:
-                      "If you want, I can add chips for Waterfront / Family / Luxury / Prime too (those exist as tags in your data).",
-                  })
-                }
-              >
-                More…
-              </Pill>
+              <MoreTagsPopover
+                active={value.segment}
+                onSelect={(seg) => onChange({ ...value, segment: seg })}
+              />
             </div>
 
             <div className="flex items-center gap-3">
