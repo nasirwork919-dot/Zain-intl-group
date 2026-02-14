@@ -155,9 +155,6 @@ const Index = () => {
           </div>
 
           <style>{`
-            /* Each slide: fade-in -> HOLD -> fade-out -> stay hidden.
-               Total cycle per slide group = 24s (3 slides * 8s).
-               This creates a clear delay/hold so it doesn't constantly transition. */
             @keyframes heroHoldFade {
               0% { opacity: 0; transform: scale(1.02); }
               10% { opacity: 1; transform: scale(1.0); }
@@ -306,8 +303,7 @@ const Index = () => {
                 title: "Community selected",
                 description: `Showing listings in ${location}.`,
               });
-              navigate(`/nav/buy/option/all`);
-              setFilters((prev) => ({ ...prev, location: location as any }));
+              navigate(`/nav/buy/option/all?q=${encodeURIComponent(location)}`);
             }}
           />
         </div>

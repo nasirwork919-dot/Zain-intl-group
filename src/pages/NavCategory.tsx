@@ -189,13 +189,16 @@ export default function NavCategoryPage() {
 
   const config = CONFIG[category];
 
+  const initialQ = (searchParams.get("q") ?? "").trim();
+
   const [activeProperty, setActiveProperty] = useState<Property | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const [rail, setRail] = useState<BayutRailValue>({
+  const [rail, setRail] = useState<BayutRailValue>(() => ({
     ...BAYUT_RAIL_DEFAULT_VALUE,
     operation: category === "rent" ? "rent" : "buy",
-  });
+    query: initialQ,
+  }));
 
   const results = useMemo(() => {
     const q = rail.query.trim().toLowerCase();
@@ -229,7 +232,6 @@ export default function NavCategoryPage() {
     <div className="min-h-screen bg-[hsl(var(--page))]">
       <RealEstateHeader />
 
-      {/* Bayut-style sticky rail (always visible) */}
       <BayutFiltersRail
         value={rail}
         onChange={setRail}
@@ -243,9 +245,7 @@ export default function NavCategoryPage() {
         topOffsetPx={132}
       />
 
-      {/* Content spacing below sticky rail */}
       <main className="mx-auto max-w-7xl px-4 pb-16 pt-6">
-        {/* Header block (breadcrumb-like + title) */}
         <section className="rounded-[5px] border border-white/40 bg-white/55 p-5 ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/45">
           <div className="text-xs font-semibold text-[hsl(var(--brand-ink))]/70">
             For {rail.operation === "rent" ? "Rent" : "Sale"} ·{" "}
@@ -276,10 +276,8 @@ export default function NavCategoryPage() {
           </div>
         </section>
 
-        {/* Results layout */}
         <section id="results" className="mt-6">
           <div className="grid gap-6 lg:grid-cols-12">
-            {/* Left: list/grid */}
             <div className="lg:col-span-8">
               <div className="rounded-[5px] border border-white/40 bg-white/40 p-5 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.6)] ring-1 ring-black/10">
                 <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">
@@ -329,7 +327,6 @@ export default function NavCategoryPage() {
               </div>
             </div>
 
-            {/* Right: contact panel */}
             <div className="lg:col-span-4">
               <div className="sticky top-[252px]">
                 <Card className="rounded-[5px] border border-white/40 bg-white/65 p-5 shadow-[0_18px_55px_-45px_rgba(15,23,42,0.45)] ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55">

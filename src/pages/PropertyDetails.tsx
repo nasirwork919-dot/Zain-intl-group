@@ -15,8 +15,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { TopPeekFiltersBar } from "@/components/real-estate/TopPeekFiltersBar";
-import type { HeroBarFilters } from "@/components/real-estate/HeroSearchBar";
 
 function getById(id?: string) {
   if (!id) return null;
@@ -30,12 +28,6 @@ export default function PropertyDetailsPage() {
   const property = getById(id);
 
   const [activeIdx, setActiveIdx] = useState(0);
-
-  const [barValue, setBarValue] = useState<HeroBarFilters>({
-    operation: "buy",
-    propertyType: "apartment",
-    query: "",
-  });
 
   const images = useMemo(() => {
     if (!property) return [];
@@ -85,21 +77,8 @@ export default function PropertyDetailsPage() {
     <div className="min-h-screen bg-[hsl(var(--page))]">
       <RealEstateHeader />
 
-      {/* Fixed under-header bar that hides while scrolling down */}
-      <TopPeekFiltersBar
-        value={barValue}
-        onChange={setBarValue}
-        onSubmit={() => {
-          toast({
-            title: "Search",
-            description:
-              "Tell me where this should route (e.g. /nav/buy/option/all with query applied) and I’ll wire it.",
-          });
-        }}
-      />
-
-      {/* Spacer so content starts BELOW the fixed bar (prevents overlap/cramped feel) */}
-      <div className="h-[178px] sm:h-[188px]" />
+      {/* Spacer so content starts below the fixed header */}
+      <div className="h-[140px] sm:h-[148px]" />
 
       <main className="mx-auto max-w-6xl px-4 pb-16">
         {/* Back */}
