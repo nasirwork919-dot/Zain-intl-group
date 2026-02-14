@@ -602,45 +602,61 @@ export function BayutFiltersRail({
       <div className={cn("w-full border-b border-black/10", railBg)}>
         <div className="mx-auto max-w-7xl px-4">
           {/* Row 1 */}
-          <div className="flex flex-wrap items-center gap-2 py-3">
+          <div
+            className={cn(
+              // Mobile: single row, horizontal scroll
+              "flex flex-nowrap items-center gap-2 py-3 overflow-x-auto",
+              "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
+              // Desktop: allow wrapping
+              "lg:flex-wrap lg:overflow-x-visible",
+            )}
+          >
             {/* Operation dropdown (simple) */}
-            <DropdownButton label="Buy" value={opLabel} className="w-[96px]">
-              <SelectGrid
-                title="Operation"
-                items={["Buy", "Rent"]}
-                value={opLabel}
-                onChange={(v) =>
-                  onChange({
-                    ...value,
-                    operation: v === "Rent" ? "rent" : "buy",
-                  })
-                }
-              />
-              <div className="mt-4 flex gap-2">
-                <Button
-                  variant="outline"
-                  className="h-10 flex-1 rounded-[10px]"
-                  onClick={() => onChange({ ...DEFAULT_VALUE, query: value.query })}
-                >
-                  Reset
-                </Button>
-                <Button
-                  className="h-10 flex-1 rounded-[10px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
-                  onClick={() =>
-                    toast({ title: "Saved", description: "Operation updated." })
+            <div className="flex-none">
+              <DropdownButton label="Buy" value={opLabel} className="w-[96px]">
+                <SelectGrid
+                  title="Operation"
+                  items={["Buy", "Rent"]}
+                  value={opLabel}
+                  onChange={(v) =>
+                    onChange({
+                      ...value,
+                      operation: v === "Rent" ? "rent" : "buy",
+                    })
                   }
-                >
-                  Done
-                </Button>
-              </div>
-            </DropdownButton>
+                />
+                <div className="mt-4 flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="h-10 flex-1 rounded-[10px]"
+                    onClick={() =>
+                      onChange({
+                        ...DEFAULT_VALUE,
+                        query: value.query,
+                      })
+                    }
+                  >
+                    Reset
+                  </Button>
+                  <Button
+                    className="h-10 flex-1 rounded-[10px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
+                    onClick={() =>
+                      toast({ title: "Saved", description: "Operation updated." })
+                    }
+                  >
+                    Done
+                  </Button>
+                </div>
+              </DropdownButton>
+            </div>
 
             {/* Query input */}
             <div
               className={cn(
-                "flex min-w-[260px] flex-1 items-center gap-2",
-                "h-10 rounded-[10px] bg-white ring-1 ring-black/10",
-                "px-3",
+                // keep a sensible width so it doesn’t eat the whole rail on mobile
+                "flex-none w-[260px] sm:w-[320px] lg:flex-1 lg:min-w-[260px]",
+                "flex items-center gap-2",
+                "h-10 rounded-[10px] bg-white ring-1 ring-black/10 px-3",
               )}
             >
               <MapPin className="h-4 w-4 text-[hsl(var(--brand-ink))]/55" />
@@ -669,148 +685,158 @@ export function BayutFiltersRail({
               ) : null}
             </div>
 
-            <Segmented
-              value={value.segment}
-              onChange={(segment) => onChange({ ...value, segment })}
-            />
+            <div className="flex-none">
+              <Segmented
+                value={value.segment}
+                onChange={(segment) => onChange({ ...value, segment })}
+              />
+            </div>
 
             {/* Property type dropdown */}
-            <DropdownButton label="Residential" value={propertyTypeLabel}>
-              <div className="grid gap-4">
-                <div className="flex items-center justify-between gap-2">
-                  <Pill
-                    active={value.category === "Residential"}
-                    onClick={() => onChange({ ...value, category: "Residential" })}
-                    className="flex-1"
-                  >
-                    Residential
-                  </Pill>
-                  <Pill
-                    active={value.category === "Commercial"}
-                    onClick={() => onChange({ ...value, category: "Commercial" })}
-                    className="flex-1"
-                  >
-                    Commercial
-                  </Pill>
-                </div>
-
-                {value.category === "Residential" ? (
-                  <SelectGrid
-                    title="Residential"
-                    items={residentialItems}
-                    value={value.residentialType}
-                    onChange={(v) =>
-                      onChange({
-                        ...value,
-                        residentialType: v as BayutRailValue["residentialType"],
-                      })
-                    }
-                  />
-                ) : (
-                  <div className="rounded-[12px] bg-muted/30 p-3 text-sm text-muted-foreground ring-1 ring-black/5">
-                    Commercial filters can be added next (offices, retail, warehouses, etc.).
-                  </div>
-                )}
-
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    className="h-10 flex-1 rounded-[10px]"
-                    onClick={() =>
-                      onChange({
-                        ...value,
-                        category: "Residential",
-                        residentialType: "Any",
-                      })
-                    }
-                  >
-                    Reset
-                  </Button>
-                  <Button
-                    className="h-10 flex-1 rounded-[10px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
-                    onClick={() =>
-                      toast({
-                        title: "Done",
-                        description: "Property type updated.",
-                      })
-                    }
-                  >
-                    Done
-                  </Button>
-                </div>
-              </div>
-            </DropdownButton>
-
-            {/* Beds & Baths dropdown */}
-            <Popover open={openBedsBaths} onOpenChange={setOpenBedsBaths}>
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  className={cn(
-                    "inline-flex h-10 items-center justify-between gap-3 rounded-[10px] px-4 text-xs font-semibold",
-                    "bg-white text-[hsl(var(--brand-ink))] ring-1 ring-black/10",
-                    "hover:bg-muted/30 transition",
-                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
-                    "min-w-[160px]",
-                  )}
-                >
-                  <span className="truncate">{bedsBathsLabel}</span>
-                  <ChevronDown className="h-4 w-4 opacity-70" />
-                </button>
-              </PopoverTrigger>
-
-              <PopoverContent
-                className="w-[360px] rounded-[12px] p-4"
-                align="start"
-              >
+            <div className="flex-none">
+              <DropdownButton label="Residential" value={propertyTypeLabel}>
                 <div className="grid gap-4">
-                  <SelectGrid
-                    title="Beds"
-                    items={[
-                      "Any",
-                      "Studio",
-                      "1",
-                      "2",
-                      "3",
-                      "4",
-                      "5",
-                      "6",
-                      "7",
-                      "8+",
-                    ]}
-                    value={value.beds}
-                    onChange={(beds) => onChange({ ...value, beds })}
-                  />
+                  <div className="flex items-center justify-between gap-2">
+                    <Pill
+                      active={value.category === "Residential"}
+                      onClick={() =>
+                        onChange({ ...value, category: "Residential" })
+                      }
+                      className="flex-1"
+                    >
+                      Residential
+                    </Pill>
+                    <Pill
+                      active={value.category === "Commercial"}
+                      onClick={() => onChange({ ...value, category: "Commercial" })}
+                      className="flex-1"
+                    >
+                      Commercial
+                    </Pill>
+                  </div>
 
-                  <SelectGrid
-                    title="Baths"
-                    items={["Any", "1", "2", "3", "4", "5", "6+"]}
-                    value={value.baths}
-                    onChange={(baths) => onChange({ ...value, baths })}
-                  />
+                  {value.category === "Residential" ? (
+                    <SelectGrid
+                      title="Residential"
+                      items={residentialItems}
+                      value={value.residentialType}
+                      onChange={(v) =>
+                        onChange({
+                          ...value,
+                          residentialType: v as BayutRailValue["residentialType"],
+                        })
+                      }
+                    />
+                  ) : (
+                    <div className="rounded-[12px] bg-muted/30 p-3 text-sm text-muted-foreground ring-1 ring-black/5">
+                      Commercial filters can be added next (offices, retail, warehouses, etc.).
+                    </div>
+                  )}
 
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
                       className="h-10 flex-1 rounded-[10px]"
                       onClick={() =>
-                        onChange({ ...value, beds: "Any", baths: "Any" })
+                        onChange({
+                          ...value,
+                          category: "Residential",
+                          residentialType: "Any",
+                        })
                       }
                     >
                       Reset
                     </Button>
                     <Button
                       className="h-10 flex-1 rounded-[10px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
-                      onClick={() => setOpenBedsBaths(false)}
+                      onClick={() =>
+                        toast({
+                          title: "Done",
+                          description: "Property type updated.",
+                        })
+                      }
                     >
                       Done
                     </Button>
                   </div>
                 </div>
-              </PopoverContent>
-            </Popover>
+              </DropdownButton>
+            </div>
 
-            <MoreFiltersPopover value={value} onChange={onChange} />
+            {/* Beds & Baths dropdown */}
+            <div className="flex-none">
+              <Popover open={openBedsBaths} onOpenChange={setOpenBedsBaths}>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className={cn(
+                      "inline-flex h-10 items-center justify-between gap-3 rounded-[10px] px-4 text-xs font-semibold",
+                      "bg-white text-[hsl(var(--brand-ink))] ring-1 ring-black/10",
+                      "hover:bg-muted/30 transition",
+                      "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
+                      "min-w-[160px]",
+                    )}
+                  >
+                    <span className="truncate">{bedsBathsLabel}</span>
+                    <ChevronDown className="h-4 w-4 opacity-70" />
+                  </button>
+                </PopoverTrigger>
+
+                <PopoverContent
+                  className="w-[360px] rounded-[12px] p-4"
+                  align="start"
+                >
+                  <div className="grid gap-4">
+                    <SelectGrid
+                      title="Beds"
+                      items={[
+                        "Any",
+                        "Studio",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8+",
+                      ]}
+                      value={value.beds}
+                      onChange={(beds) => onChange({ ...value, beds })}
+                    />
+
+                    <SelectGrid
+                      title="Baths"
+                      items={["Any", "1", "2", "3", "4", "5", "6+"]}
+                      value={value.baths}
+                      onChange={(baths) => onChange({ ...value, baths })}
+                    />
+
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        className="h-10 flex-1 rounded-[10px]"
+                        onClick={() =>
+                          onChange({ ...value, beds: "Any", baths: "Any" })
+                        }
+                      >
+                        Reset
+                      </Button>
+                      <Button
+                        className="h-10 flex-1 rounded-[10px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
+                        onClick={() => setOpenBedsBaths(false)}
+                      >
+                        Done
+                      </Button>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            <div className="flex-none">
+              <MoreFiltersPopover value={value} onChange={onChange} />
+            </div>
           </div>
 
           {/* Row 2 */}
