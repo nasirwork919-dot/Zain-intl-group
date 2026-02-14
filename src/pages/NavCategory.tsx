@@ -22,6 +22,7 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { StickyResultsBar } from "@/components/real-estate/StickyResultsBar";
 
 export type NavCategoryKey =
   | "buy"
@@ -229,10 +230,7 @@ export default function NavCategoryPage() {
       ? "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=3200&q=85"
       : "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=3200&q=90";
 
-  const ctaTitle =
-    config.key === "services"
-      ? "Talk to an advisor"
-      : "Request a shortlist";
+  const ctaTitle = config.key === "services" ? "Talk to an advisor" : "Request a shortlist";
 
   return (
     <div className="min-h-screen bg-[hsl(var(--page))]">
@@ -281,7 +279,11 @@ export default function NavCategoryPage() {
                   <button
                     key={o.slug}
                     type="button"
-                    onClick={() => navigate(`/nav/${category}/${o.slug}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`)}
+                    onClick={() =>
+                      navigate(
+                        `/nav/${category}/${o.slug}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`,
+                      )
+                    }
                     className={cn(
                       "rounded-[16px] px-4 py-3 text-xs font-semibold",
                       "ring-1 ring-white/20",
@@ -302,9 +304,21 @@ export default function NavCategoryPage() {
         </div>
       </section>
 
+      {/* Sticky filters bar (Bayut-style refinement) */}
+      <StickyResultsBar
+        value={heroBar}
+        onChange={setHeroBar}
+        onSubmit={() => {
+          const anchor = document.getElementById("results");
+          anchor?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }}
+        className="-mt-10"
+        tone="light"
+      />
+
       {/* Featured listings */}
       <section id="results" className="mx-auto max-w-6xl px-4 pb-14">
-        <div className="-mt-10 rounded-[5px] border border-white/40 bg-white/40 p-5 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.6)] ring-1 ring-black/10">
+        <div className="rounded-[5px] border border-white/40 bg-white/40 p-5 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.6)] ring-1 ring-black/10">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">
@@ -316,44 +330,32 @@ export default function NavCategoryPage() {
                   : "Browse all"}
               </h2>
               <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-                Use the hero search to narrow down. Click any card for full details.
+                Use the filters bar to refine. Click any card for full details.
               </p>
             </div>
             <div className="rounded-[5px] border border-black/5 bg-white/70 px-4 py-2 text-sm text-muted-foreground ring-1 ring-black/10">
               Showing{" "}
-              <span className="font-semibold text-foreground">
-                {results.length}
-              </span>{" "}
+              <span className="font-semibold text-foreground">{results.length}</span>{" "}
               of {featuredProperties.length}
             </div>
           </div>
 
           <div className="mt-6">
-            <FeaturedListingsMobileSlider
-              properties={results}
-              onOpenProperty={openProperty}
-            />
+            <FeaturedListingsMobileSlider properties={results} onOpenProperty={openProperty} />
           </div>
 
           <div className="mt-6 hidden gap-4 md:grid md:grid-cols-3">
             {results.map((p) => (
               <div key={p.id} className="h-[520px]">
-                <FeaturedPropertyLaunchCard
-                  property={p}
-                  onOpen={() => openProperty(p)}
-                />
+                <FeaturedPropertyLaunchCard property={p} onOpen={() => openProperty(p)} />
               </div>
             ))}
           </div>
 
           {results.length === 0 ? (
             <div className="mt-10 rounded-[5px] border border-black/5 bg-white/70 p-6 text-center ring-1 ring-black/10">
-              <div className="text-lg font-extrabold tracking-tight">
-                No matches yet
-              </div>
-              <div className="mt-1 text-sm text-muted-foreground">
-                Try a broader keyword.
-              </div>
+              <div className="text-lg font-extrabold tracking-tight">No matches yet</div>
+              <div className="mt-1 text-sm text-muted-foreground">Try a broader keyword.</div>
               <Button
                 className="mt-4 h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
                 onClick={() => setHeroBar((p) => ({ ...p, query: "" }))}
@@ -369,12 +371,8 @@ export default function NavCategoryPage() {
       <section className="mx-auto max-w-6xl px-4 pb-16">
         <Card className="overflow-hidden rounded-[5px] border border-white/40 bg-white/65 shadow-[0_20px_60px_-45px_rgba(15,23,42,0.65)] ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55">
           <div className="p-6 sm:p-7">
-            <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">
-              Next step
-            </div>
-            <div className="mt-2 text-3xl font-extrabold tracking-tight">
-              {ctaTitle}
-            </div>
+            <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">Next step</div>
+            <div className="mt-2 text-3xl font-extrabold tracking-tight">{ctaTitle}</div>
             <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
               Share your budget, preferred areas, and timeline — we’ll respond with a curated shortlist and clear next steps.
             </p>
@@ -383,15 +381,11 @@ export default function NavCategoryPage() {
 
             <div className="grid gap-4 md:grid-cols-12 md:items-start">
               <div className="md:col-span-7">
-                <LeadCapture
-                  defaultMessage={`Hi! I’m interested in ${pageTitle}. My budget is…`}
-                />
+                <LeadCapture defaultMessage={`Hi! I’m interested in ${pageTitle}. My budget is…`} />
               </div>
               <div className="md:col-span-5">
                 <div className="rounded-[5px] border border-black/5 bg-white/70 p-5 ring-1 ring-black/10">
-                  <div className="text-sm font-extrabold tracking-tight">
-                    What we’ll send you
-                  </div>
+                  <div className="text-sm font-extrabold tracking-tight">What we’ll send you</div>
                   <ul className="mt-3 grid gap-2 text-sm text-muted-foreground">
                     {[
                       "Curated options that match your criteria",
@@ -408,8 +402,7 @@ export default function NavCategoryPage() {
                     onClick={() =>
                       toast({
                         title: "Request received",
-                        description:
-                          "We’ll reach out shortly with a shortlist and next steps.",
+                        description: "We’ll reach out shortly with a shortlist and next steps.",
                       })
                     }
                   >
