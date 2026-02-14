@@ -30,7 +30,6 @@ import { FeaturedListingsMobileSlider } from "@/components/real-estate/FeaturedL
 import { YourHomeYourWay } from "@/components/real-estate/YourHomeYourWay";
 import { SiteFooter } from "@/components/real-estate/SiteFooter";
 import { FeaturedPropertyLaunchCard } from "@/components/real-estate/FeaturedPropertyLaunchCard";
-import { MobileValuePropsCarousel } from "@/components/real-estate/MobileValuePropsCarousel";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -149,8 +148,6 @@ const Index = () => {
               />
             </div>
 
-            {/* Mobile only: quick reasons carousel (adds motion + trust) */}
-            <MobileValuePropsCarousel className="mx-auto mt-5 max-w-md" />
           </div>
 
           <style>{`

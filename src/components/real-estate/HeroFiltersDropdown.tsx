@@ -79,7 +79,6 @@ export function HeroFiltersDropdown({
         sideOffset={12}
         // Keep it under the trigger on all screen sizes (no auto-flip above fields).
         avoidCollisions={false}
-        portal={false}
         className={cn(
           // Mobile-first: always keep equal 16px gutters on both sides.
           "w-[calc(100vw-2rem)] max-w-[720px]",
