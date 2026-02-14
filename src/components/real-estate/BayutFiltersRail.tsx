@@ -1,11 +1,5 @@
 import { useMemo, useState } from "react";
-import {
-  ChevronDown,
-  MapPin,
-  SlidersHorizontal,
-  X,
-  Bookmark,
-} from "lucide-react";
+import { ChevronDown, MapPin, SlidersHorizontal, X, Bookmark } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -19,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
 
 type Operation = "buy" | "rent";
-export type Segment = "all" | "ready" | "off-plan";
+export type Segment = "all" | "ready" | "off-plan" | "new" | "hot-deal" | "investor-pick";
 
 function Pill({
   active,
@@ -322,10 +316,7 @@ function MoreFiltersPopover({
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent
-        align="start"
-        className="w-[340px] rounded-[12px] p-4"
-      >
+      <PopoverContent align="start" className="w-[340px] rounded-[12px] p-4">
         <div className="grid gap-4">
           {/* Price */}
           <div>
@@ -432,7 +423,7 @@ function MoreFiltersPopover({
             </div>
           </div>
 
-          {/* Tour type */}
+          {/* Tour type (kept UI for later) */}
           <div>
             <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
               Tour Type
@@ -492,30 +483,19 @@ function MoreFiltersPopover({
             <Button
               className="h-10 flex-1 rounded-[10px] bg-[hsl(var(--brand))] text-white hover:bg-[hsl(var(--brand))]/90"
               onClick={() => {
-                // basic guard: if min/max swapped, keep the input but still allow applying
                 const pMin = numOrNull(draft.priceMin);
                 const pMax = numOrNull(draft.priceMax);
                 const aMin = numOrNull(draft.areaMin);
                 const aMax = numOrNull(draft.areaMax);
 
-                if (
-                  pMin !== null &&
-                  pMax !== null &&
-                  pMax > 0 &&
-                  pMin > pMax
-                ) {
+                if (pMin !== null && pMax !== null && pMax > 0 && pMin > pMax) {
                   toast({
                     title: "Check price range",
                     description: "Minimum price is higher than maximum.",
                   });
                   return;
                 }
-                if (
-                  aMin !== null &&
-                  aMax !== null &&
-                  aMax > 0 &&
-                  aMin > aMax
-                ) {
+                if (aMin !== null && aMax !== null && aMax > 0 && aMin > aMax) {
                   toast({
                     title: "Check area range",
                     description: "Minimum area is higher than maximum.",
@@ -563,8 +543,7 @@ export function BayutFiltersRail({
     value.areaMax.trim() ||
     value.keywords.trim();
 
-  const railBg =
-    "bg-white/92 backdrop-blur supports-[backdrop-filter]:bg-white/75";
+  const railBg = "bg-white/92 backdrop-blur supports-[backdrop-filter]:bg-white/75";
 
   const opLabel = value.operation === "buy" ? "Buy" : "Rent";
 
@@ -597,6 +576,16 @@ export function BayutFiltersRail({
     [],
   );
 
+  const tagChips = useMemo(
+    () =>
+      [
+        { label: "New", value: "new" as const },
+        { label: "Hot Deal", value: "hot-deal" as const },
+        { label: "Investor Pick", value: "investor-pick" as const },
+      ] as const,
+    [],
+  );
+
   return (
     <div className={cn("sticky z-40", className)} style={{ top: topOffsetPx }}>
       <div className={cn("w-full border-b border-black/10", railBg)}>
@@ -604,10 +593,8 @@ export function BayutFiltersRail({
           {/* Row 1 */}
           <div
             className={cn(
-              // Mobile: single row, horizontal scroll
               "flex flex-nowrap items-center gap-2 py-3 overflow-x-auto",
               "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
-              // Desktop: allow wrapping
               "lg:flex-wrap lg:overflow-x-visible",
             )}
           >
@@ -653,7 +640,6 @@ export function BayutFiltersRail({
             {/* Query input */}
             <div
               className={cn(
-                // keep a sensible width so it doesn’t eat the whole rail on mobile
                 "flex-none w-[260px] sm:w-[320px] lg:flex-1 lg:min-w-[260px]",
                 "flex items-center gap-2",
                 "h-10 rounded-[10px] bg-white ring-1 ring-black/10 px-3",
@@ -699,9 +685,7 @@ export function BayutFiltersRail({
                   <div className="flex items-center justify-between gap-2">
                     <Pill
                       active={value.category === "Residential"}
-                      onClick={() =>
-                        onChange({ ...value, category: "Residential" })
-                      }
+                      onClick={() => onChange({ ...value, category: "Residential" })}
                       className="flex-1"
                     >
                       Residential
@@ -782,10 +766,7 @@ export function BayutFiltersRail({
                   </button>
                 </PopoverTrigger>
 
-                <PopoverContent
-                  className="w-[360px] rounded-[12px] p-4"
-                  align="start"
-                >
+                <PopoverContent className="w-[360px] rounded-[12px] p-4" align="start">
                   <div className="grid gap-4">
                     <SelectGrid
                       title="Beds"
@@ -816,9 +797,7 @@ export function BayutFiltersRail({
                       <Button
                         variant="outline"
                         className="h-10 flex-1 rounded-[10px]"
-                        onClick={() =>
-                          onChange({ ...value, beds: "Any", baths: "Any" })
-                        }
+                        onClick={() => onChange({ ...value, beds: "Any", baths: "Any" })}
                       >
                         Reset
                       </Button>
@@ -839,41 +818,34 @@ export function BayutFiltersRail({
             </div>
           </div>
 
-          {/* Row 2 */}
+          {/* Row 2: REAL tag chips (not generic Bayut badges) */}
           <div className="flex flex-wrap items-center justify-between gap-3 pb-3">
             <div className="flex flex-wrap items-center gap-2">
+              {tagChips.map((t) => (
+                <Pill
+                  key={t.value}
+                  active={value.segment === t.value}
+                  onClick={() =>
+                    onChange({
+                      ...value,
+                      segment: value.segment === t.value ? "all" : t.value,
+                    })
+                  }
+                >
+                  {t.label}
+                </Pill>
+              ))}
+
               <Pill
                 onClick={() =>
                   toast({
-                    title: "TruBroker",
+                    title: "More tags",
                     description:
-                      "We can wire these badges to sorting/flags next.",
+                      "If you want, I can add chips for Waterfront / Family / Luxury / Prime too (those exist as tags in your data).",
                   })
                 }
               >
-                TruBroker™ listings first
-              </Pill>
-              <Pill
-                onClick={() =>
-                  toast({
-                    title: "TruCheck",
-                    description:
-                      "We can wire these badges to sorting/flags next.",
-                  })
-                }
-              >
-                TruCheck™ listings first
-              </Pill>
-              <Pill
-                onClick={() =>
-                  toast({
-                    title: "Floor plans",
-                    description:
-                      "We can filter by floor plan availability next.",
-                  })
-                }
-              >
-                Properties with floor plans
+                More…
               </Pill>
             </div>
 

@@ -165,26 +165,32 @@ function toNumberOrNull(v: string) {
 function matchesSegment(p: Property, segment: Segment) {
   if (segment === "all") return true;
 
+  const tag = (p.tag ?? "").trim().toLowerCase();
   const hay = `${p.title} ${p.location} ${p.description} ${(p.tag ?? "")} ${p.amenities.join(" ")}`.toLowerCase();
 
+  // Existing behavior
   if (segment === "ready") {
+    return tag.includes("ready") || hay.includes("ready") || hay.includes("vacant");
+  }
+
+  if (segment === "off-plan") {
     return (
-      (p.tag ?? "").toLowerCase().includes("ready") ||
-      hay.includes("ready") ||
-      hay.includes("vacant")
+      hay.includes("off-plan") ||
+      hay.includes("launch") ||
+      hay.includes("handover") ||
+      hay.includes("completion") ||
+      hay.includes("payment plan") ||
+      tag.includes("new")
     );
   }
 
-  // off-plan
-  return (
-    (p.tag ?? "").toLowerCase().includes("new") ||
-    (p.tag ?? "").toLowerCase().includes("off") ||
-    hay.includes("off-plan") ||
-    hay.includes("launch") ||
-    hay.includes("handover") ||
-    hay.includes("completion") ||
-    hay.includes("payment plan")
-  );
+  // NEW: map to your actual tags
+  if (segment === "new") return tag === "new" || tag.includes("new");
+  if (segment === "hot-deal") return tag === "hot deal" || tag.includes("hot");
+  if (segment === "investor-pick")
+    return tag === "investor pick" || tag.includes("investor");
+
+  return true;
 }
 
 export default function NavCategoryPage() {
@@ -252,8 +258,7 @@ export default function NavCategoryPage() {
       const matchesQuery = !q || hay.includes(q);
       const matchesKeywords = !kw || hay.includes(kw);
 
-      const matchesOption =
-        !option || option === "all" || hay.includes(optNeedle);
+      const matchesOption = !option || option === "all" || hay.includes(optNeedle);
 
       const matchesSeg = matchesSegment(p, rail.segment);
 
@@ -297,8 +302,7 @@ export default function NavCategoryPage() {
   };
 
   const optionLabel =
-    config.options.find((o) => o.slug === option)?.label ??
-    titleCaseSlug(option);
+    config.options.find((o) => o.slug === option)?.label ?? titleCaseSlug(option);
 
   const pageTitle = `${config.title} · ${optionLabel}`;
 
@@ -342,9 +346,7 @@ export default function NavCategoryPage() {
 
             <div className="rounded-[5px] border border-black/5 bg-white/70 px-4 py-2 text-sm text-muted-foreground ring-1 ring-black/10">
               Showing{" "}
-              <span className="font-semibold text-foreground">
-                {results.length}
-              </span>{" "}
+              <span className="font-semibold text-foreground">{results.length}</span>{" "}
               of {featuredProperties.length}
             </div>
           </div>
@@ -358,8 +360,8 @@ export default function NavCategoryPage() {
                   Featured listings
                 </div>
                 <h2 className="mt-2 text-2xl font-extrabold tracking-tight">
-                  Properties {rail.operation === "rent" ? "for rent" : "for sale"}{" "}
-                  in {optionLabel}
+                  Properties {rail.operation === "rent" ? "for rent" : "for sale"} in{" "}
+                  {optionLabel}
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
                   Click any card for full details.
@@ -431,9 +433,7 @@ export default function NavCategoryPage() {
 
                   <Separator className="my-4" />
 
-                  <LeadCapture
-                    defaultMessage={`Hi! I’m interested in ${optionLabel}. My budget is…`}
-                  />
+                  <LeadCapture defaultMessage={`Hi! I’m interested in ${optionLabel}. My budget is…`} />
 
                   <div className="mt-4 grid gap-2 sm:grid-cols-2">
                     <Button

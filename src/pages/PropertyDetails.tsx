@@ -1,13 +1,23 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Bath, BedDouble, Check, ChevronLeft, MapPin, Ruler } from "lucide-react";
+import {
+  Bath,
+  BedDouble,
+  Check,
+  ChevronLeft,
+  MapPin,
+  Ruler,
+} from "lucide-react";
 
 import { RealEstateHeader } from "@/components/real-estate/RealEstateHeader";
 import { SiteFooter } from "@/components/real-estate/SiteFooter";
 import { SmartImage } from "@/components/real-estate/SmartImage";
 import { FeaturedPropertyLaunchCard } from "@/components/real-estate/FeaturedPropertyLaunchCard";
 import { formatAED } from "@/components/real-estate/format";
-import { featuredProperties, type Property } from "@/components/real-estate/site-data";
+import {
+  featuredProperties,
+  type Property,
+} from "@/components/real-estate/site-data";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 
@@ -293,9 +303,9 @@ export default function PropertyDetailsPage() {
             </div>
           </div>
 
-          <div className="mt-5 flex gap-4 overflow-x-auto pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:mt-6 sm:gap-5">
+          <div className="mt-5 grid gap-4 sm:mt-6 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((p) => (
-              <div key={p.id} className="w-[84vw] max-w-[360px] flex-none">
+              <div key={p.id} className="h-[520px]">
                 <FeaturedPropertyLaunchCard
                   property={p}
                   onOpen={() => navigate(`/property/${p.id}`)}
