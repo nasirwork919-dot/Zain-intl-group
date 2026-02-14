@@ -10,10 +10,6 @@ import {
 import { FeaturedPropertyLaunchCard } from "@/components/real-estate/FeaturedPropertyLaunchCard";
 import { FeaturedListingsMobileSlider } from "@/components/real-estate/FeaturedListingsMobileSlider";
 import { PropertyDialog } from "@/components/real-estate/PropertyDialog";
-import {
-  type HeroBarFilters,
-  HeroSearchBar,
-} from "@/components/real-estate/HeroSearchBar";
 import { LeadCapture } from "@/components/real-estate/LeadCapture";
 import { ScrollUpButton } from "@/components/ScrollUpButton";
 
@@ -22,7 +18,11 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { StickyResultsBar } from "@/components/real-estate/StickyResultsBar";
+import {
+  BayutFiltersRail,
+  type BayutRailValue,
+  BAYUT_RAIL_DEFAULT_VALUE,
+} from "@/components/real-estate/BayutFiltersRail";
 
 export type NavCategoryKey =
   | "buy"
@@ -163,7 +163,6 @@ export default function NavCategoryPage() {
   const category = (params.category as NavCategoryKey) ?? "buy";
   const option = (params.option as string | undefined) ?? undefined;
 
-  // If someone opens /nav/:category without an option, send them to the landing page with cards.
   if (!option) {
     return (
       <div className="min-h-screen bg-[hsl(var(--page))]">
@@ -193,16 +192,14 @@ export default function NavCategoryPage() {
   const [activeProperty, setActiveProperty] = useState<Property | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const [heroBar, setHeroBar] = useState<HeroBarFilters>({
+  const [rail, setRail] = useState<BayutRailValue>({
+    ...BAYUT_RAIL_DEFAULT_VALUE,
     operation: category === "rent" ? "rent" : "buy",
-    propertyType: "apartment",
-    query: "",
   });
 
   const results = useMemo(() => {
-    const q = heroBar.query.trim().toLowerCase();
+    const q = rail.query.trim().toLowerCase();
 
-    // Minimal filtering for now: keyword only, plus category/option bias in title/location.
     const base = featuredProperties;
 
     const optLabel = config.options.find((o) => o.slug === option)?.label;
@@ -215,7 +212,7 @@ export default function NavCategoryPage() {
         !option || option === "all" || hay.includes(optNeedle);
       return matchesQuery && matchesOption;
     });
-  }, [heroBar.query, option, config.options]);
+  }, [rail.query, option, config.options]);
 
   const openProperty = (p: Property) => {
     setActiveProperty(p);
@@ -223,120 +220,52 @@ export default function NavCategoryPage() {
     navigate(`/property/${p.id}`);
   };
 
-  const pageTitle = option
-    ? `${config.title} · ${config.options.find((o) => o.slug === option)?.label ?? titleCaseSlug(option)}`
-    : config.title;
+  const optionLabel =
+    config.options.find((o) => o.slug === option)?.label ?? titleCaseSlug(option);
 
-  const heroBg =
-    config.key === "services"
-      ? "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=3200&q=85"
-      : "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=3200&q=90";
-
-  const ctaTitle =
-    config.key === "services" ? "Talk to an advisor" : "Request a shortlist";
+  const pageTitle = `${config.title} · ${optionLabel}`;
 
   return (
     <div className="min-h-screen bg-[hsl(var(--page))]">
       <RealEstateHeader />
 
-      {/* Hero */}
-      <section className="relative flex overflow-hidden pt-20 min-h-[720px] sm:min-h-[820px] lg:min-h-[920px]">
-        <div className="pointer-events-none absolute inset-0">
-          <img
-            src={heroBg}
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover"
-            loading="eager"
-          />
-          <div className="absolute inset-0 bg-[#0b1220]/45" />
-        </div>
-
-        <div className="relative mx-auto flex w-full max-w-6xl flex-1 items-center justify-center px-4 py-16 sm:py-20 lg:py-24">
-          <div className="mx-auto w-full max-w-4xl text-center">
-            <div className="text-xs font-semibold tracking-[0.18em] text-white/80">
-              {config.eyebrow}
-            </div>
-            <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
-              {pageTitle}
-            </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-sm font-medium leading-relaxed text-white/80">
-              {config.description}
-            </p>
-
-            <div className="mx-auto mt-10 max-w-5xl">
-              <HeroSearchBar
-                value={heroBar}
-                onChange={setHeroBar}
-                onSubmit={() => {
-                  const anchor = document.getElementById("results");
-                  anchor?.scrollIntoView({ behavior: "smooth", block: "start" });
-                }}
-              />
-            </div>
-
-            {/* Option selector grid */}
-            <div className="mx-auto mt-8 grid max-w-5xl grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-              {config.options.map((o) => {
-                const active = o.slug === (option ?? "");
-                return (
-                  <button
-                    key={o.slug}
-                    type="button"
-                    onClick={() =>
-                      navigate(
-                        `/nav/${category}/${o.slug}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`,
-                      )
-                    }
-                    className={cn(
-                      "rounded-[16px] px-4 py-3 text-xs font-semibold",
-                      "ring-1 ring-white/20",
-                      "transition",
-                      active
-                        ? "bg-white text-[#0b1025]"
-                        : "bg-white/10 text-white hover:bg-white/15",
-                      "backdrop-blur",
-                    )}
-                    aria-pressed={active}
-                  >
-                    {o.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Sticky filters bar (Bayut-style refinement) */}
-      <StickyResultsBar
-        value={heroBar}
-        onChange={setHeroBar}
-        onSubmit={() => {
-          const anchor = document.getElementById("results");
-          anchor?.scrollIntoView({ behavior: "smooth", block: "start" });
-        }}
-        className="-mt-10"
-        tone="light"
+      {/* Bayut-style sticky rail (always visible) */}
+      <BayutFiltersRail
+        value={rail}
+        onChange={setRail}
+        onClear={() =>
+          setRail({
+            ...BAYUT_RAIL_DEFAULT_VALUE,
+            operation: category === "rent" ? "rent" : "buy",
+          })
+        }
+        className="top-[132px]"
+        topOffsetPx={132}
       />
 
-      {/* Featured listings */}
-      <section id="results" className="mx-auto max-w-6xl px-4 pb-14">
-        <div className="rounded-[5px] border border-white/40 bg-white/40 p-5 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.6)] ring-1 ring-black/10">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      {/* Content spacing below sticky rail */}
+      <main className="mx-auto max-w-7xl px-4 pb-16 pt-6">
+        {/* Header block (breadcrumb-like + title) */}
+        <section className="rounded-[5px] border border-white/40 bg-white/55 p-5 ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/45">
+          <div className="text-xs font-semibold text-[hsl(var(--brand-ink))]/70">
+            For {rail.operation === "rent" ? "Rent" : "Sale"} ·{" "}
+            <span className="text-[hsl(var(--brand))]">Dubai Properties</span>{" "}
+            <span className="text-[hsl(var(--brand-ink))]/45">›</span>{" "}
+            <span className="text-[hsl(var(--brand))]">{config.title}</span>{" "}
+            <span className="text-[hsl(var(--brand-ink))]/45">›</span>{" "}
+            <span className="text-[hsl(var(--brand-ink))]">{optionLabel}</span>
+          </div>
+
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">
-                Featured listings
+              <h1 className="font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                {optionLabel}
+              </h1>
+              <div className="mt-2 text-sm text-muted-foreground">
+                Results update based on your filters.
               </div>
-              <h2 className="mt-2 text-3xl font-extrabold tracking-tight">
-                {option
-                  ? config.options.find((o) => o.slug === option)?.label ??
-                    "Results"
-                  : "Browse all"}
-              </h2>
-              <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-                Use the filters bar to refine. Click any card for full details.
-              </p>
             </div>
+
             <div className="rounded-[5px] border border-black/5 bg-white/70 px-4 py-2 text-sm text-muted-foreground ring-1 ring-black/10">
               Showing{" "}
               <span className="font-semibold text-foreground">
@@ -345,101 +274,116 @@ export default function NavCategoryPage() {
               of {featuredProperties.length}
             </div>
           </div>
+        </section>
 
-          <div className="mt-6">
-            <FeaturedListingsMobileSlider
-              properties={results}
-              onOpenProperty={openProperty}
-            />
-          </div>
-
-          <div className="mt-6 hidden gap-4 md:grid md:grid-cols-3">
-            {results.map((p) => (
-              <div key={p.id} className="h-[520px]">
-                <FeaturedPropertyLaunchCard
-                  property={p}
-                  onOpen={() => openProperty(p)}
-                />
-              </div>
-            ))}
-          </div>
-
-          {results.length === 0 ? (
-            <div className="mt-10 rounded-[5px] border border-black/5 bg-white/70 p-6 text-center ring-1 ring-black/10">
-              <div className="text-lg font-extrabold tracking-tight">
-                No matches yet
-              </div>
-              <div className="mt-1 text-sm text-muted-foreground">
-                Try a broader keyword.
-              </div>
-              <Button
-                className="mt-4 h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
-                onClick={() => setHeroBar((p) => ({ ...p, query: "" }))}
-              >
-                Clear keyword
-              </Button>
-            </div>
-          ) : null}
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="mx-auto max-w-6xl px-4 pb-16">
-        <Card className="overflow-hidden rounded-[5px] border border-white/40 bg-white/65 shadow-[0_20px_60px_-45px_rgba(15,23,42,0.65)] ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55">
-          <div className="p-6 sm:p-7">
-            <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">
-              Next step
-            </div>
-            <div className="mt-2 text-3xl font-extrabold tracking-tight">
-              {ctaTitle}
-            </div>
-            <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-              Share your budget, preferred areas, and timeline — we’ll respond
-              with a curated shortlist and clear next steps.
-            </p>
-
-            <Separator className="my-6" />
-
-            <div className="grid gap-4 md:grid-cols-12 md:items-start">
-              <div className="md:col-span-7">
-                <LeadCapture
-                  defaultMessage={`Hi! I’m interested in ${pageTitle}. My budget is…`}
-                />
-              </div>
-              <div className="md:col-span-5">
-                <div className="rounded-[5px] border border-black/5 bg-white/70 p-5 ring-1 ring-black/10">
-                  <div className="text-sm font-extrabold tracking-tight">
-                    What we’ll send you
-                  </div>
-                  <ul className="mt-3 grid gap-2 text-sm text-muted-foreground">
-                    {[
-                      "Curated options that match your criteria",
-                      "Payment plans & timeline breakdown",
-                      "ROI/rental insight where relevant",
-                      "Priority access to availability",
-                    ].map((t) => (
-                      <li key={t}>{t}</li>
-                    ))}
-                  </ul>
-
-                  <Button
-                    className="mt-5 h-11 w-full rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
-                    onClick={() =>
-                      toast({
-                        title: "Request received",
-                        description:
-                          "We’ll reach out shortly with a shortlist and next steps.",
-                      })
-                    }
-                  >
-                    Request now
-                  </Button>
+        {/* Results layout */}
+        <section id="results" className="mt-6">
+          <div className="grid gap-6 lg:grid-cols-12">
+            {/* Left: list/grid */}
+            <div className="lg:col-span-8">
+              <div className="rounded-[5px] border border-white/40 bg-white/40 p-5 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.6)] ring-1 ring-black/10">
+                <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">
+                  Featured listings
                 </div>
+                <h2 className="mt-2 text-2xl font-extrabold tracking-tight">
+                  Properties {rail.operation === "rent" ? "for rent" : "for sale"} in {optionLabel}
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+                  Click any card for full details.
+                </p>
+
+                <div className="mt-6">
+                  <FeaturedListingsMobileSlider
+                    properties={results}
+                    onOpenProperty={openProperty}
+                  />
+                </div>
+
+                <div className="mt-6 hidden gap-4 md:grid md:grid-cols-2">
+                  {results.map((p) => (
+                    <div key={p.id} className="h-[520px]">
+                      <FeaturedPropertyLaunchCard
+                        property={p}
+                        onOpen={() => openProperty(p)}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {results.length === 0 ? (
+                  <div className="mt-10 rounded-[5px] border border-black/5 bg-white/70 p-6 text-center ring-1 ring-black/10">
+                    <div className="text-lg font-extrabold tracking-tight">
+                      No matches yet
+                    </div>
+                    <div className="mt-1 text-sm text-muted-foreground">
+                      Try a broader keyword.
+                    </div>
+                    <Button
+                      className="mt-4 h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
+                      onClick={() => setRail((p) => ({ ...p, query: "" }))}
+                    >
+                      Clear keyword
+                    </Button>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+
+            {/* Right: contact panel */}
+            <div className="lg:col-span-4">
+              <div className="sticky top-[252px]">
+                <Card className="rounded-[5px] border border-white/40 bg-white/65 p-5 shadow-[0_18px_55px_-45px_rgba(15,23,42,0.45)] ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55">
+                  <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">
+                    Contact Us
+                  </div>
+                  <div className="mt-2 text-xl font-extrabold tracking-tight">
+                    Register your interest for {optionLabel}
+                  </div>
+                  <div className="mt-2 text-sm text-muted-foreground">
+                    Get pricing, payment plans, and best availability.
+                  </div>
+
+                  <Separator className="my-4" />
+
+                  <LeadCapture
+                    defaultMessage={`Hi! I’m interested in ${optionLabel}. My budget is…`}
+                  />
+
+                  <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                    <Button
+                      variant="outline"
+                      className="h-11 rounded-[5px]"
+                      onClick={() =>
+                        toast({
+                          title: "WhatsApp",
+                          description:
+                            "We can wire WhatsApp CTAs with your real number next.",
+                        })
+                      }
+                    >
+                      WhatsApp
+                    </Button>
+                    <Button
+                      className={cn(
+                        "h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92",
+                      )}
+                      onClick={() =>
+                        toast({
+                          title: "Saved search",
+                          description:
+                            "If you want real saved searches, we’ll add Supabase next.",
+                        })
+                      }
+                    >
+                      Save Search
+                    </Button>
+                  </div>
+                </Card>
               </div>
             </div>
           </div>
-        </Card>
-      </section>
+        </section>
+      </main>
 
       <SiteFooter
         onGetInTouch={() => {
@@ -451,7 +395,6 @@ export default function NavCategoryPage() {
         }}
       />
 
-      {/* Keep dialog mounted for now (not used as primary open anymore) */}
       <PropertyDialog
         property={activeProperty}
         open={dialogOpen}
