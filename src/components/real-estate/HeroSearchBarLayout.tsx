@@ -60,8 +60,8 @@ export function HeroSearchBarLayout({
 }) {
   return (
     <div className={cn("w-full", className)}>
-      {/* Mobile UI (screenshot-style) */}
-      <div className="mx-auto w-full max-w-xl lg:hidden">
+      {/* Mobile UI (initial layout) */}
+      <div className="mx-auto w-full max-w-xl md:hidden">
         {/* Top pills */}
         <div className="flex flex-wrap items-center justify-center gap-2">
           <OpPill
@@ -170,17 +170,17 @@ export function HeroSearchBarLayout({
         </div>
       </div>
 
-      {/* Desktop / large screens: keep the previous "new layout" (2-row bar) */}
+      {/* Tablet + Desktop UI (new layout) */}
       <div
         className={cn(
-          "hidden lg:block",
+          "hidden md:block",
           "rounded-[5px] bg-white/95 p-3",
           "shadow-[0_26px_80px_-60px_rgba(15,23,42,0.75)]",
           "ring-1 ring-black/10",
         )}
       >
         {/* Row 1 */}
-        <div className="grid gap-3 lg:grid-cols-[240px_1fr_200px]">
+        <div className="grid gap-3 md:grid-cols-[240px_1fr_200px]">
           {/* Buy/Rent tabs */}
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -245,7 +245,7 @@ export function HeroSearchBarLayout({
         </div>
 
         {/* Row 2 */}
-        <div className="mt-3 grid gap-3 lg:grid-cols-[1fr_180px_200px_200px]">
+        <div className="mt-3 grid gap-3 md:grid-cols-[1fr_180px_200px_200px]">
           {/* Pills */}
           <div className="flex flex-wrap gap-2">
             {[
