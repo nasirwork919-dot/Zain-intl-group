@@ -320,7 +320,7 @@ export default function NavCategoryPage() {
       />
 
       <main className="mx-auto max-w-7xl px-4 pb-16">
-        <section className="mt-[100px] rounded-[5px] border border-white/40 bg-white/55 p-5 ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/45">
+        <section className="mt-[200px] rounded-[5px] border border-white/40 bg-white/55 p-5 ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/45">
           <div className="text-xs font-semibold text-[hsl(var(--brand-ink))]/70">
             For {rail.operation === "rent" ? "Rent" : "Sale"} ·{" "}
             <span className="text-[hsl(var(--brand))]">Dubai Properties</span>{" "}
