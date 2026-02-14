@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 export function BrandLogo({
   className,
-  alt = "Zain Avenue Realty Real Estate",
+  alt = "ZAIN Avenue Reality Real Estate",
   variant = "mark",
 }: {
   className?: string;
@@ -10,7 +10,7 @@ export function BrandLogo({
   variant?: "mark" | "lockup";
 }) {
   // Current asset is a lockup (icon + text). Keep variants for future flexibility.
-  const src = "/brand/logo.jpeg";
+  const src = "/brand/logo.webp";
 
   return (
     <img
