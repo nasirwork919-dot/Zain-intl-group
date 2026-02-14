@@ -1,24 +1,13 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  Bath,
-  BedDouble,
-  Check,
-  ChevronLeft,
-  MapPin,
-  Ruler,
-} from "lucide-react";
+import { Bath, BedDouble, Check, ChevronLeft, MapPin, Ruler } from "lucide-react";
 
 import { RealEstateHeader } from "@/components/real-estate/RealEstateHeader";
-import { StickyResultsBar } from "@/components/real-estate/StickyResultsBar";
 import { SiteFooter } from "@/components/real-estate/SiteFooter";
 import { SmartImage } from "@/components/real-estate/SmartImage";
 import { FeaturedPropertyLaunchCard } from "@/components/real-estate/FeaturedPropertyLaunchCard";
 import { formatAED } from "@/components/real-estate/format";
-import {
-  featuredProperties,
-  type Property,
-} from "@/components/real-estate/site-data";
+import { featuredProperties, type Property } from "@/components/real-estate/site-data";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 
@@ -26,6 +15,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { TopPeekFiltersBar } from "@/components/real-estate/TopPeekFiltersBar";
+import type { HeroBarFilters } from "@/components/real-estate/HeroSearchBar";
 
 function getById(id?: string) {
   if (!id) return null;
@@ -40,6 +31,12 @@ export default function PropertyDetailsPage() {
 
   const [activeIdx, setActiveIdx] = useState(0);
 
+  const [barValue, setBarValue] = useState<HeroBarFilters>({
+    operation: "buy",
+    propertyType: "apartment",
+    query: "",
+  });
+
   const images = useMemo(() => {
     if (!property) return [];
     return property.gallery?.length ? property.gallery : [property.coverImage];
@@ -47,7 +44,6 @@ export default function PropertyDetailsPage() {
 
   const related = useMemo(() => {
     if (!property) return [];
-    // "Related": same location first, then fill.
     const same = featuredProperties.filter(
       (p) => p.id !== property.id && p.location === property.location,
     );
@@ -89,33 +85,23 @@ export default function PropertyDetailsPage() {
     <div className="min-h-screen bg-[hsl(var(--page))]">
       <RealEstateHeader />
 
-      {/* Sticky search/filters (premium pattern) */}
-      <StickyResultsBar
-        value={{
-          operation: "buy",
-          propertyType: "apartment",
-          query: "",
-        }}
-        onChange={() => {
-          toast({
-            title: "Filters",
-            description:
-              "Tell me what these filters should control on the details page (related listings vs. global search) and I’ll wire it.",
-          });
-        }}
+      {/* Fixed under-header bar that hides while scrolling down */}
+      <TopPeekFiltersBar
+        value={barValue}
+        onChange={setBarValue}
         onSubmit={() => {
           toast({
             title: "Search",
             description:
-              "We can route this to your listings/results page with the query applied.",
+              "Tell me where this should route (e.g. /nav/buy/option/all with query applied) and I’ll wire it.",
           });
         }}
-        className="mt-0"
-        tone="light"
       />
 
-      {/* Give content breathing room BELOW the sticky bar */}
-      <main className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:pt-8">
+      {/* Spacer so content starts BELOW the fixed bar (prevents overlap/cramped feel) */}
+      <div className="h-[178px] sm:h-[188px]" />
+
+      <main className="mx-auto max-w-6xl px-4 pb-16">
         {/* Back */}
         <div className="flex items-center justify-between gap-3 pt-2 sm:pt-3">
           <button
@@ -186,7 +172,6 @@ export default function PropertyDetailsPage() {
                 </div>
               </div>
 
-              {/* thumbnails */}
               {images.length > 1 ? (
                 <div className="mt-4 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:mt-5 sm:gap-3">
                   {images.map((src, i) => {
