@@ -110,13 +110,14 @@ export default function PropertyDetailsPage() {
               "We can route this to your listings/results page with the query applied.",
           });
         }}
-        className="mt-2"
+        className="mt-0"
         tone="light"
       />
 
+      {/* Give content breathing room BELOW the sticky bar */}
       <main className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:pt-8">
         {/* Back */}
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-3 pt-2 sm:pt-3">
           <button
             type="button"
             onClick={() => navigate(-1)}
@@ -145,17 +146,17 @@ export default function PropertyDetailsPage() {
         </div>
 
         {/* Hero image */}
-        <section className="mt-4 overflow-hidden rounded-[5px] border border-white/50 bg-white/70 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.6)] ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55">
+        <section className="mt-5 overflow-hidden rounded-[5px] border border-white/50 bg-white/70 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.6)] ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55 sm:mt-6">
           <div className="relative">
             <SmartImage
               src={mainSrc}
               alt={property.title}
-              className="h-[320px] w-full object-cover sm:h-[420px]"
+              className="h-[320px] w-full object-cover sm:h-[460px]"
               loading="eager"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-black/0" />
 
-            <div className="absolute bottom-4 left-4 right-4">
+            <div className="absolute bottom-4 left-4 right-4 sm:bottom-5 sm:left-5 sm:right-5">
               <div className="flex items-end justify-between gap-3">
                 <div className="min-w-0">
                   <div className="sm:hidden inline-flex items-center gap-2">
@@ -175,7 +176,7 @@ export default function PropertyDetailsPage() {
                   </h1>
                 </div>
 
-                <div className="shrink-0 rounded-[5px] bg-white/90 px-3 py-2 text-right shadow-sm ring-1 ring-black/10">
+                <div className="shrink-0 rounded-[5px] bg-white/90 px-3 py-2 text-right shadow-sm ring-1 ring-black/10 sm:px-4 sm:py-3">
                   <div className="text-[10px] font-semibold tracking-[0.18em] text-muted-foreground">
                     PRICE
                   </div>
@@ -187,7 +188,7 @@ export default function PropertyDetailsPage() {
 
               {/* thumbnails */}
               {images.length > 1 ? (
-                <div className="mt-4 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                <div className="mt-4 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:mt-5 sm:gap-3">
                   {images.map((src, i) => {
                     const active = i === activeIdx;
                     return (
@@ -206,7 +207,7 @@ export default function PropertyDetailsPage() {
                         <SmartImage
                           src={src}
                           alt=""
-                          className="h-14 w-20 object-cover"
+                          className="h-14 w-20 object-cover sm:h-16 sm:w-24"
                           loading="lazy"
                         />
                       </button>
@@ -218,27 +219,27 @@ export default function PropertyDetailsPage() {
           </div>
 
           {/* Details */}
-          <div className="p-5 sm:p-6">
-            <div className="grid gap-4 md:grid-cols-12">
+          <div className="p-5 sm:p-7">
+            <div className="grid gap-6 md:grid-cols-12">
               <div className="md:col-span-8">
                 <div className="text-base font-extrabold tracking-tight">
                   Overview
                 </div>
 
-                <div className="mt-3 grid grid-cols-3 gap-2 text-sm">
-                  <div className="rounded-[5px] bg-muted/45 p-3 ring-1 ring-black/5">
+                <div className="mt-4 grid grid-cols-3 gap-2 text-sm sm:gap-3">
+                  <div className="rounded-[5px] bg-muted/45 p-3 ring-1 ring-black/5 sm:p-4">
                     <div className="text-xs text-muted-foreground">Beds</div>
                     <div className="mt-1 inline-flex items-center gap-1 font-semibold">
                       <BedDouble className="h-4 w-4" /> {property.beds}
                     </div>
                   </div>
-                  <div className="rounded-[5px] bg-muted/45 p-3 ring-1 ring-black/5">
+                  <div className="rounded-[5px] bg-muted/45 p-3 ring-1 ring-black/5 sm:p-4">
                     <div className="text-xs text-muted-foreground">Baths</div>
                     <div className="mt-1 inline-flex items-center gap-1 font-semibold">
                       <Bath className="h-4 w-4" /> {property.baths}
                     </div>
                   </div>
-                  <div className="rounded-[5px] bg-muted/45 p-3 ring-1 ring-black/5">
+                  <div className="rounded-[5px] bg-muted/45 p-3 ring-1 ring-black/5 sm:p-4">
                     <div className="text-xs text-muted-foreground">Area</div>
                     <div className="mt-1 inline-flex items-center gap-1 font-semibold">
                       <Ruler className="h-4 w-4" />{" "}
@@ -247,15 +248,15 @@ export default function PropertyDetailsPage() {
                   </div>
                 </div>
 
-                <p className="mt-4 text-sm leading-relaxed text-foreground/80">
+                <p className="mt-5 text-sm leading-relaxed text-foreground/80">
                   {property.description}
                 </p>
 
-                <div className="mt-5">
+                <div className="mt-6">
                   <div className="text-sm font-extrabold tracking-tight">
                     Amenities
                   </div>
-                  <ul className="mt-3 grid gap-2 text-sm text-muted-foreground">
+                  <ul className="mt-3 grid gap-2 text-sm text-muted-foreground sm:mt-4 sm:grid-cols-2">
                     {property.amenities.map((a) => (
                       <li key={a} className="inline-flex items-center gap-2">
                         <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))] ring-1 ring-black/5">
@@ -269,7 +270,7 @@ export default function PropertyDetailsPage() {
               </div>
 
               <div className="md:col-span-4">
-                <Card className="rounded-[5px] border border-black/5 bg-white/70 p-4 ring-1 ring-black/10">
+                <Card className="rounded-[5px] border border-black/5 bg-white/70 p-5 ring-1 ring-black/10">
                   <div className="text-sm font-extrabold tracking-tight">
                     Ready to proceed?
                   </div>
@@ -277,7 +278,7 @@ export default function PropertyDetailsPage() {
                     Request details, payment plan, and best availability.
                   </div>
 
-                  <Separator className="my-4" />
+                  <Separator className="my-5" />
 
                   <Button
                     className="h-11 w-full rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
@@ -301,6 +302,11 @@ export default function PropertyDetailsPage() {
                   >
                     Close
                   </Button>
+
+                  <div className="mt-4 rounded-[5px] bg-white/70 px-3 py-3 text-xs font-semibold text-muted-foreground ring-1 ring-black/10">
+                    Tip: ask for payment plans, handover timelines, and unit
+                    availability.
+                  </div>
                 </Card>
               </div>
             </div>
@@ -308,13 +314,13 @@ export default function PropertyDetailsPage() {
         </section>
 
         {/* Related listings */}
-        <section id="related" className="mt-10">
+        <section id="related" className="mt-10 sm:mt-12">
           <div className="flex items-end justify-between gap-3">
             <div>
               <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">
                 Related listings
               </div>
-              <h2 className="mt-2 font-serif text-3xl font-semibold tracking-tight">
+              <h2 className="mt-2 font-serif text-3xl font-semibold tracking-tight sm:text-4xl">
                 You might also like
               </h2>
               <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
@@ -323,7 +329,7 @@ export default function PropertyDetailsPage() {
             </div>
           </div>
 
-          <div className="mt-5 flex gap-4 overflow-x-auto pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <div className="mt-5 flex gap-4 overflow-x-auto pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:mt-6 sm:gap-5">
             {related.map((p) => (
               <div key={p.id} className="w-[84vw] max-w-[360px] flex-none">
                 <FeaturedPropertyLaunchCard
