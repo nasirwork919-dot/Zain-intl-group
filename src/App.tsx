@@ -11,6 +11,7 @@ import NavFeatureLandingPage from "./pages/NavFeatureLanding";
 import NavFeatureOptionsPage from "./pages/NavFeatureOptions";
 import NavCategoryPage from "./pages/NavCategory";
 import ListYourPropertyPage from "./pages/ListYourProperty";
+import PropertyDetailsPage from "./pages/PropertyDetails";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+
+          <Route path="/property/:id" element={<PropertyDetailsPage />} />
 
           <Route path="/list-your-property" element={<ListYourPropertyPage />} />
 

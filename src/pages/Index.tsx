@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ArrowRight,
   Building2,
@@ -18,7 +19,6 @@ import {
   featuredProperties,
   type Property,
 } from "@/components/real-estate/site-data";
-import { PropertyDialog } from "@/components/real-estate/PropertyDialog";
 import { LeadCapture } from "@/components/real-estate/LeadCapture";
 import { CuratedOpportunities } from "@/components/real-estate/CuratedOpportunities";
 import { ScrollingTextSeparator } from "@/components/real-estate/ScrollingTextSeparator";
@@ -36,6 +36,8 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
 
 const Index = () => {
+  const navigate = useNavigate();
+
   const [filters, setFilters] = useState<SearchFilters>({
     query: "",
     location: "any",
@@ -50,7 +52,6 @@ const Index = () => {
   });
 
   const [activeProperty, setActiveProperty] = useState<Property | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   const results = useMemo(() => {
     const q = filters.query.trim().toLowerCase();
@@ -77,7 +78,7 @@ const Index = () => {
 
   const openProperty = (p: Property) => {
     setActiveProperty(p);
-    setDialogOpen(true);
+    navigate(`/property/${p.id}`);
   };
 
   const resetListingFilters = () => {
@@ -301,12 +302,12 @@ const Index = () => {
         <div className="rounded-[5px] border border-white/40 bg-white/45 ring-1 ring-black/10">
           <ExploreCommunities
             onSearchCommunity={(location) => {
-              setFilters((prev) => ({ ...prev, location: location as any }));
-              scrollTo("#listings");
               toast({
                 title: "Community selected",
                 description: `Showing listings in ${location}.`,
               });
+              navigate(`/nav/buy/option/all`);
+              setFilters((prev) => ({ ...prev, location: location as any }));
             }}
           />
         </div>
@@ -544,20 +545,6 @@ const Index = () => {
       <SiteFooter
         onGetInTouch={() => scrollTo("#contact")}
         onNavigateSection={(hash) => scrollTo(hash)}
-      />
-
-      <PropertyDialog
-        property={activeProperty}
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        onRequest={(p) => {
-          setDialogOpen(false);
-          scrollTo("#contact");
-          toast({
-            title: "Requesting details",
-            description: `We prefilled the form for “${p.title}”.`,
-          });
-        }}
       />
 
       <ScrollUpButton />
