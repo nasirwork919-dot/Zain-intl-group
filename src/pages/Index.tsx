@@ -127,7 +127,7 @@ const Index = () => {
           <div className="absolute inset-0 bg-[#0b1220]/35" />
         </div>
 
-        <div className="relative mx-auto flex w-full max-w-6xl flex-1 items-center justify-center px-4 py-10 sm:py-20 lg:py-24">
+        <div className="relative mx-auto my-8 flex w-full max-w-6xl flex-1 items-center justify-center px-4 py-10 sm:my-0 sm:py-20 lg:py-24">
           <div className="mx-auto my-8 w-full max-w-4xl text-center sm:my-10 lg:my-12">
             <div className="text-xs font-semibold tracking-[0.14em] text-white/85">
               At the Heart of Every Home is You
