@@ -154,7 +154,14 @@ export function SiteFooter({
         <div className="absolute inset-0 bg-gradient-to-r from-[#0b1220]/82 via-[#0b1220]/65 to-[#0b1220]/18" />
 
         <div className="relative z-[2]">
-          <div className={cn(containerClass, "py-10 sm:py-12 lg:py-14")}>
+          <div
+            className={cn(
+              containerClass,
+              "py-10 sm:py-12 lg:py-14",
+              "rounded-[5px]",
+              "bg-white/[0.04] ring-1 ring-white/10 backdrop-blur-sm",
+            )}
+          >
             <div className="grid gap-8 md:grid-cols-12 md:items-center">
               <div className="md:col-span-8">
                 <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.18em] text-white/80">
