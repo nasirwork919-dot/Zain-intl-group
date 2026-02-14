@@ -30,6 +30,7 @@ import { FeaturedListingsMobileSlider } from "@/components/real-estate/FeaturedL
 import { YourHomeYourWay } from "@/components/real-estate/YourHomeYourWay";
 import { SiteFooter } from "@/components/real-estate/SiteFooter";
 import { FeaturedPropertyLaunchCard } from "@/components/real-estate/FeaturedPropertyLaunchCard";
+import { MobileValuePropsCarousel } from "@/components/real-estate/MobileValuePropsCarousel";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -102,7 +103,7 @@ const Index = () => {
       <RealEstateHeader />
 
       {/* Hero (background slider + only title + search controls) */}
-      <section className="relative flex overflow-hidden pt-20 min-h-[720px] sm:min-h-[820px] lg:min-h-[920px]">
+      <section className="relative flex overflow-hidden pt-24 min-h-[760px] sm:pt-20 sm:min-h-[820px] lg:min-h-[920px]">
         {/* background slider */}
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0">
@@ -126,7 +127,7 @@ const Index = () => {
           <div className="absolute inset-0 bg-[#0b1220]/35" />
         </div>
 
-        <div className="relative mx-auto flex w-full max-w-6xl flex-1 items-center justify-center px-4 py-16 sm:py-20 lg:py-24">
+        <div className="relative mx-auto flex w-full max-w-6xl flex-1 items-center justify-center px-4 py-10 sm:py-20 lg:py-24">
           <div className="mx-auto w-full max-w-4xl text-center">
             <div className="text-xs font-semibold tracking-[0.14em] text-white/85">
               At the Heart of Every Home is You
@@ -135,7 +136,7 @@ const Index = () => {
               Let’s Find Your Perfect Haven Together
             </h1>
 
-            <div className="mx-auto mt-10 max-w-5xl">
+            <div className="mx-auto mt-7 max-w-5xl">
               <HeroSearchBar
                 value={heroBar}
                 onChange={setHeroBar}
@@ -147,6 +148,9 @@ const Index = () => {
                 }}
               />
             </div>
+
+            {/* Mobile only: quick reasons carousel (adds motion + trust) */}
+            <MobileValuePropsCarousel className="mx-auto mt-5 max-w-md" />
           </div>
 
           <style>{`
