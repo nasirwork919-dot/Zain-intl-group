@@ -116,7 +116,7 @@ export function SiteFooter({
   );
 
   const ctaBg =
-    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2600&q=80";
+    "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2600&q=85";
 
   const ink = "text-[#0b1025]";
   const sectionTitle = cn("text-sm font-extrabold tracking-tight", ink);
@@ -412,10 +412,8 @@ export function SiteFooter({
         <div className="border-t border-black/10">
           <div className={cn(containerClass, "py-6")}>
             <div className="grid grid-cols-[48px_1fr_48px] items-center">
-              {/* Left lane (matches arrow lane width) */}
               <div aria-hidden="true" />
 
-              {/* Center lane: always pure centered, wraps on small screens */}
               <div className="text-center">
                 <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
                   <div className="text-xs font-semibold text-[#0b1025]/80">
@@ -466,7 +464,6 @@ export function SiteFooter({
                 </div>
               </div>
 
-              {/* Right lane: arrow pinned, same width as left lane */}
               <div className="flex justify-end">
                 <button
                   type="button"

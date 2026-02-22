@@ -85,9 +85,6 @@ const Index = () => {
   }, [allProperties, filters]);
 
   const featuredResults = useMemo(() => {
-    // Priority order:
-    // 1) Admin "featured" flag OR placement "featured"
-    // 2) Otherwise, show results
     const featured = results.filter(
       (p) => p.featured || hasPlacement(p.placements, "featured"),
     );
@@ -119,16 +116,15 @@ const Index = () => {
     <div id="top" className="min-h-screen bg-[hsl(var(--page))]">
       <RealEstateHeader />
 
-      {/* Hero (background slider + only title + search controls) */}
+      {/* Hero (Dubai towers + Burj Khalifa vibe) */}
       <section className="relative flex overflow-hidden pt-24 min-h-[760px] sm:pt-20 sm:min-h-[820px] lg:min-h-[920px]">
-        {/* background slider */}
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0">
             {[
-              // Luxury skyline / premium facade / high-end interiors
-              "https://images.unsplash.com/photo-1496564203457-11bb12075d90?auto=format&fit=crop&w=3200&q=90",
-              "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=3200&q=90",
-              "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=3200&q=90",
+              // Burj Khalifa / Dubai skyline / towers
+              "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=3200&q=90",
+              "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=3200&q=90",
+              "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=3200&q=90",
             ].map((src, idx) => (
               <img
                 key={src}
@@ -141,8 +137,7 @@ const Index = () => {
             ))}
           </div>
 
-          {/* no white wash; keep readability with a subtle dark veil */}
-          <div className="absolute inset-0 bg-[#0b1220]/35" />
+          <div className="absolute inset-0 bg-[#0b1220]/38" />
         </div>
 
         <div className="relative mx-auto my-8 flex w-full max-w-6xl flex-1 items-center justify-center px-4 py-10 sm:my-0 sm:py-20 lg:py-24">
@@ -457,8 +452,8 @@ const Index = () => {
 
           <Card className="overflow-hidden rounded-[5px] border border-white/40 bg-white/65 shadow-[0_20px_60px_-45px_rgba(15,23,42,0.65)] ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55 md:col-span-5">
             <img
-              src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1600&q=85"
-              alt="Luxury interior"
+              src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1600&q=85"
+              alt="Dubai skyline"
               className="h-48 w-full object-cover"
               loading="lazy"
             />
