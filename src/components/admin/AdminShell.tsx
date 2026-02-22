@@ -2,18 +2,12 @@ import { ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { LogOut, PanelLeft, Settings } from "lucide-react";
 
-import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { adminLogout } from "@/components/admin/admin-auth";
 
-function SideLink({
-  to,
-  label,
-}: {
-  to: string;
-  label: string;
-}) {
+function SideLink({ to, label }: { to: string; label: string }) {
   return (
     <NavLink
       to={to}
@@ -33,13 +27,7 @@ function SideLink({
   );
 }
 
-export function AdminShell({
-  title,
-  children,
-}: {
-  title: string;
-  children: ReactNode;
-}) {
+export function AdminShell({ title, children }: { title: string; children: ReactNode }) {
   const navigate = useNavigate();
 
   return (
@@ -78,8 +66,8 @@ export function AdminShell({
 
             <Button
               className="h-10 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
-              onClick={async () => {
-                await supabase.auth.signOut();
+              onClick={() => {
+                adminLogout();
                 navigate("/admin/login", { replace: true });
               }}
             >
