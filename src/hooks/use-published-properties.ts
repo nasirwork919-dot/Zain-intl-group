@@ -18,6 +18,11 @@ export type DbPropertyRow = {
   published: boolean;
   created_at: string;
   updated_at: string;
+
+  listing_type: string;
+  property_type: string;
+  placements: string[];
+  featured: boolean;
 };
 
 export type PublicProperty = {
@@ -34,6 +39,11 @@ export type PublicProperty = {
   gallery: string[];
   description: string;
   amenities: string[];
+
+  listingType: "sale" | "rent";
+  propertyType: string;
+  placements: string[];
+  featured: boolean;
 };
 
 function mapRowToPublic(row: DbPropertyRow): PublicProperty {
@@ -51,6 +61,11 @@ function mapRowToPublic(row: DbPropertyRow): PublicProperty {
     gallery: row.gallery ?? [],
     description: row.description,
     amenities: row.amenities ?? [],
+
+    listingType: (row.listing_type as "sale" | "rent") ?? "sale",
+    propertyType: row.property_type ?? "apartment",
+    placements: row.placements ?? [],
+    featured: !!row.featured,
   };
 }
 
@@ -61,7 +76,7 @@ export function usePublishedProperties() {
       const { data, error } = await supabase
         .from("properties")
         .select(
-          "id,title,location,price,beds,baths,area_sqft,tag,cover_image,gallery,description,amenities,published,created_at,updated_at",
+          "id,title,location,price,beds,baths,area_sqft,tag,cover_image,gallery,description,amenities,published,created_at,updated_at,listing_type,property_type,placements,featured",
         )
         .eq("published", true)
         .order("created_at", { ascending: false });

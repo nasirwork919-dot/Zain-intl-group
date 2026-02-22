@@ -78,6 +78,11 @@ const Index = () => {
     });
   }, [allProperties, filters]);
 
+  const featuredResults = useMemo(() => {
+    const featured = results.filter((p) => p.featured);
+    return featured.length ? featured : results;
+  }, [results]);
+
   const openProperty = (p: Property) => {
     setActiveProperty(p);
     navigate(`/property/${p.id}`);
@@ -336,14 +341,14 @@ const Index = () => {
                 Featured properties
               </h2>
               <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-                Results update based on your filters. Click any card for full
-                details.
+                If you mark listings as <b>Featured</b> in the admin panel,
+                they’ll show here first.
               </p>
             </div>
             <div className="rounded-[5px] border border-black/5 bg-white/70 px-4 py-2 text-sm text-muted-foreground ring-1 ring-black/10">
               Showing{" "}
               <span className="font-semibold text-foreground">
-                {results.length}
+                {featuredResults.length}
               </span>{" "}
               of {allProperties.length}
             </div>
@@ -351,13 +356,13 @@ const Index = () => {
 
           <div className="mt-6">
             <FeaturedListingsMobileSlider
-              properties={results}
+              properties={featuredResults}
               onOpenProperty={openProperty}
             />
           </div>
 
           <div className="mt-6 hidden gap-4 md:grid md:grid-cols-3">
-            {results.map((p) => (
+            {featuredResults.map((p) => (
               <div key={p.id} className="h-[520px]">
                 <FeaturedPropertyLaunchCard
                   property={p}
@@ -367,7 +372,7 @@ const Index = () => {
             ))}
           </div>
 
-          {results.length === 0 ? (
+          {featuredResults.length === 0 ? (
             <div className="mt-10 rounded-[5px] border border-black/5 bg-white/70 p-6 text-center ring-1 ring-black/10">
               <div className="text-lg font-extrabold tracking-tight">
                 No matches yet

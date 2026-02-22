@@ -30,6 +30,11 @@ type DbProperty = {
   amenities: string[];
   published: boolean;
   created_at: string;
+
+  listing_type: string;
+  property_type: string;
+  placements: string[];
+  featured: boolean;
 };
 
 const emptyDraft = (): AdminPropertyDraft => ({
@@ -45,9 +50,16 @@ const emptyDraft = (): AdminPropertyDraft => ({
   description: "",
   amenities: [],
   published: true,
+
+  listingType: "sale",
+  propertyType: "apartment",
+  placements: ["buy"],
+  featured: false,
 });
 
 function mapToDraft(p: DbProperty): AdminPropertyDraft {
+  const placements = (p.placements ?? []) as any[];
+
   return {
     id: p.id,
     title: p.title,
@@ -62,6 +74,11 @@ function mapToDraft(p: DbProperty): AdminPropertyDraft {
     description: p.description,
     amenities: p.amenities ?? [],
     published: p.published,
+
+    listingType: (p.listing_type as any) ?? "sale",
+    propertyType: (p.property_type as any) ?? "apartment",
+    placements: placements.length ? (placements as any) : (["buy"] as any),
+    featured: !!p.featured,
   };
 }
 
@@ -94,7 +111,7 @@ export default function AdminPropertiesPage() {
     const { data, error } = await supabase
       .from("properties")
       .select(
-        "id,title,location,price,beds,baths,area_sqft,tag,cover_image,gallery,description,amenities,published,created_at",
+        "id,title,location,price,beds,baths,area_sqft,tag,cover_image,gallery,description,amenities,published,created_at,listing_type,property_type,placements,featured",
       )
       .order("created_at", { ascending: false });
 
@@ -147,6 +164,11 @@ export default function AdminPropertiesPage() {
       description: draft.description,
       amenities: draft.amenities,
       published: draft.published,
+
+      listing_type: draft.listingType,
+      property_type: draft.propertyType,
+      placements: draft.placements,
+      featured: draft.featured,
     };
 
     if (draft.id) {
@@ -240,6 +262,11 @@ export default function AdminPropertiesPage() {
               ) : (
                 filtered.map((p) => {
                   const active = selectedId === p.id;
+
+                  const typeHint =
+                    p.listing_type === "rent" ? "Rent" : "Sale";
+                  const featuredHint = p.featured ? " · Featured" : "";
+
                   return (
                     <button
                       key={p.id}
@@ -259,8 +286,9 @@ export default function AdminPropertiesPage() {
                             {p.title}
                           </div>
                           <div className="mt-1 text-xs font-semibold text-muted-foreground">
-                            {p.location} ·{" "}
+                            {p.location} · {typeHint} ·{" "}
                             {p.published ? "Published" : "Draft"}
+                            {featuredHint}
                             {p.tag ? ` · ${p.tag}` : ""}
                           </div>
                         </div>

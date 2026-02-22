@@ -195,6 +195,12 @@ function matchesSegment(p: Property, segment: Segment) {
   return true;
 }
 
+function categoryExpectedListingType(category: NavCategoryKey) {
+  if (category === "rent") return "rent" as const;
+  if (category === "buy") return "sale" as const;
+  return null;
+}
+
 export default function NavCategoryPage() {
   const params = useParams();
   const navigate = useNavigate();
@@ -242,6 +248,8 @@ export default function NavCategoryPage() {
     query: initialQ,
   }));
 
+  const expectedType = categoryExpectedListingType(category);
+
   const results = useMemo(() => {
     const q = rail.query.trim().toLowerCase();
     const kw = rail.keywords.trim().toLowerCase();
@@ -251,7 +259,9 @@ export default function NavCategoryPage() {
     const areaMin = toNumberOrNull(rail.areaMin);
     const areaMax = toNumberOrNull(rail.areaMax);
 
-    const base = allProperties;
+    const base = expectedType
+      ? allProperties.filter((p) => p.listingType === expectedType)
+      : allProperties;
 
     const optLabel = config.options.find((o) => o.slug === option)?.label;
     const optNeedle = (optLabel ?? titleCaseSlug(option)).toLowerCase();
@@ -291,6 +301,7 @@ export default function NavCategoryPage() {
   }, [
     allProperties,
     config.options,
+    expectedType,
     option,
     rail.areaMax,
     rail.areaMin,
