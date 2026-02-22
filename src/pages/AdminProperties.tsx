@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Plus, Search, Wand2 } from "lucide-react";
+import { ArrowLeft, Image as ImageIcon, Plus, Search, Wand2 } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -105,12 +105,34 @@ function safeReadDraft(): AdminPropertyDraft | null {
   try {
     const parsed = JSON.parse(raw) as AdminPropertyDraft;
     if (!parsed || typeof parsed !== "object") return null;
-    // Minimal shape check
     if (typeof parsed.title !== "string") return null;
     return parsed;
   } catch {
     return null;
   }
+}
+
+function CoverFallback() {
+  return (
+    <div className="relative h-44 w-full">
+      <div className="absolute inset-0 bg-[hsl(var(--brand-ink))]/85" />
+      <div className="absolute inset-0 opacity-[0.18]">
+        <div className="absolute -left-10 -top-12 h-40 w-40 rounded-full bg-[hsl(var(--brand))] blur-2xl" />
+        <div className="absolute -bottom-16 -right-16 h-56 w-56 rounded-full bg-[hsl(var(--brand-2))] blur-3xl" />
+      </div>
+
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="rounded-[5px] bg-white/10 px-4 py-3 text-center ring-1 ring-white/15 backdrop-blur">
+          <div className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-[5px] bg-white/10 ring-1 ring-white/15">
+            <ImageIcon className="h-5 w-5 text-white" />
+          </div>
+          <div className="mt-2 text-xs font-extrabold tracking-[0.18em] text-white/80">
+            NO COVER IMAGE
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function AdminPropertiesPage() {
@@ -132,7 +154,6 @@ export default function AdminPropertiesPage() {
   });
 
   const [newMode, setNewMode] = useState<"setup" | "details">(() => {
-    // If there's an existing draft, resume details; otherwise start setup.
     return safeReadDraft() ? "details" : "setup";
   });
 
@@ -146,7 +167,6 @@ export default function AdminPropertiesPage() {
 
   const persistDraft = (next: AdminPropertyDraft) => {
     setDraft(next);
-    // Only persist unsaved "new" drafts (no id)
     if (!next.id) {
       sessionStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(next));
     }
@@ -267,14 +287,12 @@ export default function AdminPropertiesPage() {
     setSelectedId(p.id);
     setView("new");
     setNewMode("details");
-    // Editing an existing property should not overwrite the "new draft" draft storage
     setDraft(mapToDraft(p));
   };
 
   const backToList = () => {
     setView("list");
     setSelectedId(null);
-    // Do NOT clear draft: requirement says changes should still be there if back clicked.
     if (!draft.id) {
       sessionStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
     }
@@ -346,12 +364,15 @@ export default function AdminPropertiesPage() {
 
       <div className="mt-5 grid gap-3 sm:grid-cols-12">
         <div className="sm:col-span-8">
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="h-11 rounded-[5px] bg-white/80"
-            placeholder="Search by title, location, tag, type…"
-          />
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="h-11 rounded-[5px] bg-white/80 pl-9"
+              placeholder="Search by title, location, tag, type…"
+            />
+          </div>
         </div>
         <div className="sm:col-span-4">
           <div className="flex h-11 items-center justify-between rounded-[5px] bg-white/75 px-4 text-sm font-semibold text-muted-foreground ring-1 ring-black/10">
@@ -393,6 +414,7 @@ export default function AdminPropertiesPage() {
               filtered.map((p) => {
                 const status = p.published ? "Published" : "Draft";
                 const typeHint = p.listing_type === "rent" ? "Rent" : "Sale";
+                const hasCover = String(p.cover_image ?? "").trim().length > 5;
 
                 return (
                   <button
@@ -409,12 +431,17 @@ export default function AdminPropertiesPage() {
                       )}
                     >
                       <div className="relative">
-                        <SmartImage
-                          src={p.cover_image}
-                          alt={p.title}
-                          className="h-44 w-full object-cover transition duration-500 group-hover:scale-[1.02]"
-                          loading="lazy"
-                        />
+                        {hasCover ? (
+                          <SmartImage
+                            src={p.cover_image}
+                            alt={p.title}
+                            className="h-44 w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <CoverFallback />
+                        )}
+
                         <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/0" />
 
                         <div className="absolute left-3 top-3 flex flex-wrap gap-2">
@@ -513,10 +540,7 @@ export default function AdminPropertiesPage() {
             <NewListingSetup
               value={draft}
               onChange={persistDraft}
-              onCancel={() => {
-                // Back keeps draft, per request
-                backToList();
-              }}
+              onCancel={() => backToList()}
               onContinue={() => {
                 toast({
                   title: "Setup saved",
@@ -529,12 +553,8 @@ export default function AdminPropertiesPage() {
             <PropertyEditor
               value={draft}
               onChange={(next) => {
-                // Persist only new drafts
-                if (!next.id) {
-                  persistDraft(next);
-                } else {
-                  setDraft(next);
-                }
+                if (!next.id) persistDraft(next);
+                else setDraft(next);
               }}
               onSave={save}
               onDelete={selected ? del : undefined}
@@ -542,14 +562,6 @@ export default function AdminPropertiesPage() {
               deleting={deleting}
             />
           )}
-
-          {!isEditingExisting ? (
-            <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-              <ArrowLeft className="h-4 w-4 opacity-70" />
-              You can go back anytime — your new property draft will still be
-              here.
-            </div>
-          ) : null}
         </div>
       )}
     </AdminShell>
