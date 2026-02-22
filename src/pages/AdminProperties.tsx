@@ -1,5 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Image as ImageIcon, Plus, Search, Wand2, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Filter,
+  Image as ImageIcon,
+  Plus,
+  Search,
+  Wand2,
+  X,
+} from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -26,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 type DbProperty = {
   id: string;
@@ -157,6 +166,217 @@ type FilterPlacement =
   | "services"
   | "more";
 
+function FiltersPanel({
+  query,
+  setQuery,
+  status,
+  setStatus,
+  listingType,
+  setListingType,
+  featuredOnly,
+  setFeaturedOnly,
+  placement,
+  setPlacement,
+  activeFiltersCount,
+  clearFilters,
+  filteredCount,
+  loading,
+  onNew,
+  onRefresh,
+  onSeedLuxury,
+  seeding,
+  dense,
+}: {
+  query: string;
+  setQuery: (v: string) => void;
+  status: FilterStatus;
+  setStatus: (v: FilterStatus) => void;
+  listingType: FilterListingType;
+  setListingType: (v: FilterListingType) => void;
+  featuredOnly: FilterFeatured;
+  setFeaturedOnly: (v: FilterFeatured) => void;
+  placement: FilterPlacement;
+  setPlacement: (v: FilterPlacement) => void;
+  activeFiltersCount: number;
+  clearFilters: () => void;
+  filteredCount: number;
+  loading: boolean;
+  onNew: () => void;
+  onRefresh: () => void;
+  onSeedLuxury: () => void;
+  seeding: boolean;
+  dense?: boolean;
+}) {
+  return (
+    <div className="grid gap-3">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="text-xs font-extrabold tracking-[0.22em] text-[hsl(var(--brand-ink))]/60">
+            FILTERS
+          </div>
+          <div className={cn("mt-2 font-extrabold tracking-tight text-[hsl(var(--brand-ink))]", dense ? "text-xl" : "text-2xl")}>
+            Find listings
+          </div>
+          <div className="mt-2 text-sm font-semibold text-muted-foreground">
+            Narrow down by status, type, and placements.
+          </div>
+        </div>
+
+        <Button
+          className="h-10 rounded-[5px] bg-[hsl(var(--brand))] text-white hover:bg-[hsl(var(--brand))]/90"
+          onClick={onNew}
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          New
+        </Button>
+      </div>
+
+      <Separator className="my-2 bg-black/10" />
+
+      <div className="relative">
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="h-11 rounded-[5px] bg-white/80 pl-9 pr-10"
+          placeholder="Search title, location, tag…"
+        />
+        {query.trim() ? (
+          <button
+            type="button"
+            onClick={() => setQuery("")}
+            className={cn(
+              "absolute right-2 top-1/2 -translate-y-1/2",
+              "inline-flex h-7 w-7 items-center justify-center rounded-full",
+              "bg-white text-[hsl(var(--brand-ink))] ring-1 ring-black/10",
+              "hover:bg-muted/30 transition",
+            )}
+            aria-label="Clear search"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        ) : null}
+      </div>
+
+      <div className="grid gap-2">
+        <div className="text-xs font-extrabold tracking-[0.18em] text-[hsl(var(--brand-ink))]/70">
+          STATUS
+        </div>
+        <Select value={status} onValueChange={(v) => setStatus(v as FilterStatus)}>
+          <SelectTrigger className="h-11 rounded-[5px] bg-white/80">
+            <SelectValue placeholder="All" />
+          </SelectTrigger>
+          <SelectContent className="rounded-[5px]">
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="published">Published</SelectItem>
+            <SelectItem value="draft">Draft</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="grid gap-2">
+        <div className="text-xs font-extrabold tracking-[0.18em] text-[hsl(var(--brand-ink))]/70">
+          LISTING TYPE
+        </div>
+        <Select
+          value={listingType}
+          onValueChange={(v) => setListingType(v as FilterListingType)}
+        >
+          <SelectTrigger className="h-11 rounded-[5px] bg-white/80">
+            <SelectValue placeholder="All" />
+          </SelectTrigger>
+          <SelectContent className="rounded-[5px]">
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="sale">For Sale</SelectItem>
+            <SelectItem value="rent">For Rent</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="grid gap-2">
+        <div className="text-xs font-extrabold tracking-[0.18em] text-[hsl(var(--brand-ink))]/70">
+          FEATURED
+        </div>
+        <Select
+          value={featuredOnly}
+          onValueChange={(v) => setFeaturedOnly(v as FilterFeatured)}
+        >
+          <SelectTrigger className="h-11 rounded-[5px] bg-white/80">
+            <SelectValue placeholder="All" />
+          </SelectTrigger>
+          <SelectContent className="rounded-[5px]">
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="featured">Featured only</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="grid gap-2">
+        <div className="text-xs font-extrabold tracking-[0.18em] text-[hsl(var(--brand-ink))]/70">
+          PLACEMENT
+        </div>
+        <Select value={placement} onValueChange={(v) => setPlacement(v as FilterPlacement)}>
+          <SelectTrigger className="h-11 rounded-[5px] bg-white/80">
+            <SelectValue placeholder="All" />
+          </SelectTrigger>
+          <SelectContent className="rounded-[5px]">
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="featured">Featured</SelectItem>
+            <SelectItem value="buy">Buy</SelectItem>
+            <SelectItem value="rent">Rent</SelectItem>
+            <SelectItem value="communities">Communities</SelectItem>
+            <SelectItem value="developers">Developers</SelectItem>
+            <SelectItem value="featured-projects">Featured Projects</SelectItem>
+            <SelectItem value="services">Services</SelectItem>
+            <SelectItem value="more">More</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="mt-1 flex items-center justify-between rounded-[5px] bg-white/75 px-3 py-2 text-xs font-semibold text-muted-foreground ring-1 ring-black/10">
+        <span>Showing</span>
+        <span className="text-[hsl(var(--brand-ink))]">
+          {loading ? "—" : filteredCount}
+        </span>
+      </div>
+
+      <div className="grid gap-2 sm:grid-cols-2">
+        <Button
+          variant="outline"
+          className="h-10 rounded-[5px] bg-white/70"
+          disabled={!activeFiltersCount}
+          onClick={clearFilters}
+        >
+          Clear
+          {activeFiltersCount ? (
+            <span className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[hsl(var(--brand))]/14 px-1.5 text-[11px] font-extrabold text-[hsl(var(--brand-ink))] ring-1 ring-[hsl(var(--brand))]/25">
+              {activeFiltersCount}
+            </span>
+          ) : null}
+        </Button>
+
+        <Button
+          variant="outline"
+          className="h-10 rounded-[5px] bg-white/70"
+          onClick={onRefresh}
+        >
+          Refresh
+        </Button>
+      </div>
+
+      <Button
+        variant="outline"
+        className="h-10 rounded-[5px] bg-white/70"
+        disabled={seeding}
+        onClick={onSeedLuxury}
+      >
+        <Wand2 className="mr-2 h-4 w-4" />
+        {seeding ? "Seeding..." : "Seed luxury"}
+      </Button>
+    </div>
+  );
+}
+
 export default function AdminPropertiesPage() {
   const [params] = useSearchParams();
   const startNew = params.get("new") === "1";
@@ -192,6 +412,9 @@ export default function AdminPropertiesPage() {
   const [listingType, setListingType] = useState<FilterListingType>("all");
   const [featuredOnly, setFeaturedOnly] = useState<FilterFeatured>("all");
   const [placement, setPlacement] = useState<FilterPlacement>("all");
+
+  // Mobile filters sheet
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const persistDraft = (next: AdminPropertyDraft) => {
     setDraft(next);
@@ -231,13 +454,16 @@ export default function AdminPropertiesPage() {
       const matchesQuery = !q || hay.includes(q);
 
       const matchesStatus =
-        status === "all" ? true : status === "published" ? p.published : !p.published;
+        status === "all"
+          ? true
+          : status === "published"
+            ? p.published
+            : !p.published;
 
       const matchesListingType =
         listingType === "all" ? true : p.listing_type === listingType;
 
-      const matchesFeatured =
-        featuredOnly === "all" ? true : !!p.featured;
+      const matchesFeatured = featuredOnly === "all" ? true : !!p.featured;
 
       const placements = (p.placements ?? []).map((x) => String(x).toLowerCase());
       const matchesPlacement =
@@ -321,6 +547,7 @@ export default function AdminPropertiesPage() {
   const openNew = () => {
     setSelectedId(null);
     setView("new");
+    setFiltersOpen(false);
 
     const existing = safeReadDraft();
     if (existing) {
@@ -366,215 +593,30 @@ export default function AdminPropertiesPage() {
     return c;
   }, [featuredOnly, listingType, placement, query, status]);
 
+  const onSeedLuxury = async () => {
+    setSeeding(true);
+    const { inserted } = await seedPremiumListings();
+    toast({
+      title: "Luxury seed complete",
+      description:
+        inserted === 0
+          ? "Seed listings already exist."
+          : `Inserted ${inserted} luxury listings.`,
+    });
+    await load();
+    setSeeding(false);
+  };
+
   const isEditingExisting = !!draft.id;
 
   return (
     <AdminShell title="Properties">
       {view === "list" ? (
-        <div className="grid gap-4 lg:grid-cols-12">
-          {/* Sidebar filters */}
-          <div className="lg:col-span-4">
-            <Card
-              className={cn(
-                "rounded-[5px] border border-black/10 bg-white/70 p-6 ring-1 ring-black/5",
-                "backdrop-blur supports-[backdrop-filter]:bg-white/55",
-              )}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <div className="text-xs font-extrabold tracking-[0.22em] text-[hsl(var(--brand-ink))]/60">
-                    FILTERS
-                  </div>
-                  <div className="mt-2 text-2xl font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
-                    Find listings
-                  </div>
-                  <div className="mt-2 text-sm font-semibold text-muted-foreground">
-                    Narrow down by status, type, and placements.
-                  </div>
-                </div>
-
-                <Button
-                  className="h-10 rounded-[5px] bg-[hsl(var(--brand))] text-white hover:bg-[hsl(var(--brand))]/90"
-                  onClick={openNew}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  New
-                </Button>
-              </div>
-
-              <Separator className="my-5 bg-black/10" />
-
-              <div className="grid gap-3">
-                <div className="relative">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    className="h-11 rounded-[5px] bg-white/80 pl-9 pr-10"
-                    placeholder="Search title, location, tag…"
-                  />
-                  {query.trim() ? (
-                    <button
-                      type="button"
-                      onClick={() => setQuery("")}
-                      className={cn(
-                        "absolute right-2 top-1/2 -translate-y-1/2",
-                        "inline-flex h-7 w-7 items-center justify-center rounded-full",
-                        "bg-white text-[hsl(var(--brand-ink))] ring-1 ring-black/10",
-                        "hover:bg-muted/30 transition",
-                      )}
-                      aria-label="Clear search"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  ) : null}
-                </div>
-
-                <div className="grid gap-2">
-                  <div className="text-xs font-extrabold tracking-[0.18em] text-[hsl(var(--brand-ink))]/70">
-                    STATUS
-                  </div>
-                  <Select value={status} onValueChange={(v) => setStatus(v as FilterStatus)}>
-                    <SelectTrigger className="h-11 rounded-[5px] bg-white/80">
-                      <SelectValue placeholder="All" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-[5px]">
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="published">Published</SelectItem>
-                      <SelectItem value="draft">Draft</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="grid gap-2">
-                  <div className="text-xs font-extrabold tracking-[0.18em] text-[hsl(var(--brand-ink))]/70">
-                    LISTING TYPE
-                  </div>
-                  <Select
-                    value={listingType}
-                    onValueChange={(v) => setListingType(v as FilterListingType)}
-                  >
-                    <SelectTrigger className="h-11 rounded-[5px] bg-white/80">
-                      <SelectValue placeholder="All" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-[5px]">
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="sale">For Sale</SelectItem>
-                      <SelectItem value="rent">For Rent</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="grid gap-2">
-                  <div className="text-xs font-extrabold tracking-[0.18em] text-[hsl(var(--brand-ink))]/70">
-                    FEATURED
-                  </div>
-                  <Select
-                    value={featuredOnly}
-                    onValueChange={(v) => setFeaturedOnly(v as FilterFeatured)}
-                  >
-                    <SelectTrigger className="h-11 rounded-[5px] bg-white/80">
-                      <SelectValue placeholder="All" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-[5px]">
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="featured">Featured only</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="grid gap-2">
-                  <div className="text-xs font-extrabold tracking-[0.18em] text-[hsl(var(--brand-ink))]/70">
-                    PLACEMENT
-                  </div>
-                  <Select
-                    value={placement}
-                    onValueChange={(v) => setPlacement(v as FilterPlacement)}
-                  >
-                    <SelectTrigger className="h-11 rounded-[5px] bg-white/80">
-                      <SelectValue placeholder="All" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-[5px]">
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="featured">Featured</SelectItem>
-                      <SelectItem value="buy">Buy</SelectItem>
-                      <SelectItem value="rent">Rent</SelectItem>
-                      <SelectItem value="communities">Communities</SelectItem>
-                      <SelectItem value="developers">Developers</SelectItem>
-                      <SelectItem value="featured-projects">
-                        Featured Projects
-                      </SelectItem>
-                      <SelectItem value="services">Services</SelectItem>
-                      <SelectItem value="more">More</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="mt-1 flex items-center justify-between rounded-[5px] bg-white/75 px-3 py-2 text-xs font-semibold text-muted-foreground ring-1 ring-black/10">
-                  <span>Showing</span>
-                  <span className="text-[hsl(var(--brand-ink))]">
-                    {loading ? "—" : filtered.length}
-                  </span>
-                </div>
-
-                <div className="grid gap-2 sm:grid-cols-2">
-                  <Button
-                    variant="outline"
-                    className="h-10 rounded-[5px] bg-white/70"
-                    disabled={!activeFiltersCount}
-                    onClick={clearFilters}
-                  >
-                    Clear
-                    {activeFiltersCount ? (
-                      <span className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[hsl(var(--brand))]/14 px-1.5 text-[11px] font-extrabold text-[hsl(var(--brand-ink))] ring-1 ring-[hsl(var(--brand))]/25">
-                        {activeFiltersCount}
-                      </span>
-                    ) : null}
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    className="h-10 rounded-[5px] bg-white/70"
-                    onClick={load}
-                  >
-                    Refresh
-                  </Button>
-                </div>
-
-                <Button
-                  variant="outline"
-                  className="h-10 rounded-[5px] bg-white/70"
-                  disabled={seeding}
-                  onClick={async () => {
-                    setSeeding(true);
-                    const { inserted } = await seedPremiumListings();
-                    toast({
-                      title: "Luxury seed complete",
-                      description:
-                        inserted === 0
-                          ? "Seed listings already exist."
-                          : `Inserted ${inserted} luxury listings.`,
-                    });
-                    await load();
-                    setSeeding(false);
-                  }}
-                >
-                  <Wand2 className="mr-2 h-4 w-4" />
-                  {seeding ? "Seeding..." : "Seed luxury"}
-                </Button>
-              </div>
-            </Card>
-          </div>
-
-          {/* Cards grid */}
-          <div className="lg:col-span-8">
-            <Card
-              className={cn(
-                "rounded-[5px] border border-black/10 bg-white/70 p-6 ring-1 ring-black/5",
-                "backdrop-blur supports-[backdrop-filter]:bg-white/55",
-              )}
-            >
-              <div className="flex items-end justify-between gap-3">
+        <>
+          {/* Top controls (always visible) */}
+          <div className="mb-4">
+            <Card className="rounded-[5px] border border-black/10 bg-white/70 p-5 ring-1 ring-black/5 backdrop-blur supports-[backdrop-filter]:bg-white/55">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <div className="text-xs font-extrabold tracking-[0.22em] text-[hsl(var(--brand-ink))]/60">
                     PROPERTIES
@@ -583,138 +625,271 @@ export default function AdminPropertiesPage() {
                     Inventory
                   </div>
                   <div className="mt-2 text-sm font-semibold text-muted-foreground">
-                    Click a property card to edit it.
+                    Filter, browse, then click a card to edit.
                   </div>
                 </div>
 
-                <div className="rounded-[5px] bg-white/75 px-3 py-2 text-xs font-semibold text-muted-foreground ring-1 ring-black/10">
-                  Total:{" "}
-                  <span className="font-extrabold text-[hsl(var(--brand-ink))]">
-                    {loading ? "—" : items.length}
-                  </span>
+                <div className="flex flex-col gap-2 sm:items-end">
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      className="h-10 rounded-[5px] bg-[hsl(var(--brand))] text-white hover:bg-[hsl(var(--brand))]/90"
+                      onClick={openNew}
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      New property
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      className="h-10 rounded-[5px] bg-white/70"
+                      onClick={load}
+                    >
+                      Refresh
+                    </Button>
+
+                    {/* Mobile/tablet filters button */}
+                    <Button
+                      variant="outline"
+                      className="h-10 rounded-[5px] bg-white/70 lg:hidden"
+                      onClick={() => setFiltersOpen(true)}
+                    >
+                      <Filter className="mr-2 h-4 w-4" />
+                      Filters
+                      {activeFiltersCount ? (
+                        <span className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[hsl(var(--brand))]/14 px-1.5 text-[11px] font-extrabold text-[hsl(var(--brand-ink))] ring-1 ring-[hsl(var(--brand))]/25">
+                          {activeFiltersCount}
+                        </span>
+                      ) : null}
+                    </Button>
+                  </div>
+
+                  <div className="rounded-[5px] bg-white/75 px-3 py-2 text-xs font-semibold text-muted-foreground ring-1 ring-black/10">
+                    Showing{" "}
+                    <span className="font-extrabold text-[hsl(var(--brand-ink))]">
+                      {loading ? "—" : filtered.length}
+                    </span>{" "}
+                    / {loading ? "—" : items.length}
+                  </div>
                 </div>
-              </div>
-
-              <Separator className="my-5 bg-black/10" />
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                {loading ? (
-                  <div className="rounded-[5px] bg-white/70 p-4 text-sm text-muted-foreground ring-1 ring-black/5 sm:col-span-2">
-                    Loading…
-                  </div>
-                ) : filtered.length === 0 ? (
-                  <div className="rounded-[5px] bg-white/70 p-6 text-center ring-1 ring-black/10 sm:col-span-2">
-                    <div className="text-lg font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
-                      No matches
-                    </div>
-                    <div className="mt-1 text-sm font-semibold text-muted-foreground">
-                      Try clearing filters or changing the search.
-                    </div>
-                  </div>
-                ) : (
-                  filtered.map((p) => {
-                    const statusLabel = p.published ? "Published" : "Draft";
-                    const typeHint = p.listing_type === "rent" ? "Rent" : "Sale";
-                    const hasCover = String(p.cover_image ?? "").trim().length > 5;
-
-                    return (
-                      <button
-                        key={p.id}
-                        type="button"
-                        onClick={() => openEdit(p)}
-                        className="text-left"
-                      >
-                        <Card
-                          className={cn(
-                            "group overflow-hidden rounded-[5px] border border-black/10 bg-white/70",
-                            "ring-1 ring-black/5 shadow-[0_18px_55px_-45px_rgba(15,23,42,0.35)]",
-                            "transition hover:bg-white hover:-translate-y-0.5",
-                          )}
-                        >
-                          <div className="relative">
-                            {hasCover ? (
-                              <SmartImage
-                                src={p.cover_image}
-                                alt={p.title}
-                                className="h-44 w-full object-cover transition duration-500 group-hover:scale-[1.02]"
-                                loading="lazy"
-                              />
-                            ) : (
-                              <CoverFallback />
-                            )}
-
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/0" />
-
-                            <div className="absolute left-3 top-3 flex flex-wrap gap-2">
-                              <Badge className="rounded-[5px] bg-white/85 text-foreground hover:bg-white">
-                                {typeHint}
-                              </Badge>
-                              <Badge
-                                className={cn(
-                                  "rounded-[5px] hover:bg-white/85",
-                                  p.published
-                                    ? "bg-[hsl(var(--brand))]/15 text-[hsl(var(--brand-ink))]"
-                                    : "bg-white/85 text-foreground",
-                                )}
-                              >
-                                {statusLabel}
-                              </Badge>
-                              {p.featured ? (
-                                <Badge className="rounded-[5px] bg-[hsl(var(--brand-2))]/18 text-[hsl(var(--brand-ink))] hover:bg-[hsl(var(--brand-2))]/18">
-                                  Featured
-                                </Badge>
-                              ) : null}
-                            </div>
-
-                            <div className="absolute bottom-3 left-3 right-3">
-                              <div className="text-lg font-extrabold tracking-tight text-white drop-shadow">
-                                {p.title}
-                              </div>
-                              <div className="mt-0.5 text-sm font-semibold text-white/85">
-                                {p.location}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="p-4">
-                            <div className="flex items-start justify-between gap-3">
-                              <div className="min-w-0">
-                                <div className="text-xs font-semibold text-muted-foreground">
-                                  Price
-                                </div>
-                                <div className="truncate text-sm font-extrabold text-[hsl(var(--brand-ink))]">
-                                  {formatCompact(p.price)} AED
-                                </div>
-
-                                <div className="mt-2 text-xs font-semibold text-muted-foreground">
-                                  Placements:{" "}
-                                  <span className="text-foreground">
-                                    {(p.placements ?? []).length
-                                      ? (p.placements ?? []).join(", ")
-                                      : "—"}
-                                  </span>
-                                </div>
-                              </div>
-
-                              <div className="rounded-[5px] bg-muted/35 px-3 py-2 text-right ring-1 ring-black/5">
-                                <div className="text-[11px] font-semibold text-muted-foreground">
-                                  Beds / Baths
-                                </div>
-                                <div className="text-xs font-extrabold text-[hsl(var(--brand-ink))]">
-                                  {p.beds} / {p.baths}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </Card>
-                      </button>
-                    );
-                  })
-                )}
               </div>
             </Card>
           </div>
-        </div>
+
+          {/* Mobile filters sheet */}
+          <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
+            <SheetContent side="right" className="w-[360px] p-0">
+              <div className="flex h-full flex-col">
+                <div className="flex items-center justify-between gap-3 border-b border-black/10 bg-white/75 px-4 py-3 backdrop-blur">
+                  <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+                    Filters
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10 rounded-full hover:bg-black/5"
+                    onClick={() => setFiltersOpen(false)}
+                    aria-label="Close filters"
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto px-4 py-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                  <Card className="rounded-[5px] border border-black/10 bg-white/70 p-4 ring-1 ring-black/5">
+                    <FiltersPanel
+                      query={query}
+                      setQuery={setQuery}
+                      status={status}
+                      setStatus={setStatus}
+                      listingType={listingType}
+                      setListingType={setListingType}
+                      featuredOnly={featuredOnly}
+                      setFeaturedOnly={setFeaturedOnly}
+                      placement={placement}
+                      setPlacement={setPlacement}
+                      activeFiltersCount={activeFiltersCount}
+                      clearFilters={clearFilters}
+                      filteredCount={filtered.length}
+                      loading={loading}
+                      onNew={openNew}
+                      onRefresh={load}
+                      onSeedLuxury={onSeedLuxury}
+                      seeding={seeding}
+                      dense
+                    />
+                  </Card>
+
+                  <div className="mt-3">
+                    <Button
+                      className="h-11 w-full rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
+                      onClick={() => setFiltersOpen(false)}
+                    >
+                      Done
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+
+          {/* Desktop: sidebar + grid */}
+          <div className="grid gap-4 lg:grid-cols-12">
+            <div className="hidden lg:block lg:col-span-4">
+              <Card
+                className={cn(
+                  "rounded-[5px] border border-black/10 bg-white/70 p-6 ring-1 ring-black/5",
+                  "backdrop-blur supports-[backdrop-filter]:bg-white/55",
+                )}
+              >
+                <FiltersPanel
+                  query={query}
+                  setQuery={setQuery}
+                  status={status}
+                  setStatus={setStatus}
+                  listingType={listingType}
+                  setListingType={setListingType}
+                  featuredOnly={featuredOnly}
+                  setFeaturedOnly={setFeaturedOnly}
+                  placement={placement}
+                  setPlacement={setPlacement}
+                  activeFiltersCount={activeFiltersCount}
+                  clearFilters={clearFilters}
+                  filteredCount={filtered.length}
+                  loading={loading}
+                  onNew={openNew}
+                  onRefresh={load}
+                  onSeedLuxury={onSeedLuxury}
+                  seeding={seeding}
+                />
+              </Card>
+            </div>
+
+            <div className="lg:col-span-8">
+              <Card
+                className={cn(
+                  "rounded-[5px] border border-black/10 bg-white/70 p-6 ring-1 ring-black/5",
+                  "backdrop-blur supports-[backdrop-filter]:bg-white/55",
+                )}
+              >
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {loading ? (
+                    <div className="rounded-[5px] bg-white/70 p-4 text-sm text-muted-foreground ring-1 ring-black/5 sm:col-span-2">
+                      Loading…
+                    </div>
+                  ) : filtered.length === 0 ? (
+                    <div className="rounded-[5px] bg-white/70 p-6 text-center ring-1 ring-black/10 sm:col-span-2">
+                      <div className="text-lg font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+                        No matches
+                      </div>
+                      <div className="mt-1 text-sm font-semibold text-muted-foreground">
+                        Try clearing filters or changing the search.
+                      </div>
+                    </div>
+                  ) : (
+                    filtered.map((p) => {
+                      const statusLabel = p.published ? "Published" : "Draft";
+                      const typeHint = p.listing_type === "rent" ? "Rent" : "Sale";
+                      const hasCover = String(p.cover_image ?? "").trim().length > 5;
+
+                      return (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => openEdit(p)}
+                          className="text-left"
+                        >
+                          <Card
+                            className={cn(
+                              "group overflow-hidden rounded-[5px] border border-black/10 bg-white/70",
+                              "ring-1 ring-black/5 shadow-[0_18px_55px_-45px_rgba(15,23,42,0.35)]",
+                              "transition hover:bg-white hover:-translate-y-0.5",
+                            )}
+                          >
+                            <div className="relative">
+                              {hasCover ? (
+                                <SmartImage
+                                  src={p.cover_image}
+                                  alt={p.title}
+                                  className="h-44 w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+                                  loading="lazy"
+                                />
+                              ) : (
+                                <CoverFallback />
+                              )}
+
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/0" />
+
+                              <div className="absolute left-3 top-3 flex flex-wrap gap-2">
+                                <Badge className="rounded-[5px] bg-white/85 text-foreground hover:bg-white">
+                                  {typeHint}
+                                </Badge>
+                                <Badge
+                                  className={cn(
+                                    "rounded-[5px] hover:bg-white/85",
+                                    p.published
+                                      ? "bg-[hsl(var(--brand))]/15 text-[hsl(var(--brand-ink))]"
+                                      : "bg-white/85 text-foreground",
+                                  )}
+                                >
+                                  {statusLabel}
+                                </Badge>
+                                {p.featured ? (
+                                  <Badge className="rounded-[5px] bg-[hsl(var(--brand-2))]/18 text-[hsl(var(--brand-ink))] hover:bg-[hsl(var(--brand-2))]/18">
+                                    Featured
+                                  </Badge>
+                                ) : null}
+                              </div>
+
+                              <div className="absolute bottom-3 left-3 right-3">
+                                <div className="text-lg font-extrabold tracking-tight text-white drop-shadow">
+                                  {p.title}
+                                </div>
+                                <div className="mt-0.5 text-sm font-semibold text-white/85">
+                                  {p.location}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="p-4">
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0">
+                                  <div className="text-xs font-semibold text-muted-foreground">
+                                    Price
+                                  </div>
+                                  <div className="truncate text-sm font-extrabold text-[hsl(var(--brand-ink))]">
+                                    {formatCompact(p.price)} AED
+                                  </div>
+
+                                  <div className="mt-2 text-xs font-semibold text-muted-foreground">
+                                    Placements:{" "}
+                                    <span className="text-foreground">
+                                      {(p.placements ?? []).length
+                                        ? (p.placements ?? []).join(", ")
+                                        : "—"}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <div className="rounded-[5px] bg-muted/35 px-3 py-2 text-right ring-1 ring-black/5">
+                                  <div className="text-[11px] font-semibold text-muted-foreground">
+                                    Beds / Baths
+                                  </div>
+                                  <div className="text-xs font-extrabold text-[hsl(var(--brand-ink))]">
+                                    {p.beds} / {p.baths}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </Card>
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+              </Card>
+            </div>
+          </div>
+        </>
       ) : (
         <div className="grid gap-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
