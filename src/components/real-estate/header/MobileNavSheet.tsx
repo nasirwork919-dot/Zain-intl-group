@@ -1,5 +1,5 @@
-import { Menu } from "lucide-react";
-import { useState } from "react";
+import { Menu, ChevronDown } from "lucide-react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
@@ -13,23 +13,9 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { NAV_OPTIONS } from "@/components/real-estate/nav-config";
-import { ChevronDown } from "lucide-react";
+import { useNavInventory } from "@/hooks/use-nav-inventory";
 
-type MobileSectionKey =
-  | "buy"
-  | "rent"
-  | "off-plan"
-  | "featured-projects"
-  | "services"
-  | null;
+type MobileSectionKey = "buy" | "rent" | "communities" | null;
 
 function MobileMenuSection({
   title,
@@ -83,7 +69,7 @@ function MobileMenuItem({
         "text-[#11124a]",
       )}
     >
-      <span>{label}</span>
+      <span className="truncate">{label}</span>
     </button>
   );
 }
@@ -97,7 +83,17 @@ export function MobileNavSheet({
 }) {
   const navigate = useNavigate();
   const [openSection, setOpenSection] = useState<MobileSectionKey>(null);
-  const [currency, setCurrency] = useState("AED");
+
+  const { buyOptions, rentOptions, communityOptions } = useNavInventory();
+
+  const sections = useMemo(
+    () => [
+      { key: "buy" as const, title: "BUY", items: buyOptions },
+      { key: "rent" as const, title: "RENT", items: rentOptions },
+      { key: "communities" as const, title: "COMMUNITIES", items: communityOptions },
+    ],
+    [buyOptions, communityOptions, rentOptions],
+  );
 
   return (
     <Sheet
@@ -127,149 +123,68 @@ export function MobileNavSheet({
 
           <div className="flex-1 overflow-y-auto px-4 pb-6 pt-4">
             <div className="grid gap-3">
-              <MobileMenuSection
-                title="BUY"
-                open={openSection === "buy"}
-                onToggle={() => {
-                  navigate("/nav/buy");
-                  onOpenChange(false);
-                }}
-              >
-                <div className="grid gap-2">
-                  {NAV_OPTIONS.buy.map((o) => (
-                    <MobileMenuItem
-                      key={o.slug}
-                      label={o.label.toUpperCase()}
-                      onClick={() => {
-                        navigate(`/nav/buy/option/${o.slug}`);
-                        onOpenChange(false);
-                      }}
-                    />
-                  ))}
-                </div>
-              </MobileMenuSection>
+              {sections.map((s) => (
+                <MobileMenuSection
+                  key={s.key}
+                  title={s.title}
+                  open={openSection === s.key}
+                  onToggle={() =>
+                    setOpenSection((prev) => (prev === s.key ? null : s.key))
+                  }
+                >
+                  <div className="grid gap-2">
+                    {s.items.length ? (
+                      s.items.map((o) => (
+                        <MobileMenuItem
+                          key={o.slug}
+                          label={o.label.toUpperCase()}
+                          onClick={() => {
+                            navigate(`/nav/${s.key}/option/${o.slug}`);
+                            onOpenChange(false);
+                          }}
+                        />
+                      ))
+                    ) : (
+                      <div className="rounded-[5px] bg-white/60 p-3 text-xs font-semibold text-muted-foreground ring-1 ring-black/5">
+                        No published listings yet.
+                      </div>
+                    )}
 
-              <MobileMenuSection
-                title="RENT"
-                open={openSection === "rent"}
-                onToggle={() => {
-                  navigate("/nav/rent");
-                  onOpenChange(false);
-                }}
-              >
-                <div className="grid gap-2">
-                  {NAV_OPTIONS.rent.map((o) => (
                     <MobileMenuItem
-                      key={o.slug}
-                      label={o.label.toUpperCase()}
+                      label="VIEW ALL"
                       onClick={() => {
-                        navigate(`/nav/rent/option/${o.slug}`);
+                        navigate(`/nav/${s.key}/option/all`);
                         onOpenChange(false);
                       }}
                     />
-                  ))}
-                </div>
-              </MobileMenuSection>
-
-              <MobileMenuSection
-                title="OFF-PLAN"
-                open={openSection === "off-plan"}
-                onToggle={() => {
-                  navigate("/nav/buy/off-plan");
-                  onOpenChange(false);
-                }}
-              >
-                <div className="grid gap-2">
-                  {NAV_OPTIONS.buy.map((o) => (
-                    <MobileMenuItem
-                      key={o.slug}
-                      label={o.label.toUpperCase()}
-                      onClick={() => {
-                        navigate(`/nav/buy/option/${o.slug}`);
-                        onOpenChange(false);
-                      }}
-                    />
-                  ))}
-                </div>
-              </MobileMenuSection>
-
-              <MobileMenuSection
-                title="FEATURED PROJECTS"
-                open={openSection === "featured-projects"}
-                onToggle={() => {
-                  navigate("/nav/featured-projects");
-                  onOpenChange(false);
-                }}
-              >
-                <div className="grid gap-2">
-                  {NAV_OPTIONS["featured-projects"].map((o) => (
-                    <MobileMenuItem
-                      key={o.slug}
-                      label={o.label.toUpperCase()}
-                      onClick={() => {
-                        navigate(`/nav/featured-projects/option/${o.slug}`);
-                        onOpenChange(false);
-                      }}
-                    />
-                  ))}
-                </div>
-              </MobileMenuSection>
-
-              <MobileMenuSection
-                title="OUR SERVICES"
-                open={openSection === "services"}
-                onToggle={() => {
-                  navigate("/nav/services");
-                  onOpenChange(false);
-                }}
-              >
-                <div className="grid gap-2">
-                  {NAV_OPTIONS.services.map((o) => (
-                    <MobileMenuItem
-                      key={o.slug}
-                      label={o.label.toUpperCase()}
-                      onClick={() => {
-                        navigate(`/nav/services/option/${o.slug}`);
-                        onOpenChange(false);
-                      }}
-                    />
-                  ))}
-                </div>
-              </MobileMenuSection>
+                  </div>
+                </MobileMenuSection>
+              ))}
 
               <div className="rounded-[5px] bg-muted/35 p-4 ring-1 ring-black/5">
                 <div className="text-xs font-semibold text-muted-foreground">
-                  Currency
+                  Tip
                 </div>
 
-                <div className="mt-3">
-                  <Select value={currency} onValueChange={(v) => setCurrency(v)}>
-                    <SelectTrigger className="h-11 rounded-[5px] bg-white/70 ring-1 ring-black/5">
-                      <SelectValue placeholder="Select currency" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-[5px]">
-                      <SelectItem value="AED">AED</SelectItem>
-                      <SelectItem value="EUR">EUR</SelectItem>
-                      <SelectItem value="GBP">GBP</SelectItem>
-                      <SelectItem value="USD">USD</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  <Separator className="my-4" />
-
-                  <Button
-                    className="h-11 w-full rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
-                    onClick={() => {
-                      toast({
-                        title: "Saved",
-                        description: `Currency: ${currency}`,
-                      });
-                      onOpenChange(false);
-                    }}
-                  >
-                    Save preferences
-                  </Button>
+                <div className="mt-2 text-xs font-semibold text-[hsl(var(--brand-ink))]/80">
+                  The menu only shows categories that exist in your Admin →
+                  Properties inventory.
                 </div>
+
+                <Separator className="my-4" />
+
+                <Button
+                  className="h-11 w-full rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
+                  onClick={() => {
+                    toast({
+                      title: "Saved",
+                      description: "Navigation is now inventory-driven.",
+                    });
+                    onOpenChange(false);
+                  }}
+                >
+                  Got it
+                </Button>
               </div>
             </div>
           </div>

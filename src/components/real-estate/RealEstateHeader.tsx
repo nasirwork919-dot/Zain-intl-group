@@ -1,12 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { BuyMegaMenu } from "@/components/real-estate/BuyMegaMenu";
-import { RentMegaMenu } from "@/components/real-estate/RentMegaMenu";
-import { MarketTrendsMegaMenu } from "@/components/real-estate/MarketTrendsMegaMenu";
-import { ServicesMegaMenu } from "@/components/real-estate/ServicesMegaMenu";
-import { slugifyNavLabel } from "@/components/real-estate/nav-config";
-
 import { useActiveSection } from "@/hooks/use-active-section";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
 
@@ -16,6 +10,8 @@ import {
   type HeaderNavItem,
 } from "@/components/real-estate/header/HeaderMainBar";
 import { MobileNavSheet } from "@/components/real-estate/header/MobileNavSheet";
+import { useNavInventory } from "@/hooks/use-nav-inventory";
+import { SimpleMegaMenu } from "@/components/real-estate/SimpleMegaMenu";
 
 export function RealEstateHeader() {
   const navigate = useNavigate();
@@ -31,58 +27,35 @@ export function RealEstateHeader() {
 
   const [buyOpen, setBuyOpen] = useState(false);
   const [rentOpen, setRentOpen] = useState(false);
-  const [featuredProjectsOpen, setFeaturedProjectsOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
+  const [communitiesOpen, setCommunitiesOpen] = useState(false);
 
   const { cancel: cancelClose, schedule: scheduleClose } = useDelayedClose();
+
+  const { buyOptions, rentOptions, communityOptions } = useNavInventory();
 
   const closeMegas = () => {
     cancelClose();
     setBuyOpen(false);
     setRentOpen(false);
-    setFeaturedProjectsOpen(false);
-    setServicesOpen(false);
+    setCommunitiesOpen(false);
   };
 
-  const openOnly = (key: "buy" | "rent" | "featured-projects" | "services") => {
+  const openOnly = (key: "buy" | "rent" | "communities") => {
     cancelClose();
     setBuyOpen(key === "buy");
     setRentOpen(key === "rent");
-    setFeaturedProjectsOpen(key === "featured-projects");
-    setServicesOpen(key === "services");
+    setCommunitiesOpen(key === "communities");
   };
 
   const navItems: HeaderNavItem[] = useMemo(
     () => [
+      { label: "BUY", href: "/nav/buy/option/all", hasChevron: true, mega: "buy" },
+      { label: "RENT", href: "/nav/rent/option/all", hasChevron: true, mega: "rent" },
       {
-        label: "BUY",
-        href: "/nav/buy",
+        label: "COMMUNITIES",
+        href: "/nav/communities/option/all",
         hasChevron: true,
-        mega: "buy",
-      },
-      {
-        label: "RENT",
-        href: "/nav/rent",
-        hasChevron: true,
-        mega: "rent",
-      },
-      {
-        label: "OFF-PLAN",
-        href: "/nav/buy/off-plan",
-        hasChevron: false,
-        mega: "off-plan",
-      },
-      {
-        label: "FEATURED PROJECTS",
-        href: "/nav/featured-projects",
-        hasChevron: true,
-        mega: "featured-projects",
-      },
-      {
-        label: "OUR SERVICES",
-        href: "/nav/services",
-        hasChevron: true,
-        mega: "services",
+        mega: "communities",
       },
     ],
     [],
@@ -92,14 +65,12 @@ export function RealEstateHeader() {
     () => ({
       buy: buyOpen,
       rent: rentOpen,
-      "featured-projects": featuredProjectsOpen,
-      services: servicesOpen,
-      "off-plan": false,
+      communities: communitiesOpen,
     }),
-    [buyOpen, featuredProjectsOpen, rentOpen, servicesOpen],
+    [buyOpen, communitiesOpen, rentOpen],
   );
 
-  const anyOpen = buyOpen || rentOpen || featuredProjectsOpen || servicesOpen;
+  const anyOpen = buyOpen || rentOpen || communitiesOpen;
 
   return (
     <header
@@ -120,15 +91,17 @@ export function RealEstateHeader() {
         activeSectionId={active}
         onLogoClick={() => navigate("/")}
         onNavHoverOpen={(mega) => {
-          if (!mega || mega === "off-plan") return;
-          openOnly(mega);
+          if (!mega) return;
+          if (mega === "buy" || mega === "rent" || mega === "communities") {
+            openOnly(mega);
+          }
         }}
         onNavHoverCancelClose={cancelClose}
         onNavHoverScheduleClose={(ms) =>
           scheduleClose(() => closeMegas(), ms ?? 140)
         }
         onNavClickCloseMegas={closeMegas}
-        expandedByMega={expandedByMega}
+        expandedByMega={expandedByMega as any}
       />
 
       <div
@@ -136,40 +109,31 @@ export function RealEstateHeader() {
         onMouseEnter={() => cancelClose()}
         onMouseLeave={() => scheduleClose(() => closeMegas(), 140)}
       >
-        <BuyMegaMenu
+        <SimpleMegaMenu
           open={buyOpen}
           onClose={() => setBuyOpen(false)}
-          onNavigate={(label) => {
-            const slug = slugifyNavLabel(label);
-            navigate(`/nav/buy/option/${slug}`);
-          }}
+          title="Buy"
+          items={[{ label: "View All", slug: "all" }, ...buyOptions]}
+          onNavigate={(slug) => navigate(`/nav/buy/option/${slug}`)}
+          cols={3}
         />
 
-        <RentMegaMenu
+        <SimpleMegaMenu
           open={rentOpen}
           onClose={() => setRentOpen(false)}
-          onNavigate={(label) => {
-            const slug = slugifyNavLabel(label);
-            navigate(`/nav/rent/option/${slug}`);
-          }}
+          title="Rent"
+          items={[{ label: "View All", slug: "all" }, ...rentOptions]}
+          onNavigate={(slug) => navigate(`/nav/rent/option/${slug}`)}
+          cols={3}
         />
 
-        <MarketTrendsMegaMenu
-          open={featuredProjectsOpen}
-          onClose={() => setFeaturedProjectsOpen(false)}
-          onNavigate={(label) => {
-            const slug = slugifyNavLabel(label);
-            navigate(`/nav/featured-projects/option/${slug}`);
-          }}
-        />
-
-        <ServicesMegaMenu
-          open={servicesOpen}
-          onClose={() => setServicesOpen(false)}
-          onNavigate={(label) => {
-            const slug = slugifyNavLabel(label);
-            navigate(`/nav/services/option/${slug}`);
-          }}
+        <SimpleMegaMenu
+          open={communitiesOpen}
+          onClose={() => setCommunitiesOpen(false)}
+          title="Communities"
+          items={[{ label: "View All", slug: "all" }, ...communityOptions]}
+          onNavigate={(slug) => navigate(`/nav/communities/option/${slug}`)}
+          cols={3}
         />
       </div>
     </header>

@@ -24,128 +24,18 @@ import {
   type PublicProperty as Property,
 } from "@/hooks/use-published-properties";
 
-export type NavCategoryKey =
-  | "buy"
-  | "rent"
-  | "communities"
-  | "developers"
-  | "featured-projects"
-  | "services"
-  | "more";
+export type NavCategoryKey = "buy" | "rent" | "communities";
 
-type NavCategoryConfig = {
-  key: NavCategoryKey;
-  title: string;
-  eyebrow: string;
-  description: string;
-  options: { label: string; slug: string; hint?: string }[];
-};
-
-const CONFIG: Record<NavCategoryKey, NavCategoryConfig> = {
-  buy: {
-    key: "buy",
-    title: "Buy",
-    eyebrow: "Find your next home",
-    description:
-      "Explore curated residential, off-plan, and commercial listings with a filter-first experience.",
-    options: [
-      { label: "Apartments", slug: "apartments" },
-      { label: "Townhouses", slug: "townhouses" },
-      { label: "Penthouses", slug: "penthouses" },
-      { label: "Villas", slug: "villas" },
-      { label: "Offices", slug: "offices" },
-      { label: "View All", slug: "all" },
-    ],
-  },
-  rent: {
-    key: "rent",
-    title: "Rent",
-    eyebrow: "Flexible living, premium locations",
-    description:
-      "Shortlist rental-ready homes and commercial spaces with clear filters and quick next steps.",
-    options: [
-      { label: "Apartments", slug: "apartments" },
-      { label: "Offices", slug: "offices" },
-      { label: "Townhouses", slug: "townhouses" },
-      { label: "Villas", slug: "villas" },
-      { label: "Commercial", slug: "commercial" },
-    ],
-  },
-  communities: {
-    key: "communities",
-    title: "Communities",
-    eyebrow: "Neighborhood discovery",
-    description:
-      "Browse Dubai’s most in-demand communities and explore listings by lifestyle and location.",
-    options: [
-      { label: "Dubai Marina", slug: "dubai-marina" },
-      { label: "Dubai Creek Harbour", slug: "dubai-creek-harbour" },
-      { label: "Jumeirah Village Circle (JVC)", slug: "jvc" },
-      { label: "Dubai Hills Estate", slug: "dubai-hills" },
-      { label: "Jumeirah Beach Residence (JBR)", slug: "jbr" },
-      { label: "Palm Jebel Ali", slug: "palm-jebel-ali" },
-      { label: "Downtown Dubai", slug: "downtown" },
-      { label: "Palm Jumeirah", slug: "palm-jumeirah" },
-    ],
-  },
-  developers: {
-    key: "developers",
-    title: "Developers",
-    eyebrow: "Developer-led opportunities",
-    description:
-      "Explore projects from Dubai’s top developers with a launch-style, filterable listing experience.",
-    options: [
-      { label: "Emaar", slug: "emaar" },
-      { label: "Nakheel", slug: "nakheel" },
-      { label: "Danube", slug: "danube" },
-      { label: "Select Group", slug: "select-group" },
-      { label: "View All Developers", slug: "all" },
-    ],
-  },
-  "featured-projects": {
-    key: "featured-projects",
-    title: "Featured Projects",
-    eyebrow: "Market pulse",
-    description:
-      "Trends, guides, and featured launches — curated for buyers, investors, and end-users.",
-    options: [
-      { label: "Daily Transaction", slug: "daily-transaction" },
-      { label: "Rental Transaction", slug: "rental-transaction" },
-      { label: "Sale Transaction", slug: "sale-transaction" },
-      { label: "Market Guide", slug: "market-guide" },
-    ],
-  },
-  services: {
-    key: "services",
-    title: "Services",
-    eyebrow: "Full-service real estate",
-    description:
-      "From listing to handover — premium support across sales, leasing, management, and more.",
-    options: [
-      { label: "Selling", slug: "selling" },
-      { label: "Buying", slug: "buying" },
-      { label: "Leasing", slug: "leasing" },
-      { label: "Management", slug: "management" },
-      { label: "Legal Assistance", slug: "legal-assistance" },
-      { label: "Property Maintenance", slug: "property-maintenance" },
-    ],
-  },
-  more: {
-    key: "more",
-    title: "More",
-    eyebrow: "Company & resources",
-    description:
-      "Learn more about us, explore content, and discover what’s next.",
-    options: [
-      { label: "About Us", slug: "about" },
-      { label: "Careers", slug: "careers" },
-      { label: "Reports", slug: "reports" },
-      { label: "News", slug: "news" },
-      { label: "Blogs", slug: "blogs" },
-      { label: "Media", slug: "media" },
-    ],
-  },
-};
+function slugify(v: string) {
+  return v
+    .trim()
+    .toLowerCase()
+    .replace(/\s+&\s+/g, "-")
+    .replace(/\s+/g, "-")
+    .replace(/\(|\)/g, "")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-");
+}
 
 function titleCaseSlug(slug?: string) {
   if (!slug) return "";
@@ -225,17 +115,15 @@ export default function NavCategoryPage() {
             </div>
             <Button
               className="mt-5 h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
-              onClick={() => navigate(`/nav/${category}`)}
+              onClick={() => navigate(`/nav/${category}/option/all`)}
             >
-              Go to options
+              Go to results
             </Button>
           </div>
         </div>
       </div>
     );
   }
-
-  const config = CONFIG[category];
 
   const initialQ = (searchParams.get("q") ?? "").trim();
 
@@ -250,6 +138,34 @@ export default function NavCategoryPage() {
 
   const expectedType = categoryExpectedListingType(category);
 
+  const inventoryOptions = useMemo(() => {
+    if (category === "communities") {
+      const locations = Array.from(new Set(allProperties.map((p) => p.location)))
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b));
+      return locations.map((label) => ({ label, slug: slugify(label) }));
+    }
+
+    const filteredByType = expectedType
+      ? allProperties.filter((p) => p.listingType === expectedType)
+      : allProperties;
+
+    const types = Array.from(
+      new Set(filteredByType.map((p) => (p.propertyType ?? "").trim()).filter(Boolean)),
+    ).sort((a, b) => a.localeCompare(b));
+
+    return types.map((t) => ({
+      label: titleCaseSlug(slugify(t)),
+      slug: slugify(t),
+    }));
+  }, [allProperties, category, expectedType]);
+
+  const optionLabel =
+    option === "all"
+      ? "View All"
+      : inventoryOptions.find((o) => o.slug === option)?.label ??
+        titleCaseSlug(option);
+
   const results = useMemo(() => {
     const q = rail.query.trim().toLowerCase();
     const kw = rail.keywords.trim().toLowerCase();
@@ -263,9 +179,6 @@ export default function NavCategoryPage() {
       ? allProperties.filter((p) => p.listingType === expectedType)
       : allProperties;
 
-    const optLabel = config.options.find((o) => o.slug === option)?.label;
-    const optNeedle = (optLabel ?? titleCaseSlug(option)).toLowerCase();
-
     return base.filter((p) => {
       const hay = `${p.title} ${p.location} ${p.description} ${(p.tag ?? "")} ${p.amenities.join(" ")}`.toLowerCase();
 
@@ -273,7 +186,11 @@ export default function NavCategoryPage() {
       const matchesKeywords = !kw || hay.includes(kw);
 
       const matchesOption =
-        !option || option === "all" || hay.includes(optNeedle);
+        option === "all"
+          ? true
+          : category === "communities"
+            ? slugify(p.location) === option
+            : slugify(p.propertyType ?? "") === option;
 
       const matchesSeg = matchesSegment(p, rail.segment);
 
@@ -300,7 +217,7 @@ export default function NavCategoryPage() {
     });
   }, [
     allProperties,
-    config.options,
+    category,
     expectedType,
     option,
     rail.areaMax,
@@ -317,10 +234,6 @@ export default function NavCategoryPage() {
     setDialogOpen(true);
     navigate(`/property/${p.id}`);
   };
-
-  const optionLabel =
-    config.options.find((o) => o.slug === option)?.label ??
-    titleCaseSlug(option);
 
   return (
     <div className="min-h-screen bg-[hsl(var(--page))]">
@@ -342,10 +255,13 @@ export default function NavCategoryPage() {
       <main className="mx-auto max-w-7xl px-4 pb-16">
         <section className="mt-[200px] rounded-[5px] border border-white/40 bg-white/55 p-5 ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/45">
           <div className="text-xs font-semibold text-[hsl(var(--brand-ink))]/70">
-            For {rail.operation === "rent" ? "Rent" : "Sale"} ·{" "}
-            <span className="text-[hsl(var(--brand))]">Dubai Properties</span>{" "}
-            <span className="text-[hsl(var(--brand-ink))]/45">›</span>{" "}
-            <span className="text-[hsl(var(--brand))]">{config.title}</span>{" "}
+            <span className="text-[hsl(var(--brand))]">
+              {category === "buy"
+                ? "Buy"
+                : category === "rent"
+                  ? "Rent"
+                  : "Communities"}
+            </span>{" "}
             <span className="text-[hsl(var(--brand-ink))]/45">›</span>{" "}
             <span className="text-[hsl(var(--brand-ink))]">{optionLabel}</span>
           </div>
@@ -375,18 +291,21 @@ export default function NavCategoryPage() {
             <div className="lg:col-span-8">
               <div className="rounded-[5px] border border-white/40 bg-white/40 p-5 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.6)] ring-1 ring-black/10">
                 <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">
-                  Featured listings
+                  Listings
                 </div>
                 <h2 className="mt-2 text-2xl font-extrabold tracking-tight">
                   Properties{" "}
-                  {rail.operation === "rent" ? "for rent" : "for sale"} in{" "}
+                  {category === "rent"
+                    ? "for rent"
+                    : category === "buy"
+                      ? "for sale"
+                      : "in"}{" "}
                   {optionLabel}
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
                   Click any card for full details.
                 </p>
 
-                {/* Mobile: STACKED list (no slider/pager) */}
                 <div className="mt-6 grid gap-4 md:hidden">
                   {results.map((p) => (
                     <div key={p.id} className="h-[520px]">
@@ -398,7 +317,6 @@ export default function NavCategoryPage() {
                   ))}
                 </div>
 
-                {/* Desktop/tablet: grid */}
                 <div className="mt-6 hidden gap-4 md:grid md:grid-cols-2">
                   {results.map((p) => (
                     <div key={p.id} className="h-[520px]">
@@ -482,9 +400,9 @@ export default function NavCategoryPage() {
                       )}
                       onClick={() =>
                         toast({
-                          title: "Saved search",
+                          title: "Save search",
                           description:
-                            "If you want real saved searches, we’ll add Supabase next.",
+                            "If you want real saved searches, we’ll add Supabase auth next.",
                         })
                       }
                     >
