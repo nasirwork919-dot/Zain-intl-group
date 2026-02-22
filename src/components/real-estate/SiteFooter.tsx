@@ -283,7 +283,15 @@ export function SiteFooter({
 
             {/* Right side */}
             <div className="lg:col-span-7">
-              <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+              <div
+                className={cn(
+                  "grid gap-10",
+                  "sm:grid-cols-2",
+                  "lg:grid-cols-3",
+                  // prevent any accidental overlap from long content
+                  "[&>*]:min-w-0",
+                )}
+              >
                 {/* Quick Links + Resources */}
                 <div>
                   <div className={sectionTitle}>Quick Links</div>
@@ -372,7 +380,7 @@ export function SiteFooter({
                 </div>
 
                 {/* Social + availability */}
-                <div className="sm:col-span-2 lg:col-span-1">
+                <div>
                   <div className={sectionTitle}>Social Media</div>
 
                   <div className="mt-5 flex flex-wrap items-center gap-3">
