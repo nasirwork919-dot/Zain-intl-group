@@ -13,9 +13,9 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
-import { useNavInventory } from "@/hooks/use-nav-inventory";
+import { useNavMenuInventory, type NavMenuKey } from "@/hooks/use-nav-menu-inventory";
 
-type MobileSectionKey = "buy" | "rent" | "communities" | null;
+type MobileSectionKey = NavMenuKey | null;
 
 function MobileMenuSection({
   title,
@@ -74,6 +74,16 @@ function MobileMenuItem({
   );
 }
 
+const MENU_ORDER: NavMenuKey[] = [
+  "buy",
+  "rent",
+  "communities",
+  "developers",
+  "featured-projects",
+  "services",
+  "more",
+];
+
 export function MobileNavSheet({
   open,
   onOpenChange,
@@ -84,16 +94,11 @@ export function MobileNavSheet({
   const navigate = useNavigate();
   const [openSection, setOpenSection] = useState<MobileSectionKey>(null);
 
-  const { buyOptions, rentOptions, communityOptions } = useNavInventory();
+  const { menus } = useNavMenuInventory();
 
-  const sections = useMemo(
-    () => [
-      { key: "buy" as const, title: "BUY", items: buyOptions },
-      { key: "rent" as const, title: "RENT", items: rentOptions },
-      { key: "communities" as const, title: "COMMUNITIES", items: communityOptions },
-    ],
-    [buyOptions, communityOptions, rentOptions],
-  );
+  const sections = useMemo(() => {
+    return MENU_ORDER.map((key) => ({ key, ...menus[key] })).filter((s) => s.hasAny);
+  }, [menus]);
 
   return (
     <Sheet
@@ -126,15 +131,15 @@ export function MobileNavSheet({
               {sections.map((s) => (
                 <MobileMenuSection
                   key={s.key}
-                  title={s.title}
+                  title={s.label}
                   open={openSection === s.key}
                   onToggle={() =>
                     setOpenSection((prev) => (prev === s.key ? null : s.key))
                   }
                 >
                   <div className="grid gap-2">
-                    {s.items.length ? (
-                      s.items.map((o) => (
+                    {s.options.length ? (
+                      s.options.map((o) => (
                         <MobileMenuItem
                           key={o.slug}
                           label={o.label.toUpperCase()}
@@ -167,8 +172,7 @@ export function MobileNavSheet({
                 </div>
 
                 <div className="mt-2 text-xs font-semibold text-[hsl(var(--brand-ink))]/80">
-                  The menu only shows categories that exist in your Admin →
-                  Properties inventory.
+                  All menus and options come from your Admin → published listings.
                 </div>
 
                 <Separator className="my-4" />
@@ -177,8 +181,8 @@ export function MobileNavSheet({
                   className="h-11 w-full rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
                   onClick={() => {
                     toast({
-                      title: "Saved",
-                      description: "Navigation is now inventory-driven.",
+                      title: "Navigation updated",
+                      description: "Everything is now inventory-driven.",
                     });
                     onOpenChange(false);
                   }}

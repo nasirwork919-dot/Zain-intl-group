@@ -10,8 +10,8 @@ import {
   type HeaderNavItem,
 } from "@/components/real-estate/header/HeaderMainBar";
 import { MobileNavSheet } from "@/components/real-estate/header/MobileNavSheet";
-import { useNavInventory } from "@/hooks/use-nav-inventory";
 import { SimpleMegaMenu } from "@/components/real-estate/SimpleMegaMenu";
+import { useNavMenuInventory, type NavMenuKey } from "@/hooks/use-nav-menu-inventory";
 
 export function RealEstateHeader() {
   const navigate = useNavigate();
@@ -25,52 +25,61 @@ export function RealEstateHeader() {
 
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const [buyOpen, setBuyOpen] = useState(false);
-  const [rentOpen, setRentOpen] = useState(false);
-  const [communitiesOpen, setCommunitiesOpen] = useState(false);
-
+  const [openMega, setOpenMega] = useState<NavMenuKey | null>(null);
   const { cancel: cancelClose, schedule: scheduleClose } = useDelayedClose();
 
-  const { buyOptions, rentOptions, communityOptions } = useNavInventory();
+  const { menus } = useNavMenuInventory();
 
   const closeMegas = () => {
     cancelClose();
-    setBuyOpen(false);
-    setRentOpen(false);
-    setCommunitiesOpen(false);
+    setOpenMega(null);
   };
 
-  const openOnly = (key: "buy" | "rent" | "communities") => {
+  const openOnly = (key: NavMenuKey) => {
     cancelClose();
-    setBuyOpen(key === "buy");
-    setRentOpen(key === "rent");
-    setCommunitiesOpen(key === "communities");
+    setOpenMega(key);
   };
 
-  const navItems: HeaderNavItem[] = useMemo(
-    () => [
-      { label: "BUY", href: "/nav/buy/option/all", hasChevron: true, mega: "buy" },
-      { label: "RENT", href: "/nav/rent/option/all", hasChevron: true, mega: "rent" },
-      {
-        label: "COMMUNITIES",
-        href: "/nav/communities/option/all",
-        hasChevron: true,
-        mega: "communities",
-      },
-    ],
-    [],
-  );
+  const navItems: HeaderNavItem[] = useMemo(() => {
+    const items: { key: NavMenuKey; href: string; label: string }[] = [
+      { key: "buy", href: "/nav/buy/option/all", label: "BUY" },
+      { key: "rent", href: "/nav/rent/option/all", label: "RENT" },
+      { key: "communities", href: "/nav/communities/option/all", label: "COMMUNITIES" },
+      { key: "developers", href: "/nav/developers/option/all", label: "DEVELOPERS" },
+      { key: "featured-projects", href: "/nav/featured-projects/option/all", label: "FEATURED PROJECTS" },
+      { key: "services", href: "/nav/services/option/all", label: "SERVICES" },
+      { key: "more", href: "/nav/more/option/all", label: "MORE" },
+    ];
 
-  const expandedByMega = useMemo(
-    () => ({
-      buy: buyOpen,
-      rent: rentOpen,
-      communities: communitiesOpen,
-    }),
-    [buyOpen, communitiesOpen, rentOpen],
-  );
+    return items
+      .filter((it) => menus[it.key]?.hasAny)
+      .map(
+        (it) =>
+          ({
+            label: it.label,
+            href: it.href,
+            hasChevron: true,
+            mega: it.key as any,
+          }) satisfies HeaderNavItem,
+      );
+  }, [menus]);
 
-  const anyOpen = buyOpen || rentOpen || communitiesOpen;
+  const expandedByMega = useMemo(() => {
+    const keys: NavMenuKey[] = [
+      "buy",
+      "rent",
+      "communities",
+      "developers",
+      "featured-projects",
+      "services",
+      "more",
+    ];
+    const obj: Partial<Record<NavMenuKey, boolean>> = {};
+    keys.forEach((k) => (obj[k] = openMega === k));
+    return obj;
+  }, [openMega]);
+
+  const anyOpen = openMega !== null;
 
   return (
     <header
@@ -80,7 +89,7 @@ export function RealEstateHeader() {
       }}
     >
       <HeaderTopBar
-        onContact={() => navigate("/nav/services")}
+        onContact={() => navigate("/nav/services/option/all")}
         mobileMenuTrigger={
           <MobileNavSheet open={mobileOpen} onOpenChange={setMobileOpen} />
         }
@@ -91,10 +100,10 @@ export function RealEstateHeader() {
         activeSectionId={active}
         onLogoClick={() => navigate("/")}
         onNavHoverOpen={(mega) => {
-          if (!mega) return;
-          if (mega === "buy" || mega === "rent" || mega === "communities") {
-            openOnly(mega);
-          }
+          const key = mega as NavMenuKey | undefined;
+          if (!key) return;
+          if (!menus[key]?.hasAny) return;
+          openOnly(key);
         }}
         onNavHoverCancelClose={cancelClose}
         onNavHoverScheduleClose={(ms) =>
@@ -109,32 +118,22 @@ export function RealEstateHeader() {
         onMouseEnter={() => cancelClose()}
         onMouseLeave={() => scheduleClose(() => closeMegas(), 140)}
       >
-        <SimpleMegaMenu
-          open={buyOpen}
-          onClose={() => setBuyOpen(false)}
-          title="Buy"
-          items={[{ label: "View All", slug: "all" }, ...buyOptions]}
-          onNavigate={(slug) => navigate(`/nav/buy/option/${slug}`)}
-          cols={3}
-        />
+        {(Object.keys(menus) as NavMenuKey[]).map((key) => {
+          const m = menus[key];
+          if (!m?.hasAny) return null;
 
-        <SimpleMegaMenu
-          open={rentOpen}
-          onClose={() => setRentOpen(false)}
-          title="Rent"
-          items={[{ label: "View All", slug: "all" }, ...rentOptions]}
-          onNavigate={(slug) => navigate(`/nav/rent/option/${slug}`)}
-          cols={3}
-        />
-
-        <SimpleMegaMenu
-          open={communitiesOpen}
-          onClose={() => setCommunitiesOpen(false)}
-          title="Communities"
-          items={[{ label: "View All", slug: "all" }, ...communityOptions]}
-          onNavigate={(slug) => navigate(`/nav/communities/option/${slug}`)}
-          cols={3}
-        />
+          return (
+            <SimpleMegaMenu
+              key={key}
+              open={openMega === key}
+              onClose={() => setOpenMega(null)}
+              title={m.label}
+              items={[{ label: "View All", slug: "all" }, ...m.options]}
+              onNavigate={(slug) => navigate(`/nav/${key}/option/${slug}`)}
+              cols={3}
+            />
+          );
+        })}
       </div>
     </header>
   );

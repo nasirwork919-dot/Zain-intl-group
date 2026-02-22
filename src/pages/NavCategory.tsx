@@ -23,8 +23,7 @@ import {
   usePublishedProperties,
   type PublicProperty as Property,
 } from "@/hooks/use-published-properties";
-
-export type NavCategoryKey = "buy" | "rent" | "communities";
+import { useNavMenuInventory, type NavMenuKey } from "@/hooks/use-nav-menu-inventory";
 
 function slugify(v: string) {
   return v
@@ -49,6 +48,10 @@ function toNumberOrNull(v: string) {
   const n = Number(String(v).replace(/[^0-9.]/g, ""));
   if (!Number.isFinite(n)) return null;
   return n;
+}
+
+function hasPlacement(placements: string[], key: string) {
+  return (placements ?? []).map((p) => String(p).toLowerCase()).includes(key);
 }
 
 function matchesSegment(p: Property, segment: Segment) {
@@ -85,10 +88,26 @@ function matchesSegment(p: Property, segment: Segment) {
   return true;
 }
 
-function categoryExpectedListingType(category: NavCategoryKey) {
+function expectedListingTypeForCategory(category: NavMenuKey) {
   if (category === "rent") return "rent" as const;
   if (category === "buy") return "sale" as const;
   return null;
+}
+
+function railOperationForCategory(category: NavMenuKey) {
+  return category === "rent" ? "rent" : "buy";
+}
+
+function isNavMenuKey(v?: string): v is NavMenuKey {
+  return (
+    v === "buy" ||
+    v === "rent" ||
+    v === "communities" ||
+    v === "developers" ||
+    v === "featured-projects" ||
+    v === "services" ||
+    v === "more"
+  );
 }
 
 export default function NavCategoryPage() {
@@ -96,10 +115,12 @@ export default function NavCategoryPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const category = (params.category as NavCategoryKey) ?? "buy";
+  const rawCategory = params.category;
+  const category: NavMenuKey = isNavMenuKey(rawCategory) ? rawCategory : "buy";
   const option = (params.option as string | undefined) ?? undefined;
 
   const { data: allProperties = [] } = usePublishedProperties();
+  const { menus } = useNavMenuInventory();
 
   if (!option) {
     return (
@@ -111,7 +132,7 @@ export default function NavCategoryPage() {
               Choose an option
             </div>
             <div className="mt-2 text-sm text-muted-foreground">
-              Redirecting you to the {category} options.
+              Redirecting you to {menus[category]?.label ?? category}.
             </div>
             <Button
               className="mt-5 h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
@@ -132,38 +153,16 @@ export default function NavCategoryPage() {
 
   const [rail, setRail] = useState<BayutRailValue>(() => ({
     ...BAYUT_RAIL_DEFAULT_VALUE,
-    operation: category === "rent" ? "rent" : "buy",
+    operation: railOperationForCategory(category),
     query: initialQ,
   }));
 
-  const expectedType = categoryExpectedListingType(category);
-
-  const inventoryOptions = useMemo(() => {
-    if (category === "communities") {
-      const locations = Array.from(new Set(allProperties.map((p) => p.location)))
-        .filter(Boolean)
-        .sort((a, b) => a.localeCompare(b));
-      return locations.map((label) => ({ label, slug: slugify(label) }));
-    }
-
-    const filteredByType = expectedType
-      ? allProperties.filter((p) => p.listingType === expectedType)
-      : allProperties;
-
-    const types = Array.from(
-      new Set(filteredByType.map((p) => (p.propertyType ?? "").trim()).filter(Boolean)),
-    ).sort((a, b) => a.localeCompare(b));
-
-    return types.map((t) => ({
-      label: titleCaseSlug(slugify(t)),
-      slug: slugify(t),
-    }));
-  }, [allProperties, category, expectedType]);
+  const expectedType = expectedListingTypeForCategory(category);
 
   const optionLabel =
     option === "all"
       ? "View All"
-      : inventoryOptions.find((o) => o.slug === option)?.label ??
+      : menus[category]?.options.find((o) => o.slug === option)?.label ??
         titleCaseSlug(option);
 
   const results = useMemo(() => {
@@ -175,9 +174,20 @@ export default function NavCategoryPage() {
     const areaMin = toNumberOrNull(rail.areaMin);
     const areaMax = toNumberOrNull(rail.areaMax);
 
-    const base = expectedType
+    // Base: enforce Buy vs Rent by listing_type when applicable.
+    let base = expectedType
       ? allProperties.filter((p) => p.listingType === expectedType)
       : allProperties;
+
+    // Placement-aware categories (everything except buy/rent/communities):
+    // only show listings that have that placement.
+    if (
+      category !== "buy" &&
+      category !== "rent" &&
+      category !== "communities"
+    ) {
+      base = base.filter((p) => hasPlacement(p.placements, category));
+    }
 
     return base.filter((p) => {
       const hay = `${p.title} ${p.location} ${p.description} ${(p.tag ?? "")} ${p.amenities.join(" ")}`.toLowerCase();
@@ -185,12 +195,18 @@ export default function NavCategoryPage() {
       const matchesQuery = !q || hay.includes(q);
       const matchesKeywords = !kw || hay.includes(kw);
 
+      // Option matching:
+      // - Communities: option slug matches location
+      // - Buy/Rent: option slug matches propertyType
+      // - Other categories: option slug matches location (inventory options are locations)
       const matchesOption =
         option === "all"
           ? true
           : category === "communities"
             ? slugify(p.location) === option
-            : slugify(p.propertyType ?? "") === option;
+            : category === "buy" || category === "rent"
+              ? slugify(p.propertyType ?? "") === option
+              : slugify(p.location) === option;
 
       const matchesSeg = matchesSegment(p, rail.segment);
 
@@ -219,6 +235,7 @@ export default function NavCategoryPage() {
     allProperties,
     category,
     expectedType,
+    menus,
     option,
     rail.areaMax,
     rail.areaMin,
@@ -235,6 +252,8 @@ export default function NavCategoryPage() {
     navigate(`/property/${p.id}`);
   };
 
+  const labelTop = menus[category]?.label ?? category.toUpperCase();
+
   return (
     <div className="min-h-screen bg-[hsl(var(--page))]">
       <RealEstateHeader />
@@ -245,7 +264,7 @@ export default function NavCategoryPage() {
         onClear={() =>
           setRail({
             ...BAYUT_RAIL_DEFAULT_VALUE,
-            operation: category === "rent" ? "rent" : "buy",
+            operation: railOperationForCategory(category),
           })
         }
         className="top-[132px]"
@@ -255,13 +274,7 @@ export default function NavCategoryPage() {
       <main className="mx-auto max-w-7xl px-4 pb-16">
         <section className="mt-[200px] rounded-[5px] border border-white/40 bg-white/55 p-5 ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/45">
           <div className="text-xs font-semibold text-[hsl(var(--brand-ink))]/70">
-            <span className="text-[hsl(var(--brand))]">
-              {category === "buy"
-                ? "Buy"
-                : category === "rent"
-                  ? "Rent"
-                  : "Communities"}
-            </span>{" "}
+            <span className="text-[hsl(var(--brand))]">{labelTop}</span>{" "}
             <span className="text-[hsl(var(--brand-ink))]/45">›</span>{" "}
             <span className="text-[hsl(var(--brand-ink))]">{optionLabel}</span>
           </div>
@@ -294,13 +307,7 @@ export default function NavCategoryPage() {
                   Listings
                 </div>
                 <h2 className="mt-2 text-2xl font-extrabold tracking-tight">
-                  Properties{" "}
-                  {category === "rent"
-                    ? "for rent"
-                    : category === "buy"
-                      ? "for sale"
-                      : "in"}{" "}
-                  {optionLabel}
+                  {labelTop} · {optionLabel}
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
                   Click any card for full details.
@@ -349,7 +356,7 @@ export default function NavCategoryPage() {
                         onClick={() =>
                           setRail({
                             ...BAYUT_RAIL_DEFAULT_VALUE,
-                            operation: category === "rent" ? "rent" : "buy",
+                            operation: railOperationForCategory(category),
                           })
                         }
                       >
@@ -377,7 +384,7 @@ export default function NavCategoryPage() {
                   <Separator className="my-4" />
 
                   <LeadCapture
-                    defaultMessage={`Hi! I’m interested in ${optionLabel}. My budget is…`}
+                    defaultMessage={`Hi! I’m interested in ${labelTop} · ${optionLabel}. My budget is…`}
                   />
 
                   <div className="mt-4 grid gap-2 sm:grid-cols-2">
