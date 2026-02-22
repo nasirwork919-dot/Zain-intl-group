@@ -51,7 +51,9 @@ function toNumberOrNull(v: string) {
 }
 
 function hasPlacement(placements: string[], key: string) {
-  return (placements ?? []).map((p) => String(p).toLowerCase()).includes(key);
+  return (placements ?? [])
+    .map((p) => String(p).toLowerCase().trim())
+    .includes(String(key).toLowerCase().trim());
 }
 
 function matchesSegment(p: Property, segment: Segment) {
@@ -80,6 +82,7 @@ function matchesSegment(p: Property, segment: Segment) {
   if (segment === "investor-pick")
     return tag === "investor pick" || tag.includes("investor");
 
+  // These are present in your tags dataset too; keep behavior consistent.
   if (segment === "waterfront") return tag.includes("waterfront");
   if (segment === "family") return tag.includes("family");
   if (segment === "prime") return tag.includes("prime");
@@ -181,11 +184,7 @@ export default function NavCategoryPage() {
 
     // Placement-aware categories (everything except buy/rent/communities):
     // only show listings that have that placement.
-    if (
-      category !== "buy" &&
-      category !== "rent" &&
-      category !== "communities"
-    ) {
+    if (category !== "buy" && category !== "rent" && category !== "communities") {
       base = base.filter((p) => hasPlacement(p.placements, category));
     }
 
@@ -313,6 +312,7 @@ export default function NavCategoryPage() {
                   Click any card for full details.
                 </p>
 
+                {/* Mobile: stacked list */}
                 <div className="mt-6 grid gap-4 md:hidden">
                   {results.map((p) => (
                     <div key={p.id} className="h-[520px]">
@@ -324,6 +324,7 @@ export default function NavCategoryPage() {
                   ))}
                 </div>
 
+                {/* Desktop/tablet: grid */}
                 <div className="mt-6 hidden gap-4 md:grid md:grid-cols-2">
                   {results.map((p) => (
                     <div key={p.id} className="h-[520px]">
