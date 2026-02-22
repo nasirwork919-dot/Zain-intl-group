@@ -7,6 +7,7 @@ import {
   PropertyEditor,
   type AdminPropertyDraft,
 } from "@/components/admin/PropertyEditor";
+import { NewListingSetup } from "@/components/admin/NewListingSetup";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -90,6 +91,8 @@ function formatCompact(n: number) {
   }
 }
 
+type EditorMode = "none" | "setup" | "details";
+
 export default function AdminPropertiesPage() {
   const [params] = useSearchParams();
   const startNew = params.get("new") === "1";
@@ -101,6 +104,8 @@ export default function AdminPropertiesPage() {
   const [selectedId, setSelectedId] = useState<string | "new" | null>(
     startNew ? "new" : null,
   );
+
+  const [mode, setMode] = useState<EditorMode>(startNew ? "setup" : "none");
 
   const [draft, setDraft] = useState<AdminPropertyDraft>(emptyDraft());
   const [saving, setSaving] = useState(false);
@@ -127,11 +132,20 @@ export default function AdminPropertiesPage() {
   useEffect(() => {
     if (selectedId === "new") {
       setDraft(emptyDraft());
+      setMode("setup");
       return;
     }
-    if (!selectedId) return;
+
+    if (!selectedId) {
+      setMode("none");
+      return;
+    }
+
     const found = items.find((x) => x.id === selectedId);
-    if (found) setDraft(mapToDraft(found));
+    if (found) {
+      setDraft(mapToDraft(found));
+      setMode("details");
+    }
   }, [items, selectedId]);
 
   const filtered = useMemo(() => {
@@ -207,6 +221,10 @@ export default function AdminPropertiesPage() {
     setDeleting(false);
   };
 
+  const showEmptyState = selectedId === null && mode === "none";
+  const showSetup = selectedId === "new" && mode === "setup";
+  const showDetails = (selectedId === "new" && mode === "details") || !!selected;
+
   return (
     <AdminShell title="Properties">
       <div className="grid gap-4 lg:grid-cols-12">
@@ -263,8 +281,7 @@ export default function AdminPropertiesPage() {
                 filtered.map((p) => {
                   const active = selectedId === p.id;
 
-                  const typeHint =
-                    p.listing_type === "rent" ? "Rent" : "Sale";
+                  const typeHint = p.listing_type === "rent" ? "Rent" : "Sale";
                   const featuredHint = p.featured ? " · Featured" : "";
 
                   return (
@@ -306,7 +323,7 @@ export default function AdminPropertiesPage() {
         </div>
 
         <div className="lg:col-span-8">
-          {selectedId === null ? (
+          {showEmptyState ? (
             <Card className="rounded-[5px] border border-black/10 bg-white/70 p-7 ring-1 ring-black/5 backdrop-blur supports-[backdrop-filter]:bg-white/55">
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-[5px] bg-[hsl(var(--brand))]/12 text-[hsl(var(--brand-ink))] ring-1 ring-black/10">
                 <Sparkles className="h-5 w-5" />
@@ -318,8 +335,8 @@ export default function AdminPropertiesPage() {
                 Choose a property to edit
               </div>
               <div className="mt-2 max-w-2xl text-sm font-semibold text-muted-foreground">
-                Or click <b>New</b> to add a listing — keep it draft until it’s
-                complete, then publish.
+                Or click <b>New</b> to start — you’ll pick placements first, then
+                fill the full details.
               </div>
 
               <div className="mt-6 flex flex-col gap-2 sm:flex-row">
@@ -339,7 +356,27 @@ export default function AdminPropertiesPage() {
                 </Button>
               </div>
             </Card>
-          ) : (
+          ) : null}
+
+          {showSetup ? (
+            <NewListingSetup
+              value={draft}
+              onChange={setDraft}
+              onCancel={() => {
+                setSelectedId(null);
+                setMode("none");
+              }}
+              onContinue={() => {
+                toast({
+                  title: "Setup saved",
+                  description: "Now fill in the listing details.",
+                });
+                setMode("details");
+              }}
+            />
+          ) : null}
+
+          {showDetails ? (
             <PropertyEditor
               value={draft}
               onChange={setDraft}
@@ -347,8 +384,9 @@ export default function AdminPropertiesPage() {
               onDelete={selected ? del : undefined}
               saving={saving}
               deleting={deleting}
+              className={cn(showSetup && "hidden")}
             />
-          )}
+          ) : null}
         </div>
       </div>
     </AdminShell>
