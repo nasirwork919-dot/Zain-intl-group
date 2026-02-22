@@ -1,23 +1,12 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  Bath,
-  BedDouble,
-  Check,
-  ChevronLeft,
-  MapPin,
-  Ruler,
-} from "lucide-react";
+import { Bath, BedDouble, Check, ChevronLeft, MapPin, Ruler } from "lucide-react";
 
 import { RealEstateHeader } from "@/components/real-estate/RealEstateHeader";
 import { SiteFooter } from "@/components/real-estate/SiteFooter";
 import { SmartImage } from "@/components/real-estate/SmartImage";
 import { FeaturedPropertyLaunchCard } from "@/components/real-estate/FeaturedPropertyLaunchCard";
 import { formatAED } from "@/components/real-estate/format";
-import {
-  featuredProperties,
-  type Property,
-} from "@/components/real-estate/site-data";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 
@@ -25,17 +14,20 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-
-function getById(id?: string) {
-  if (!id) return null;
-  return featuredProperties.find((p) => p.id === id) ?? null;
-}
+import {
+  usePublishedProperties,
+  type PublicProperty as Property,
+} from "@/hooks/use-published-properties";
 
 export default function PropertyDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const property = getById(id);
+  const { data: all = [] } = usePublishedProperties();
+  const property = useMemo(
+    () => all.find((p) => p.id === id) ?? null,
+    [all, id],
+  );
 
   const [activeIdx, setActiveIdx] = useState(0);
 
@@ -46,14 +38,14 @@ export default function PropertyDetailsPage() {
 
   const related = useMemo(() => {
     if (!property) return [];
-    const same = featuredProperties.filter(
+    const same = all.filter(
       (p) => p.id !== property.id && p.location === property.location,
     );
-    const rest = featuredProperties.filter(
+    const rest = all.filter(
       (p) => p.id !== property.id && p.location !== property.location,
     );
     return [...same, ...rest].slice(0, 8);
-  }, [property]);
+  }, [all, property]);
 
   if (!property) {
     return (

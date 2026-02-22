@@ -15,10 +15,6 @@ import {
   HeroSearchBar,
 } from "@/components/real-estate/HeroSearchBar";
 import { type SearchFilters } from "@/components/real-estate/HeroSearch";
-import {
-  featuredProperties,
-  type Property,
-} from "@/components/real-estate/site-data";
 import { LeadCapture } from "@/components/real-estate/LeadCapture";
 import { CuratedOpportunities } from "@/components/real-estate/CuratedOpportunities";
 import { ScrollingTextSeparator } from "@/components/real-estate/ScrollingTextSeparator";
@@ -34,9 +30,15 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
+import {
+  usePublishedProperties,
+  type PublicProperty as Property,
+} from "@/hooks/use-published-properties";
 
 const Index = () => {
   const navigate = useNavigate();
+
+  const { data: allProperties = [] } = usePublishedProperties();
 
   const [filters, setFilters] = useState<SearchFilters>({
     query: "",
@@ -56,7 +58,7 @@ const Index = () => {
   const results = useMemo(() => {
     const q = filters.query.trim().toLowerCase();
 
-    return featuredProperties.filter((p) => {
+    return allProperties.filter((p) => {
       const matchesQuery =
         !q ||
         p.title.toLowerCase().includes(q) ||
@@ -74,7 +76,7 @@ const Index = () => {
 
       return matchesQuery && matchesLocation && matchesBeds && matchesPrice;
     });
-  }, [filters]);
+  }, [allProperties, filters]);
 
   const openProperty = (p: Property) => {
     setActiveProperty(p);
@@ -182,7 +184,7 @@ const Index = () => {
           resetListingFilters();
           toast({
             title: "Showing all listings",
-            description: "Filters cleared — here are all featured properties.",
+            description: "Filters cleared — here are all published properties.",
           });
         }}
       />
@@ -343,7 +345,7 @@ const Index = () => {
               <span className="font-semibold text-foreground">
                 {results.length}
               </span>{" "}
-              of {featuredProperties.length}
+              of {allProperties.length}
             </div>
           </div>
 
@@ -532,7 +534,8 @@ const Index = () => {
             </Button>
 
             <div className="mt-4 text-xs text-muted-foreground">
-              This is a demo UI inspired by premium real estate sites.
+              Listings shown here are now pulled from the admin-published
+              inventory.
             </div>
           </Card>
         </div>

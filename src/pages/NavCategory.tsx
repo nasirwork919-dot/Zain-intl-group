@@ -3,10 +3,6 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import { RealEstateHeader } from "@/components/real-estate/RealEstateHeader";
 import { SiteFooter } from "@/components/real-estate/SiteFooter";
-import {
-  featuredProperties,
-  type Property,
-} from "@/components/real-estate/site-data";
 import { FeaturedPropertyLaunchCard } from "@/components/real-estate/FeaturedPropertyLaunchCard";
 import { PropertyDialog } from "@/components/real-estate/PropertyDialog";
 import { LeadCapture } from "@/components/real-estate/LeadCapture";
@@ -23,6 +19,10 @@ import {
   BAYUT_RAIL_DEFAULT_VALUE,
   type Segment,
 } from "@/components/real-estate/BayutFiltersRail";
+import {
+  usePublishedProperties,
+  type PublicProperty as Property,
+} from "@/hooks/use-published-properties";
 
 export type NavCategoryKey =
   | "buy"
@@ -187,7 +187,6 @@ function matchesSegment(p: Property, segment: Segment) {
   if (segment === "investor-pick")
     return tag === "investor pick" || tag.includes("investor");
 
-  // These are present in your tags dataset too; keep behavior consistent.
   if (segment === "waterfront") return tag.includes("waterfront");
   if (segment === "family") return tag.includes("family");
   if (segment === "prime") return tag.includes("prime");
@@ -203,6 +202,8 @@ export default function NavCategoryPage() {
 
   const category = (params.category as NavCategoryKey) ?? "buy";
   const option = (params.option as string | undefined) ?? undefined;
+
+  const { data: allProperties = [] } = usePublishedProperties();
 
   if (!option) {
     return (
@@ -250,7 +251,7 @@ export default function NavCategoryPage() {
     const areaMin = toNumberOrNull(rail.areaMin);
     const areaMax = toNumberOrNull(rail.areaMax);
 
-    const base = featuredProperties;
+    const base = allProperties;
 
     const optLabel = config.options.find((o) => o.slug === option)?.label;
     const optNeedle = (optLabel ?? titleCaseSlug(option)).toLowerCase();
@@ -288,6 +289,7 @@ export default function NavCategoryPage() {
       );
     });
   }, [
+    allProperties,
     config.options,
     option,
     rail.areaMax,
@@ -308,8 +310,6 @@ export default function NavCategoryPage() {
   const optionLabel =
     config.options.find((o) => o.slug === option)?.label ??
     titleCaseSlug(option);
-
-  const _pageTitle = `${config.title} · ${optionLabel}`;
 
   return (
     <div className="min-h-screen bg-[hsl(var(--page))]">
@@ -354,7 +354,7 @@ export default function NavCategoryPage() {
               <span className="font-semibold text-foreground">
                 {results.length}
               </span>{" "}
-              of {featuredProperties.length}
+              of {allProperties.length}
             </div>
           </div>
         </section>

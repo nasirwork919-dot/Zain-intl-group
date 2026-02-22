@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export function LeadCapture({
   defaultMessage,
@@ -16,9 +17,12 @@ export function LeadCapture({
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState(defaultMessage ?? "");
+  const [submitting, setSubmitting] = useState(false);
 
   const canSubmit = useMemo(() => {
-    return name.trim().length >= 2 && (phone.trim().length >= 7 || email.includes("@"));
+    return (
+      name.trim().length >= 2 && (phone.trim().length >= 7 || email.includes("@"))
+    );
   }, [name, phone, email]);
 
   return (
@@ -79,21 +83,39 @@ export function LeadCapture({
           By submitting, you agree to be contacted about relevant properties.
         </div>
         <Button
-          disabled={!canSubmit}
+          disabled={!canSubmit || submitting}
           className="h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92 disabled:opacity-50"
-          onClick={() => {
+          onClick={async () => {
+            setSubmitting(true);
+
+            const payload = {
+              name: name.trim() || null,
+              phone: phone.trim() || null,
+              email: email.trim() || null,
+              message: message.trim() || null,
+              source: "website:lead-capture",
+            };
+
+            const { error } = await supabase.from("leads").insert(payload);
+            if (error) {
+              setSubmitting(false);
+              throw error;
+            }
+
             toast({
               title: "Request sent",
               description:
                 "Thanks! An agent will reach out shortly with a curated shortlist.",
             });
+
             setName("");
             setPhone("");
             setEmail("");
             setMessage(defaultMessage ?? "");
+            setSubmitting(false);
           }}
         >
-          Send request
+          {submitting ? "Sending..." : "Send request"}
           <Send className="ml-2 h-4 w-4" />
         </Button>
       </div>
