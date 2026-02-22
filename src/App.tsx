@@ -12,6 +12,11 @@ import NavFeatureOptionsPage from "./pages/NavFeatureOptions";
 import NavCategoryPage from "./pages/NavCategory";
 import ListYourPropertyPage from "./pages/ListYourProperty";
 import PropertyDetailsPage from "./pages/PropertyDetails";
+import AdminLoginPage from "./pages/AdminLogin";
+import AdminDashboardPage from "./pages/AdminDashboard";
+import AdminPropertiesPage from "./pages/AdminProperties";
+import AdminLeadsPage from "./pages/AdminLeads";
+import { AdminGate } from "@/components/admin/AdminGate";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +32,33 @@ const App = () => (
           <Route path="/property/:id" element={<PropertyDetailsPage />} />
 
           <Route path="/list-your-property" element={<ListYourPropertyPage />} />
+
+          {/* Admin */}
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route
+            path="/admin"
+            element={
+              <AdminGate>
+                <AdminDashboardPage />
+              </AdminGate>
+            }
+          />
+          <Route
+            path="/admin/properties"
+            element={
+              <AdminGate>
+                <AdminPropertiesPage />
+              </AdminGate>
+            }
+          />
+          <Route
+            path="/admin/leads"
+            element={
+              <AdminGate>
+                <AdminLeadsPage />
+              </AdminGate>
+            }
+          />
 
           {/* Buy: 2-step landing (features -> options) */}
           <Route path="/nav/buy" element={<BuyLanding />} />
