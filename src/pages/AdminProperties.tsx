@@ -231,127 +231,141 @@ export default function AdminPropertiesPage() {
     <AdminShell title="Properties">
       <div className="grid gap-4 lg:grid-cols-12">
         <div className="lg:col-span-4">
-          <Card className="rounded-[5px] border border-black/10 bg-white/65 p-4 ring-1 ring-black/5 backdrop-blur supports-[backdrop-filter]:bg-white/55">
-            <div className="flex items-center justify-between gap-2">
-              <div>
-                <div className="text-xs font-extrabold tracking-[0.22em] text-[hsl(var(--brand-ink))]/60">
-                  LISTINGS
+          <Card
+            className={cn(
+              "flex flex-col overflow-hidden",
+              "rounded-[5px] border border-black/10 bg-white/65 ring-1 ring-black/5",
+              "backdrop-blur supports-[backdrop-filter]:bg-white/55",
+              // keeps it from turning into a huge column that causes “things getting on each other”
+              "max-h-[calc(100vh-160px)]",
+            )}
+          >
+            {/* Header */}
+            <div className="p-4">
+              <div className="flex items-center justify-between gap-2">
+                <div>
+                  <div className="text-xs font-extrabold tracking-[0.22em] text-[hsl(var(--brand-ink))]/60">
+                    LISTINGS
+                  </div>
+                  <div className="mt-1 text-lg font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+                    Properties
+                  </div>
                 </div>
-                <div className="mt-1 text-lg font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
-                  Properties
-                </div>
+
+                <Button
+                  className="h-10 rounded-[5px] bg-[hsl(var(--brand))] text-white hover:bg-[hsl(var(--brand))]/90"
+                  onClick={() => setSelectedId("new")}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  New
+                </Button>
               </div>
 
-              <Button
-                className="h-10 rounded-[5px] bg-[hsl(var(--brand))] text-white hover:bg-[hsl(var(--brand))]/90"
-                onClick={() => setSelectedId("new")}
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                New
-              </Button>
-            </div>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                <Button
+                  variant="outline"
+                  className="h-10 rounded-[5px] bg-white/70"
+                  disabled={seeding}
+                  onClick={async () => {
+                    setSeeding(true);
+                    const { inserted } = await seedPremiumListings();
+                    toast({
+                      title: "Luxury seed complete",
+                      description:
+                        inserted === 0
+                          ? "Seed listings already exist."
+                          : `Inserted ${inserted} luxury listings.`,
+                    });
+                    await load();
+                    setSeeding(false);
+                  }}
+                >
+                  <Wand2 className="mr-2 h-4 w-4" />
+                  {seeding ? "Seeding..." : "Seed luxury"}
+                </Button>
 
-            <div className="mt-3 grid gap-2 sm:grid-cols-2">
-              <Button
-                variant="outline"
-                className="h-10 rounded-[5px] bg-white/70"
-                disabled={seeding}
-                onClick={async () => {
-                  setSeeding(true);
-                  const { inserted } = await seedPremiumListings();
-                  toast({
-                    title: "Luxury seed complete",
-                    description:
-                      inserted === 0
-                        ? "Seed listings already exist."
-                        : `Inserted ${inserted} luxury listings.`,
-                  });
-                  await load();
-                  setSeeding(false);
-                }}
-              >
-                <Wand2 className="mr-2 h-4 w-4" />
-                {seeding ? "Seeding..." : "Seed luxury"}
-              </Button>
-
-              <Button
-                variant="outline"
-                className="h-10 rounded-[5px] bg-white/70"
-                onClick={load}
-              >
-                Refresh
-              </Button>
-            </div>
-
-            <div className="mt-3">
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  className="h-11 rounded-[5px] bg-white/80 pl-9"
-                  placeholder="Search title, location, tag…"
-                />
+                <Button
+                  variant="outline"
+                  className="h-10 rounded-[5px] bg-white/70"
+                  onClick={load}
+                >
+                  Refresh
+                </Button>
               </div>
 
-              <div className="mt-3 flex items-center justify-between rounded-[5px] bg-white/70 px-3 py-2 text-xs font-semibold text-muted-foreground ring-1 ring-black/10">
-                <span>Total</span>
-                <span className="text-[hsl(var(--brand-ink))]">
-                  {items.length}
-                </span>
+              <div className="mt-3">
+                <div className="relative">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="h-11 rounded-[5px] bg-white/80 pl-9"
+                    placeholder="Search title, location, tag…"
+                  />
+                </div>
+
+                <div className="mt-3 flex items-center justify-between rounded-[5px] bg-white/70 px-3 py-2 text-xs font-semibold text-muted-foreground ring-1 ring-black/10">
+                  <span>Total</span>
+                  <span className="text-[hsl(var(--brand-ink))]">
+                    {items.length}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="mt-4 grid gap-2">
-              {loading ? (
-                <div className="rounded-[5px] bg-white/70 p-4 text-sm text-muted-foreground ring-1 ring-black/5">
-                  Loading…
-                </div>
-              ) : filtered.length === 0 ? (
-                <div className="rounded-[5px] bg-white/70 p-4 text-sm text-muted-foreground ring-1 ring-black/5">
-                  No properties found.
-                </div>
-              ) : (
-                filtered.map((p) => {
-                  const active = selectedId === p.id;
+            {/* Scrollable list */}
+            <div className="flex-1 overflow-y-auto px-4 pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+              <div className="grid gap-2">
+                {loading ? (
+                  <div className="rounded-[5px] bg-white/70 p-4 text-sm text-muted-foreground ring-1 ring-black/5">
+                    Loading…
+                  </div>
+                ) : filtered.length === 0 ? (
+                  <div className="rounded-[5px] bg-white/70 p-4 text-sm text-muted-foreground ring-1 ring-black/5">
+                    No properties found.
+                  </div>
+                ) : (
+                  filtered.map((p) => {
+                    const active = selectedId === p.id;
 
-                  const typeHint = p.listing_type === "rent" ? "Rent" : "Sale";
-                  const featuredHint = p.featured ? " · Featured" : "";
+                    const typeHint = p.listing_type === "rent" ? "Rent" : "Sale";
+                    const featuredHint = p.featured ? " · Featured" : "";
 
-                  return (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => setSelectedId(p.id)}
-                      className={cn(
-                        "w-full rounded-[5px] p-4 text-left transition",
-                        "ring-1 ring-black/10",
-                        active
-                          ? "bg-[hsl(var(--brand))]/10"
-                          : "bg-white/75 hover:bg-white",
-                      )}
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0">
-                          <div className="truncate text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
-                            {p.title}
+                    return (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => setSelectedId(p.id)}
+                        className={cn(
+                          "w-full rounded-[5px] p-4 text-left transition",
+                          "ring-1 ring-black/10",
+                          active
+                            ? "bg-[hsl(var(--brand))]/10"
+                            : "bg-white/75 hover:bg-white",
+                        )}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="truncate text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+                              {p.title}
+                            </div>
+                            <div className="mt-1 text-xs font-semibold text-muted-foreground">
+                              {p.location} · {typeHint} ·{" "}
+                              {p.published ? "Published" : "Draft"}
+                              {featuredHint}
+                              {p.tag ? ` · ${p.tag}` : ""}
+                            </div>
                           </div>
-                          <div className="mt-1 text-xs font-semibold text-muted-foreground">
-                            {p.location} · {typeHint} ·{" "}
-                            {p.published ? "Published" : "Draft"}
-                            {featuredHint}
-                            {p.tag ? ` · ${p.tag}` : ""}
+
+                          <div className="shrink-0 rounded-[5px] bg-white/80 px-2.5 py-1.5 text-xs font-extrabold text-[hsl(var(--brand-ink))] ring-1 ring-black/10">
+                            {formatCompact(p.price)} AED
                           </div>
                         </div>
-
-                        <div className="shrink-0 rounded-[5px] bg-white/80 px-2.5 py-1.5 text-xs font-extrabold text-[hsl(var(--brand-ink))] ring-1 ring-black/10">
-                          {formatCompact(p.price)} AED
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })
-              )}
+                      </button>
+                    );
+                  })
+                )}
+              </div>
             </div>
           </Card>
         </div>
