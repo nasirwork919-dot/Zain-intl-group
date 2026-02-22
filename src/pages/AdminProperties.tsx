@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Search, Sparkles, Wand2 } from "lucide-react";
+import { ArrowLeft, Plus, Search, Wand2 } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -16,6 +16,8 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { seedPremiumListings } from "@/components/admin/seed-premium-listings";
+import { SmartImage } from "@/components/real-estate/SmartImage";
+import { Badge } from "@/components/ui/badge";
 
 type DbProperty = {
   id: string;
@@ -38,6 +40,9 @@ type DbProperty = {
   placements: string[];
   featured: boolean;
 };
+
+const DRAFT_STORAGE_KEY = "zain_admin_new_property_draft_v1";
+const MODE_STORAGE_KEY = "zain_admin_properties_mode_v1";
 
 const emptyDraft = (): AdminPropertyDraft => ({
   title: "",
@@ -92,7 +97,21 @@ function formatCompact(n: number) {
   }
 }
 
-type EditorMode = "none" | "setup" | "details";
+type ViewMode = "list" | "new";
+
+function safeReadDraft(): AdminPropertyDraft | null {
+  const raw = sessionStorage.getItem(DRAFT_STORAGE_KEY);
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw) as AdminPropertyDraft;
+    if (!parsed || typeof parsed !== "object") return null;
+    // Minimal shape check
+    if (typeof parsed.title !== "string") return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
 
 export default function AdminPropertiesPage() {
   const [params] = useSearchParams();
@@ -102,16 +121,36 @@ export default function AdminPropertiesPage() {
   const [loading, setLoading] = useState(true);
 
   const [query, setQuery] = useState("");
-  const [selectedId, setSelectedId] = useState<string | "new" | null>(
-    startNew ? "new" : null,
-  );
+  const [seeding, setSeeding] = useState(false);
 
-  const [mode, setMode] = useState<EditorMode>(startNew ? "setup" : "none");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const [draft, setDraft] = useState<AdminPropertyDraft>(emptyDraft());
+  const [view, setView] = useState<ViewMode>(() => {
+    if (startNew) return "new";
+    const saved = sessionStorage.getItem(MODE_STORAGE_KEY);
+    return saved === "new" ? "new" : "list";
+  });
+
+  const [newMode, setNewMode] = useState<"setup" | "details">(() => {
+    // If there's an existing draft, resume details; otherwise start setup.
+    return safeReadDraft() ? "details" : "setup";
+  });
+
+  const [draft, setDraft] = useState<AdminPropertyDraft>(() => {
+    const existing = safeReadDraft();
+    return existing ?? emptyDraft();
+  });
+
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [seeding, setSeeding] = useState(false);
+
+  const persistDraft = (next: AdminPropertyDraft) => {
+    setDraft(next);
+    // Only persist unsaved "new" drafts (no id)
+    if (!next.id) {
+      sessionStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(next));
+    }
+  };
 
   const load = async () => {
     setLoading(true);
@@ -132,35 +171,20 @@ export default function AdminPropertiesPage() {
   }, []);
 
   useEffect(() => {
-    if (selectedId === "new") {
-      setDraft(emptyDraft());
-      setMode("setup");
-      return;
-    }
-
-    if (!selectedId) {
-      setMode("none");
-      return;
-    }
-
-    const found = items.find((x) => x.id === selectedId);
-    if (found) {
-      setDraft(mapToDraft(found));
-      setMode("details");
-    }
-  }, [items, selectedId]);
+    sessionStorage.setItem(MODE_STORAGE_KEY, view);
+  }, [view]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return items;
     return items.filter((p) => {
-      const hay = `${p.title} ${p.location} ${p.tag ?? ""}`.toLowerCase();
+      const hay = `${p.title} ${p.location} ${p.tag ?? ""} ${p.listing_type} ${p.property_type}`.toLowerCase();
       return hay.includes(q);
     });
   }, [items, query]);
 
   const selected = useMemo(() => {
-    if (selectedId === "new") return null;
+    if (!selectedId) return null;
     return items.find((x) => x.id === selectedId) ?? null;
   }, [items, selectedId]);
 
@@ -200,7 +224,10 @@ export default function AdminPropertiesPage() {
       if (error) throw error;
 
       toast({ title: "Created", description: "New property added." });
-      setSelectedId(null);
+      sessionStorage.removeItem(DRAFT_STORAGE_KEY);
+      persistDraft(emptyDraft());
+      setNewMode("setup");
+      setView("list");
     }
 
     await load();
@@ -211,232 +238,320 @@ export default function AdminPropertiesPage() {
     if (!draft.id) return;
     setDeleting(true);
 
-    const { error } = await supabase
-      .from("properties")
-      .delete()
-      .eq("id", draft.id);
+    const { error } = await supabase.from("properties").delete().eq("id", draft.id);
     if (error) throw error;
 
     toast({ title: "Deleted", description: "Property removed." });
     setSelectedId(null);
+    setView("list");
     await load();
     setDeleting(false);
   };
 
-  const showEmptyState = selectedId === null && mode === "none";
-  const showSetup = selectedId === "new" && mode === "setup";
-  const showDetails = (selectedId === "new" && mode === "details") || !!selected;
+  const openNew = () => {
+    setSelectedId(null);
+    setView("new");
+
+    const existing = safeReadDraft();
+    if (existing) {
+      persistDraft(existing);
+      setNewMode("details");
+      return;
+    }
+
+    persistDraft(emptyDraft());
+    setNewMode("setup");
+  };
+
+  const openEdit = (p: DbProperty) => {
+    setSelectedId(p.id);
+    setView("new");
+    setNewMode("details");
+    // Editing an existing property should not overwrite the "new draft" draft storage
+    setDraft(mapToDraft(p));
+  };
+
+  const backToList = () => {
+    setView("list");
+    setSelectedId(null);
+    // Do NOT clear draft: requirement says changes should still be there if back clicked.
+    if (!draft.id) {
+      sessionStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
+    }
+  };
+
+  const listHeader = (
+    <Card
+      className={cn(
+        "rounded-[5px] border border-black/10 bg-white/70 p-6 ring-1 ring-black/5",
+        "backdrop-blur supports-[backdrop-filter]:bg-white/55",
+      )}
+    >
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div className="text-xs font-extrabold tracking-[0.22em] text-[hsl(var(--brand-ink))]/60">
+            LISTINGS
+          </div>
+          <div className="mt-2 text-3xl font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+            Properties
+          </div>
+          <div className="mt-2 max-w-2xl text-sm font-semibold text-muted-foreground">
+            Click a card to edit, or create a new property with a draft that
+            won’t disappear if you go back.
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2 sm:items-end">
+          <Button
+            className="h-11 rounded-[5px] bg-[hsl(var(--brand))] text-white hover:bg-[hsl(var(--brand))]/90"
+            onClick={openNew}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            New property
+          </Button>
+
+          <div className="grid w-full gap-2 sm:w-auto sm:grid-cols-2">
+            <Button
+              variant="outline"
+              className="h-10 rounded-[5px] bg-white/70"
+              disabled={seeding}
+              onClick={async () => {
+                setSeeding(true);
+                const { inserted } = await seedPremiumListings();
+                toast({
+                  title: "Luxury seed complete",
+                  description:
+                    inserted === 0
+                      ? "Seed listings already exist."
+                      : `Inserted ${inserted} luxury listings.`,
+                });
+                await load();
+                setSeeding(false);
+              }}
+            >
+              <Wand2 className="mr-2 h-4 w-4" />
+              {seeding ? "Seeding..." : "Seed luxury"}
+            </Button>
+
+            <Button
+              variant="outline"
+              className="h-10 rounded-[5px] bg-white/70"
+              onClick={load}
+            >
+              Refresh
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-3 sm:grid-cols-12">
+        <div className="sm:col-span-8">
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="h-11 rounded-[5px] bg-white/80"
+            placeholder="Search by title, location, tag, type…"
+          />
+        </div>
+        <div className="sm:col-span-4">
+          <div className="flex h-11 items-center justify-between rounded-[5px] bg-white/75 px-4 text-sm font-semibold text-muted-foreground ring-1 ring-black/10">
+            <span>Total</span>
+            <span className="text-[hsl(var(--brand-ink))]">
+              {loading ? "—" : items.length}
+            </span>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+
+  const isEditingExisting = !!draft.id;
 
   return (
     <AdminShell title="Properties">
-      <div className="grid gap-4 lg:grid-cols-12">
-        <div className="lg:col-span-4">
-          <Card
-            className={cn(
-              "flex flex-col overflow-hidden",
-              "rounded-[5px] border border-black/10 bg-white/65 ring-1 ring-black/5",
-              "backdrop-blur supports-[backdrop-filter]:bg-white/55",
-              // keeps it from turning into a huge column that causes “things getting on each other”
-              "max-h-[calc(100vh-160px)]",
-            )}
-          >
-            {/* Header */}
-            <div className="p-4">
-              <div className="flex items-center justify-between gap-2">
-                <div>
-                  <div className="text-xs font-extrabold tracking-[0.22em] text-[hsl(var(--brand-ink))]/60">
-                    LISTINGS
-                  </div>
-                  <div className="mt-1 text-lg font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
-                    Properties
-                  </div>
+      {view === "list" ? (
+        <div className="grid gap-4">
+          {listHeader}
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {loading ? (
+              <Card className="rounded-[5px] border border-black/10 bg-white/70 p-6 ring-1 ring-black/5 sm:col-span-2 lg:col-span-3">
+                <div className="text-sm font-semibold text-muted-foreground">
+                  Loading…
                 </div>
-
-                <Button
-                  className="h-10 rounded-[5px] bg-[hsl(var(--brand))] text-white hover:bg-[hsl(var(--brand))]/90"
-                  onClick={() => setSelectedId("new")}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  New
-                </Button>
-              </div>
-
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                <Button
-                  variant="outline"
-                  className="h-10 rounded-[5px] bg-white/70"
-                  disabled={seeding}
-                  onClick={async () => {
-                    setSeeding(true);
-                    const { inserted } = await seedPremiumListings();
-                    toast({
-                      title: "Luxury seed complete",
-                      description:
-                        inserted === 0
-                          ? "Seed listings already exist."
-                          : `Inserted ${inserted} luxury listings.`,
-                    });
-                    await load();
-                    setSeeding(false);
-                  }}
-                >
-                  <Wand2 className="mr-2 h-4 w-4" />
-                  {seeding ? "Seeding..." : "Seed luxury"}
-                </Button>
-
-                <Button
-                  variant="outline"
-                  className="h-10 rounded-[5px] bg-white/70"
-                  onClick={load}
-                >
-                  Refresh
-                </Button>
-              </div>
-
-              <div className="mt-3">
-                <div className="relative">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    className="h-11 rounded-[5px] bg-white/80 pl-9"
-                    placeholder="Search title, location, tag…"
-                  />
+              </Card>
+            ) : filtered.length === 0 ? (
+              <Card className="rounded-[5px] border border-black/10 bg-white/70 p-6 ring-1 ring-black/5 sm:col-span-2 lg:col-span-3">
+                <div className="text-lg font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+                  No properties found
                 </div>
-
-                <div className="mt-3 flex items-center justify-between rounded-[5px] bg-white/70 px-3 py-2 text-xs font-semibold text-muted-foreground ring-1 ring-black/10">
-                  <span>Total</span>
-                  <span className="text-[hsl(var(--brand-ink))]">
-                    {items.length}
-                  </span>
+                <div className="mt-1 text-sm font-semibold text-muted-foreground">
+                  Try a different keyword.
                 </div>
-              </div>
-            </div>
+              </Card>
+            ) : (
+              filtered.map((p) => {
+                const status = p.published ? "Published" : "Draft";
+                const typeHint = p.listing_type === "rent" ? "Rent" : "Sale";
 
-            {/* Scrollable list */}
-            <div className="flex-1 overflow-y-auto px-4 pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-              <div className="grid gap-2">
-                {loading ? (
-                  <div className="rounded-[5px] bg-white/70 p-4 text-sm text-muted-foreground ring-1 ring-black/5">
-                    Loading…
-                  </div>
-                ) : filtered.length === 0 ? (
-                  <div className="rounded-[5px] bg-white/70 p-4 text-sm text-muted-foreground ring-1 ring-black/5">
-                    No properties found.
-                  </div>
-                ) : (
-                  filtered.map((p) => {
-                    const active = selectedId === p.id;
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => openEdit(p)}
+                    className="text-left"
+                  >
+                    <Card
+                      className={cn(
+                        "group overflow-hidden rounded-[5px] border border-black/10 bg-white/70",
+                        "ring-1 ring-black/5 shadow-[0_18px_55px_-45px_rgba(15,23,42,0.35)]",
+                        "transition hover:bg-white hover:-translate-y-0.5",
+                      )}
+                    >
+                      <div className="relative">
+                        <SmartImage
+                          src={p.cover_image}
+                          alt={p.title}
+                          className="h-44 w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/0" />
 
-                    const typeHint = p.listing_type === "rent" ? "Rent" : "Sale";
-                    const featuredHint = p.featured ? " · Featured" : "";
+                        <div className="absolute left-3 top-3 flex flex-wrap gap-2">
+                          <Badge className="rounded-[5px] bg-white/85 text-foreground hover:bg-white">
+                            {typeHint}
+                          </Badge>
+                          <Badge
+                            className={cn(
+                              "rounded-[5px] hover:bg-white/85",
+                              status === "Published"
+                                ? "bg-[hsl(var(--brand))]/15 text-[hsl(var(--brand-ink))]"
+                                : "bg-white/85 text-foreground",
+                            )}
+                          >
+                            {status}
+                          </Badge>
+                          {p.featured ? (
+                            <Badge className="rounded-[5px] bg-[hsl(var(--brand-2))]/18 text-[hsl(var(--brand-ink))] hover:bg-[hsl(var(--brand-2))]/18">
+                              Featured
+                            </Badge>
+                          ) : null}
+                        </div>
 
-                    return (
-                      <button
-                        key={p.id}
-                        type="button"
-                        onClick={() => setSelectedId(p.id)}
-                        className={cn(
-                          "w-full rounded-[5px] p-4 text-left transition",
-                          "ring-1 ring-black/10",
-                          active
-                            ? "bg-[hsl(var(--brand))]/10"
-                            : "bg-white/75 hover:bg-white",
-                        )}
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0">
-                            <div className="truncate text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
-                              {p.title}
-                            </div>
-                            <div className="mt-1 text-xs font-semibold text-muted-foreground">
-                              {p.location} · {typeHint} ·{" "}
-                              {p.published ? "Published" : "Draft"}
-                              {featuredHint}
-                              {p.tag ? ` · ${p.tag}` : ""}
-                            </div>
+                        <div className="absolute bottom-3 left-3 right-3">
+                          <div className="text-lg font-extrabold tracking-tight text-white drop-shadow">
+                            {p.title}
                           </div>
-
-                          <div className="shrink-0 rounded-[5px] bg-white/80 px-2.5 py-1.5 text-xs font-extrabold text-[hsl(var(--brand-ink))] ring-1 ring-black/10">
-                            {formatCompact(p.price)} AED
+                          <div className="mt-0.5 text-sm font-semibold text-white/85">
+                            {p.location}
                           </div>
                         </div>
-                      </button>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-          </Card>
+                      </div>
+
+                      <div className="p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="text-xs font-semibold text-muted-foreground">
+                              Price
+                            </div>
+                            <div className="truncate text-sm font-extrabold text-[hsl(var(--brand-ink))]">
+                              {formatCompact(p.price)} AED
+                            </div>
+                            {p.tag ? (
+                              <div className="mt-2 text-xs font-semibold text-muted-foreground">
+                                Tag:{" "}
+                                <span className="text-foreground">{p.tag}</span>
+                              </div>
+                            ) : (
+                              <div className="mt-2 text-xs font-semibold text-muted-foreground">
+                                Tag: —
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="rounded-[5px] bg-muted/35 px-3 py-2 text-right ring-1 ring-black/5">
+                            <div className="text-[11px] font-semibold text-muted-foreground">
+                              Beds / Baths
+                            </div>
+                            <div className="text-xs font-extrabold text-[hsl(var(--brand-ink))]">
+                              {p.beds} / {p.baths}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  </button>
+                );
+              })
+            )}
+          </div>
         </div>
+      ) : (
+        <div className="grid gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <Button
+              variant="outline"
+              className="h-11 rounded-[5px] bg-white/70"
+              onClick={backToList}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to properties
+            </Button>
 
-        <div className="lg:col-span-8">
-          {showEmptyState ? (
-            <Card className="rounded-[5px] border border-black/10 bg-white/70 p-7 ring-1 ring-black/5 backdrop-blur supports-[backdrop-filter]:bg-white/55">
-              <div className="inline-flex h-12 w-12 items-center justify-center rounded-[5px] bg-[hsl(var(--brand))]/12 text-[hsl(var(--brand-ink))] ring-1 ring-black/10">
-                <Sparkles className="h-5 w-5" />
+            {!isEditingExisting ? (
+              <div className="rounded-[5px] bg-white/70 px-4 py-2 text-xs font-semibold text-muted-foreground ring-1 ring-black/10">
+                Draft saved automatically while you work.
               </div>
-              <div className="mt-4 text-sm font-semibold text-muted-foreground">
-                Select a listing
+            ) : (
+              <div className="rounded-[5px] bg-white/70 px-4 py-2 text-xs font-semibold text-muted-foreground ring-1 ring-black/10">
+                Editing existing property
               </div>
-              <div className="mt-2 text-3xl font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
-                Choose a property to edit
-              </div>
-              <div className="mt-2 max-w-2xl text-sm font-semibold text-muted-foreground">
-                Or click <b>New</b> to start — you’ll pick placements first, then
-                fill the full details.
-              </div>
+            )}
+          </div>
 
-              <div className="mt-6 flex flex-col gap-2 sm:flex-row">
-                <Button
-                  className="h-11 rounded-[5px] bg-[hsl(var(--brand))] text-white hover:bg-[hsl(var(--brand))]/90"
-                  onClick={() => setSelectedId("new")}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  New property
-                </Button>
-                <Button
-                  variant="outline"
-                  className="h-11 rounded-[5px] bg-white/70"
-                  onClick={load}
-                >
-                  Refresh list
-                </Button>
-              </div>
-            </Card>
-          ) : null}
-
-          {showSetup ? (
+          {!isEditingExisting && newMode === "setup" ? (
             <NewListingSetup
               value={draft}
-              onChange={setDraft}
+              onChange={persistDraft}
               onCancel={() => {
-                setSelectedId(null);
-                setMode("none");
+                // Back keeps draft, per request
+                backToList();
               }}
               onContinue={() => {
                 toast({
                   title: "Setup saved",
                   description: "Now fill in the listing details.",
                 });
-                setMode("details");
+                setNewMode("details");
               }}
             />
-          ) : null}
-
-          {showDetails ? (
+          ) : (
             <PropertyEditor
               value={draft}
-              onChange={setDraft}
+              onChange={(next) => {
+                // Persist only new drafts
+                if (!next.id) {
+                  persistDraft(next);
+                } else {
+                  setDraft(next);
+                }
+              }}
               onSave={save}
               onDelete={selected ? del : undefined}
               saving={saving}
               deleting={deleting}
-              className={cn(showSetup && "hidden")}
             />
+          )}
+
+          {!isEditingExisting ? (
+            <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+              <ArrowLeft className="h-4 w-4 opacity-70" />
+              You can go back anytime — your new property draft will still be
+              here.
+            </div>
           ) : null}
         </div>
-      </div>
+      )}
     </AdminShell>
   );
 }
