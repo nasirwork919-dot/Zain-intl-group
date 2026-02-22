@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Search, Sparkles } from "lucide-react";
+import { Plus, Search, Sparkles, Wand2 } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { seedPremiumListings } from "@/components/admin/seed-premium-listings";
 
 type DbProperty = {
   id: string;
@@ -110,6 +111,7 @@ export default function AdminPropertiesPage() {
   const [draft, setDraft] = useState<AdminPropertyDraft>(emptyDraft());
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [seeding, setSeeding] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -246,6 +248,38 @@ export default function AdminPropertiesPage() {
               >
                 <Plus className="mr-2 h-4 w-4" />
                 New
+              </Button>
+            </div>
+
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <Button
+                variant="outline"
+                className="h-10 rounded-[5px] bg-white/70"
+                disabled={seeding}
+                onClick={async () => {
+                  setSeeding(true);
+                  const { inserted } = await seedPremiumListings();
+                  toast({
+                    title: "Luxury seed complete",
+                    description:
+                      inserted === 0
+                        ? "Seed listings already exist."
+                        : `Inserted ${inserted} luxury listings.`,
+                  });
+                  await load();
+                  setSeeding(false);
+                }}
+              >
+                <Wand2 className="mr-2 h-4 w-4" />
+                {seeding ? "Seeding..." : "Seed luxury"}
+              </Button>
+
+              <Button
+                variant="outline"
+                className="h-10 rounded-[5px] bg-white/70"
+                onClick={load}
+              >
+                Refresh
               </Button>
             </div>
 
