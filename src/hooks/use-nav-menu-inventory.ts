@@ -49,43 +49,69 @@ function toOptions(labels: string[]): InventoryNavOption[] {
 }
 
 function uniqSorted(values: string[]) {
-  return Array.from(new Set(values)).filter(Boolean).sort((a, b) => a.localeCompare(b));
+  return Array.from(new Set(values))
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b));
 }
 
 function hasPlacement(placements: string[], key: string) {
-  return (placements ?? []).map((p) => String(p).toLowerCase()).includes(key);
+  return (placements ?? [])
+    .map((p) => String(p).toLowerCase().trim())
+    .includes(String(key).toLowerCase().trim());
+}
+
+function byPlacement<T extends { placements: string[] }>(items: T[], key: string) {
+  return items.filter((p) => hasPlacement(p.placements, key));
 }
 
 export function useNavMenuInventory() {
   const { data: all = [], isLoading } = usePublishedProperties();
 
   return useMemo(() => {
-    const byPlacement = (placement: NavMenuKey) =>
-      all.filter((p) => hasPlacement(p.placements, placement));
+    // Core rule:
+    // - Buy/Rent menus are based on listingType + (optionally) placement.
+    // - All other menus are strictly placement-driven (no guessing).
+    const sale = all.filter((p) => p.listingType === "sale");
+    const rent = all.filter((p) => p.listingType === "rent");
 
-    const buyBase = all.filter((p) => p.listingType === "sale");
-    const rentBase = all.filter((p) => p.listingType === "rent");
+    const buyInventory = byPlacement(sale, "buy");
+    const rentInventory = byPlacement(rent, "rent");
 
-    // Buy/Rent dropdowns: show property types that actually exist for that listing type.
-    // If placements are used, we also try to respect them (but fall back to listing type).
+    // If admin didn't apply placements yet, fall back to listing type so the site
+    // doesn't appear empty. Once placements are used, it becomes exact.
+    const effectiveBuy = buyInventory.length ? buyInventory : sale;
+    const effectiveRent = rentInventory.length ? rentInventory : rent;
+
     const buyTypes = uniqSorted(
-      buyBase.map((p) => normalizePropertyTypeLabel(p.propertyType)),
+      effectiveBuy.map((p) => normalizePropertyTypeLabel(p.propertyType)),
     );
     const rentTypes = uniqSorted(
-      rentBase.map((p) => normalizePropertyTypeLabel(p.propertyType)),
+      effectiveRent.map((p) => normalizePropertyTypeLabel(p.propertyType)),
     );
 
-    // Communities: list actual locations
-    const communityLocations = uniqSorted(all.map((p) => p.location));
+    const communitiesInventory = byPlacement(all, "communities");
+    const communitiesLocations = uniqSorted(
+      (communitiesInventory.length ? communitiesInventory : all).map((p) => p.location),
+    );
 
-    // For the rest (developers/featured-projects/services/more): we don't have
-    // dedicated content entities, so we list locations that have listings in that placement.
-    const developersLocations = uniqSorted(byPlacement("developers").map((p) => p.location));
+    const developersLocations = uniqSorted(byPlacement(all, "developers").map((p) => p.location));
     const featuredProjectsLocations = uniqSorted(
-      byPlacement("featured-projects").map((p) => p.location),
+      byPlacement(all, "featured-projects").map((p) => p.location),
     );
-    const servicesLocations = uniqSorted(byPlacement("services").map((p) => p.location));
-    const moreLocations = uniqSorted(byPlacement("more").map((p) => p.location));
+    const servicesLocations = uniqSorted(byPlacement(all, "services").map((p) => p.location));
+    const moreLocations = uniqSorted(byPlacement(all, "more").map((p) => p.location));
+
+    const hasBuy = buyTypes.length > 0;
+    const hasRent = rentTypes.length > 0;
+
+    const hasCommunities =
+      (communitiesInventory.length ? communitiesLocations.length : all.length > 0) &&
+      communitiesLocations.length > 0;
+
+    const hasDevelopers = developersLocations.length > 0;
+    const hasFeaturedProjects = featuredProjectsLocations.length > 0;
+    const hasServices = servicesLocations.length > 0;
+    const hasMore = moreLocations.length > 0;
 
     return {
       isLoading,
@@ -95,39 +121,42 @@ export function useNavMenuInventory() {
         buy: {
           label: "BUY",
           options: toOptions(buyTypes),
-          hasAny: buyTypes.length > 0,
+          hasAny: hasBuy,
         },
         rent: {
           label: "RENT",
           options: toOptions(rentTypes),
-          hasAny: rentTypes.length > 0,
+          hasAny: hasRent,
         },
         communities: {
           label: "COMMUNITIES",
-          options: toOptions(communityLocations),
-          hasAny: communityLocations.length > 0,
+          options: toOptions(communitiesLocations),
+          hasAny: hasCommunities,
         },
         developers: {
           label: "DEVELOPERS",
           options: toOptions(developersLocations),
-          hasAny: developersLocations.length > 0,
+          hasAny: hasDevelopers,
         },
         "featured-projects": {
           label: "FEATURED PROJECTS",
           options: toOptions(featuredProjectsLocations),
-          hasAny: featuredProjectsLocations.length > 0,
+          hasAny: hasFeaturedProjects,
         },
         services: {
           label: "SERVICES",
           options: toOptions(servicesLocations),
-          hasAny: servicesLocations.length > 0,
+          hasAny: hasServices,
         },
         more: {
           label: "MORE",
           options: toOptions(moreLocations),
-          hasAny: moreLocations.length > 0,
+          hasAny: hasMore,
         },
-      } satisfies Record<NavMenuKey, { label: string; options: InventoryNavOption[]; hasAny: boolean }>,
+      } satisfies Record<
+        NavMenuKey,
+        { label: string; options: InventoryNavOption[]; hasAny: boolean }
+      >,
     };
   }, [all, isLoading]);
 }

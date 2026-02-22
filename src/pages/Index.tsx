@@ -35,6 +35,12 @@ import {
   type PublicProperty as Property,
 } from "@/hooks/use-published-properties";
 
+function hasPlacement(placements: string[], key: string) {
+  return (placements ?? [])
+    .map((p) => String(p).toLowerCase().trim())
+    .includes(String(key).toLowerCase().trim());
+}
+
 const Index = () => {
   const navigate = useNavigate();
 
@@ -79,7 +85,12 @@ const Index = () => {
   }, [allProperties, filters]);
 
   const featuredResults = useMemo(() => {
-    const featured = results.filter((p) => p.featured);
+    // Priority order:
+    // 1) Admin "featured" flag OR placement "featured"
+    // 2) Otherwise, show results
+    const featured = results.filter(
+      (p) => p.featured || hasPlacement(p.placements, "featured"),
+    );
     return featured.length ? featured : results;
   }, [results]);
 
@@ -341,8 +352,8 @@ const Index = () => {
                 Featured properties
               </h2>
               <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-                If you mark listings as <b>Featured</b> in the admin panel,
-                they’ll show here first.
+                Mark listings as <b>Featured</b> (or select placement{" "}
+                <b>Featured</b>) in the admin panel to show them here.
               </p>
             </div>
             <div className="rounded-[5px] border border-black/5 bg-white/70 px-4 py-2 text-sm text-muted-foreground ring-1 ring-black/10">
