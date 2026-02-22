@@ -15,21 +15,31 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { adminLogout } from "@/components/admin/admin-auth";
 
+type NavItem = {
+  to: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  hint: string;
+};
+
 function SideLink({
   to,
   label,
   icon: Icon,
+  hint,
 }: {
   to: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
+  hint: string;
 }) {
   return (
     <NavLink
       to={to}
+      end
       className={({ isActive }) =>
         cn(
-          "group flex items-center gap-3 rounded-[5px] px-4 py-3 text-sm font-semibold",
+          "group relative flex items-center gap-3 rounded-[5px] px-4 py-3 text-sm font-semibold",
           "ring-1 ring-black/10 transition",
           "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
           isActive
@@ -37,14 +47,24 @@ function SideLink({
             : "bg-white/70 text-[hsl(var(--brand-ink))] hover:bg-white",
         )
       }
-      end
     >
+      {/* active rail */}
+      <span
+        className={cn(
+          "absolute left-0 top-2 bottom-2 w-1 rounded-full transition-opacity",
+          "bg-[hsl(var(--brand))]",
+          "opacity-0 group-aria-[current=page]:opacity-100",
+        )}
+        aria-hidden="true"
+      />
+
       <span
         className={cn(
           "inline-flex h-10 w-10 items-center justify-center rounded-[5px]",
           "ring-1 ring-black/10",
           "bg-white/70 text-[hsl(var(--brand-ink))]",
           "transition group-hover:bg-white",
+          "group-aria-[current=page]:bg-white",
         )}
       >
         <Icon className="h-5 w-5" />
@@ -53,14 +73,42 @@ function SideLink({
       <div className="min-w-0">
         <div className="truncate">{label}</div>
         <div className="mt-0.5 text-[11px] font-semibold text-muted-foreground">
-          {to === "/admin"
-            ? "KPIs & quick actions"
-            : to === "/admin/properties"
-              ? "Listings & publishing"
-              : "Inbox & inquiries"}
+          {hint}
         </div>
       </div>
     </NavLink>
+  );
+}
+
+function TopTabs({ items }: { items: NavItem[] }) {
+  return (
+    <div
+      className={cn(
+        "flex gap-2 overflow-x-auto pb-1",
+        "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
+      )}
+    >
+      {items.map((it) => (
+        <NavLink
+          key={it.to}
+          to={it.to}
+          end
+          className={({ isActive }) =>
+            cn(
+              "flex-none inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold",
+              "ring-1 ring-black/10 transition",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
+              isActive
+                ? "bg-[hsl(var(--brand-ink))] text-white ring-transparent"
+                : "bg-white/75 text-[hsl(var(--brand-ink))] hover:bg-white",
+            )
+          }
+        >
+          <it.icon className="h-4 w-4" />
+          {it.label}
+        </NavLink>
+      ))}
+    </div>
   );
 }
 
@@ -72,6 +120,22 @@ export function AdminShell({
   children: ReactNode;
 }) {
   const navigate = useNavigate();
+
+  const navItems: NavItem[] = [
+    {
+      to: "/admin",
+      label: "Dashboard",
+      icon: LayoutDashboard,
+      hint: "KPIs & quick actions",
+    },
+    {
+      to: "/admin/properties",
+      label: "Properties",
+      icon: Building2,
+      hint: "Listings & publishing",
+    },
+    { to: "/admin/leads", label: "Leads", icon: Inbox, hint: "Inbox & inquiries" },
+  ];
 
   return (
     <div className="min-h-screen bg-[hsl(var(--page))]">
@@ -117,7 +181,7 @@ export function AdminShell({
 
             <Button
               variant="outline"
-              className="h-10 rounded-[5px] bg-white/70"
+              className="hidden h-10 rounded-[5px] bg-white/70 sm:inline-flex"
               onClick={() => {
                 toast({
                   title: "Settings",
@@ -142,11 +206,19 @@ export function AdminShell({
             </Button>
           </div>
         </div>
+
+        {/* Mobile tabs bar */}
+        <div className="border-t border-black/10 bg-white/60 px-4 py-2 backdrop-blur sm:hidden">
+          <div className="mx-auto max-w-7xl">
+            <TopTabs items={navItems} />
+          </div>
+        </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 pb-16 pt-20">
+      <main className="mx-auto max-w-7xl px-4 pb-16 pt-[124px] sm:pt-20">
         <div className="grid gap-4 lg:grid-cols-12">
-          <aside className="lg:col-span-3">
+          {/* Desktop sidebar */}
+          <aside className="hidden lg:block lg:col-span-3">
             <div
               className={cn(
                 "sticky top-20 overflow-hidden rounded-[5px]",
@@ -161,18 +233,20 @@ export function AdminShell({
                   Navigation
                 </div>
                 <div className="mt-1 text-xs font-semibold text-muted-foreground">
-                  Manage listings and incoming inquiries.
+                  Switch sections quickly using the tabs.
                 </div>
               </div>
 
               <div className="grid gap-2 p-3">
-                <SideLink to="/admin" label="Dashboard" icon={LayoutDashboard} />
-                <SideLink
-                  to="/admin/properties"
-                  label="Properties"
-                  icon={Building2}
-                />
-                <SideLink to="/admin/leads" label="Leads" icon={Inbox} />
+                {navItems.map((it) => (
+                  <SideLink
+                    key={it.to}
+                    to={it.to}
+                    label={it.label}
+                    icon={it.icon}
+                    hint={it.hint}
+                  />
+                ))}
               </div>
 
               <div className="border-t border-black/10 p-4">
