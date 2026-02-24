@@ -127,12 +127,18 @@ const Index = () => {
               DUBAI_IMAGES.hero.burjKhalifa,
             ].map((src, idx) => (
               <img
-                key={src}
+                key={`${src}-${idx}`}
                 src={src}
                 alt=""
                 className="absolute inset-0 h-full w-full object-cover opacity-0 hero-slide"
                 style={{ animationDelay: `${idx * 8}s` }}
                 loading={idx === 0 ? "eager" : "lazy"}
+                onError={(e) => {
+                  const img = e.currentTarget;
+                  if (img.dataset.fallbackApplied === "1") return;
+                  img.dataset.fallbackApplied = "1";
+                  img.src = DUBAI_IMAGES.fallback;
+                }}
               />
             ))}
           </div>

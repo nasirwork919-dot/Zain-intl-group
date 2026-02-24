@@ -1,17 +1,28 @@
+const FALLBACK = "/placeholder.svg";
+
+function localOrFallback(path: string) {
+  // If the file is missing, the browser will 404; we still want a deterministic src.
+  // Keep the intended local paths, but allow callers to use FALLBACK easily.
+  return path || FALLBACK;
+}
+
 export const DUBAI_IMAGES = {
-  // Local, reliable assets (place these files in /public/hero):
+  // ORIGINAL/REVERTED behavior: local assets in /public/hero
+  // Expected files:
   // - /public/hero/skyline.jpg
   // - /public/hero/towers.jpg
   // - /public/hero/burj-khalifa.jpg
   hero: {
-    skyline: "/hero/skyline.jpg",
-    towers: "/hero/towers.jpg",
-    burjKhalifa: "/hero/burj-khalifa.jpg",
+    skyline: localOrFallback("/hero/skyline.jpg"),
+    towers: localOrFallback("/hero/towers.jpg"),
+    burjKhalifa: localOrFallback("/hero/burj-khalifa.jpg"),
   },
 
   tiles: {
-    skyline: "/hero/skyline.jpg",
-    towers: "/hero/towers.jpg",
-    burjKhalifa: "/hero/burj-khalifa.jpg",
+    skyline: localOrFallback("/hero/skyline.jpg"),
+    towers: localOrFallback("/hero/towers.jpg"),
+    burjKhalifa: localOrFallback("/hero/burj-khalifa.jpg"),
   },
+
+  fallback: FALLBACK,
 } as const;
