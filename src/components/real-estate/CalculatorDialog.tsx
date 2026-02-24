@@ -177,8 +177,9 @@ export function CalculatorDialog({
           "w-[calc(100vw-24px)] sm:w-full",
           "max-w-4xl",
           "h-[90vh] sm:h-auto",
-          // IMPORTANT: don't use overflow-hidden on mobile, it can block inner scrolling
           "rounded-[5px]",
+          // Hide Radix default close (X) button so only our header "Close" remains
+          "[&>button]:hidden",
         )}
       >
         <div className="flex min-h-0 flex-1 flex-col bg-[hsl(var(--page))]">
