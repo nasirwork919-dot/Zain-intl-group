@@ -3,6 +3,7 @@ import { ArrowUpRight, ChevronLeft, ChevronRight, Search } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { SmartImage } from "@/components/real-estate/SmartImage";
+import { DUBAI_IMAGES } from "@/components/real-estate/dubai-images";
 
 type Community = {
   title: string;
@@ -15,36 +16,31 @@ const communities: Community[] = [
   {
     title: "Dubai Hills Estate",
     subtitle: "Family-first green district",
-    image:
-      "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=2200&q=80",
+    image: DUBAI_IMAGES.tiles.towers,
     locationFilter: "Dubai Hills Estate",
   },
   {
     title: "Dubai Marina",
     subtitle: "Waterfront lifestyle & skyline",
-    image:
-      "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=2200&q=80",
+    image: DUBAI_IMAGES.tiles.skyline,
     locationFilter: "Dubai Marina",
   },
   {
     title: "Downtown Dubai",
     subtitle: "Landmarks & prime access",
-    image:
-      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2200&q=80",
+    image: DUBAI_IMAGES.tiles.burjKhalifa,
     locationFilter: "Downtown Dubai",
   },
   {
     title: "Business Bay",
     subtitle: "Canal-side living",
-    image:
-      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=2200&q=80",
+    image: DUBAI_IMAGES.tiles.towers,
     locationFilter: "Business Bay",
   },
   {
     title: "Jumeirah Village Circle",
     subtitle: "Value + community convenience",
-    image:
-      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=2200&q=80",
+    image: DUBAI_IMAGES.tiles.skyline,
     locationFilter: "Jumeirah Village Circle",
   },
 ];
@@ -119,7 +115,7 @@ function CommunityLaunchStyleCard({
                 "hover:bg-white/10",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70",
               )}
-              aria-label="Open"
+              aria-label={`Open ${community.title}`}
             >
               <ArrowUpRight className="h-5 w-5" />
             </button>
@@ -127,24 +123,21 @@ function CommunityLaunchStyleCard({
         </div>
       </div>
 
-      {/* Bottom overlay content */}
-      <div className="absolute bottom-0 left-0 right-0 z-[3] p-5">
-        <div className="max-w-[92%]">
-          <div className="font-serif text-2xl font-semibold tracking-tight text-white sm:text-[28px]">
-            {community.title}
-          </div>
-          {community.subtitle ? (
-            <div className="mt-1 text-sm font-medium text-white/80">
-              {community.subtitle}
-            </div>
-          ) : null}
+      <div className="absolute bottom-0 left-0 right-0 z-[3] p-6">
+        <div className="text-[11px] font-extrabold tracking-[0.22em] text-white/80">
+          COMMUNITY EDIT
         </div>
-
-        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-[13px] font-semibold text-[hsl(var(--brand-ink))] shadow-sm ring-1 ring-black/5">
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))] ring-1 ring-black/5">
-            <Search className="h-4 w-4" />
-          </span>
-          <span className="whitespace-nowrap">Search listings</span>
+        <div className="mt-2 flex items-end justify-between gap-4">
+          <div>
+            <h3 className="text-xl font-extrabold tracking-tight text-white">
+              {community.title}
+            </h3>
+            {community.subtitle ? (
+              <p className="mt-1 text-sm font-semibold text-white/80">
+                {community.subtitle}
+              </p>
+            ) : null}
+          </div>
         </div>
       </div>
     </article>
@@ -152,193 +145,113 @@ function CommunityLaunchStyleCard({
 }
 
 export function ExploreCommunities({
-  onSearchCommunity,
+  onPick,
   className,
 }: {
-  onSearchCommunity: (location: string) => void;
+  onPick?: (locationFilter: string) => void;
   className?: string;
 }) {
+  const [active, setActive] = useState(0);
   const scrollerRef = useRef<HTMLDivElement | null>(null);
-  const [canPrev, setCanPrev] = useState(false);
-  const [canNext, setCanNext] = useState(true);
 
-  const pausedRef = useRef(false);
-  const resumeTimerRef = useRef<number | null>(null);
+  const canPrev = active > 0;
+  const canNext = active < communities.length - 1;
 
-  const cancelResumeTimer = () => {
-    if (resumeTimerRef.current) window.clearTimeout(resumeTimerRef.current);
-    resumeTimerRef.current = null;
-  };
-
-  const pauseAuto = (msToResume = 2400) => {
-    pausedRef.current = true;
-    cancelResumeTimer();
-    resumeTimerRef.current = window.setTimeout(() => {
-      pausedRef.current = false;
-    }, msToResume);
-  };
-
-  const updateScrollState = () => {
+  const scrollToActive = (idx: number) => {
     const el = scrollerRef.current;
     if (!el) return;
-
-    const max = el.scrollWidth - el.clientWidth;
-    const x = el.scrollLeft;
-
-    setCanPrev(x > 4);
-    setCanNext(x < max - 4);
+    const child = el.children.item(idx) as HTMLElement | null;
+    if (!child) return;
+    child.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   };
 
-  const getStep = () => {
-    const el = scrollerRef.current;
-    if (!el) return 320;
-    const first = el.firstElementChild as HTMLElement | null;
-    return first ? first.offsetWidth : Math.max(280, el.clientWidth * 0.85);
-  };
-
-  const scrollByCard = (dir: "prev" | "next") => {
-    const el = scrollerRef.current;
-    if (!el) return;
-
-    const step = getStep();
-    el.scrollBy({ left: dir === "next" ? step : -step, behavior: "smooth" });
-    pauseAuto();
-  };
-
-  // Auto-scroll: gentle, card-by-card, loops back to start.
   useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-
-    updateScrollState();
-
-    const interval = window.setInterval(() => {
-      const node = scrollerRef.current;
-      if (!node) return;
-      if (pausedRef.current) return;
-
-      const step = getStep();
-      const max = node.scrollWidth - node.clientWidth;
-      const x = node.scrollLeft;
-
-      if (x >= max - step * 0.5) {
-        node.scrollTo({ left: 0, behavior: "smooth" });
-        return;
-      }
-
-      node.scrollBy({ left: step, behavior: "smooth" });
-    }, 3200);
-
-    return () => {
-      window.clearInterval(interval);
-      cancelResumeTimer();
-    };
+    scrollToActive(active);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [active]);
 
-  const mobileControls = useMemo(() => {
-    return (
-      <div className="mt-6 flex items-center justify-between gap-3 sm:hidden">
-        <div className="text-xs font-semibold tracking-[0.18em] text-[hsl(var(--brand-ink))]/75">
-          BROWSE BY AREA
+  const filtered = useMemo(() => communities, []);
+
+  return (
+    <section className={cn("mx-auto w-full max-w-6xl px-4 py-12", className)}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">
+            Explore communities
+          </div>
+          <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[hsl(var(--ink))] sm:text-3xl">
+            Neighborhoods with skyline energy
+          </h2>
+          <p className="mt-2 max-w-xl text-sm font-medium leading-relaxed text-[hsl(var(--muted-ink))]">
+            Browse Dubai by vibe — from landmark living in Downtown to marina-front
+            towers and calm, family-first districts.
+          </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="mt-2 flex items-center gap-2 sm:mt-0">
           <button
             type="button"
-            onClick={() => scrollByCard("prev")}
+            onClick={() => setActive((v) => Math.max(0, v - 1))}
             disabled={!canPrev}
             className={cn(
-              "inline-flex h-10 w-10 items-center justify-center rounded-full transition",
-              "ring-1 ring-black/10 bg-white/70 text-[hsl(var(--brand-ink))]",
+              "inline-flex h-11 w-11 items-center justify-center rounded-2xl",
+              "ring-1 ring-black/10",
+              "bg-white",
+              "text-[hsl(var(--ink))]",
               "shadow-sm",
-              canPrev ? "hover:bg-white" : "cursor-not-allowed opacity-50",
+              "transition",
+              canPrev ? "hover:bg-[hsl(var(--wash))]" : "opacity-50",
             )}
-            aria-label="Scroll left"
+            aria-label="Previous"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
-
           <button
             type="button"
-            onClick={() => scrollByCard("next")}
+            onClick={() => setActive((v) => Math.min(communities.length - 1, v + 1))}
             disabled={!canNext}
             className={cn(
-              "inline-flex h-10 w-10 items-center justify-center rounded-full transition",
-              "ring-1 ring-black/10 bg-white/70 text-[hsl(var(--brand-ink))]",
+              "inline-flex h-11 w-11 items-center justify-center rounded-2xl",
+              "ring-1 ring-black/10",
+              "bg-white",
+              "text-[hsl(var(--ink))]",
               "shadow-sm",
-              canNext ? "hover:bg-white" : "cursor-not-allowed opacity-50",
+              "transition",
+              canNext ? "hover:bg-[hsl(var(--wash))]" : "opacity-50",
             )}
-            aria-label="Scroll right"
+            aria-label="Next"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
         </div>
       </div>
-    );
-  }, [canNext, canPrev]);
 
-  return (
-    <section className={cn("mx-auto max-w-6xl px-4 pb-12 sm:pb-16", className)}>
-      <div className="text-center">
-        <h2 className="font-serif text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-          Explore{" "}
-          <span className="text-[hsl(var(--brand))]">Communities</span>
-        </h2>
-        <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground">
-          Swipe through neighborhoods — tap any card to jump to listings with
-          that area pre-selected.
-        </p>
-      </div>
-
-      {mobileControls}
-
-      <div className="mt-6">
-        <div
-          ref={scrollerRef}
-          className={cn(
-            "flex gap-4 overflow-x-auto pb-4",
-            "snap-x snap-mandatory",
-            "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
-          )}
-          onScroll={() => {
-            updateScrollState();
-            pauseAuto(2800);
-          }}
-          onPointerEnter={() => {
-            updateScrollState();
-            pausedRef.current = true;
-            cancelResumeTimer();
-          }}
-          onPointerLeave={() => {
-            pauseAuto(600);
-          }}
-          onTouchStart={() => {
-            updateScrollState();
-            pauseAuto(3200);
-          }}
-        >
-          {communities.map((c) => (
-            <div
-              key={c.title}
-              className={cn(
-                "flex-none snap-start",
-                "w-[82vw] max-w-[340px] sm:w-[360px] md:w-[420px] lg:w-[460px]",
-              )}
-            >
-              <div className="h-[380px] sm:h-[440px]">
-                <CommunityLaunchStyleCard
-                  community={c}
-                  onOpen={() => onSearchCommunity(c.locationFilter)}
-                />
-              </div>
-            </div>
-          ))}
+      <div className="mt-8 flex items-center gap-2 rounded-[22px] bg-white p-3 ring-1 ring-black/5 shadow-sm">
+        <div className="grid h-10 w-10 place-items-center rounded-2xl bg-[hsl(var(--wash))] text-[hsl(var(--brand-ink))]">
+          <Search className="h-5 w-5" />
+        </div>
+        <div className="text-sm font-semibold text-[hsl(var(--muted-ink))]">
+          Tip: click a card to filter the listings by area
         </div>
       </div>
 
-      <div className="hidden pt-2 text-center text-xs text-muted-foreground sm:block">
-        Tip: hold Shift while scrolling with a mouse wheel to move horizontally.
+      <div
+        ref={scrollerRef}
+        className={cn(
+          "mt-7 grid gap-4",
+          "sm:grid-cols-2",
+          "lg:grid-cols-3",
+        )}
+      >
+        {filtered.map((c, idx) => (
+          <div key={c.title} className="min-h-[320px]">
+            <CommunityLaunchStyleCard
+              community={c}
+              onOpen={() => onPick?.(c.locationFilter)}
+              className={cn(idx === 0 ? "lg:col-span-2" : "")}
+            />
+          </div>
+        ))}
       </div>
     </section>
   );

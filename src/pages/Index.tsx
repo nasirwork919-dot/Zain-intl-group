@@ -25,6 +25,7 @@ import { FeaturedListingsMobileSlider } from "@/components/real-estate/FeaturedL
 import { YourHomeYourWay } from "@/components/real-estate/YourHomeYourWay";
 import { SiteFooter } from "@/components/real-estate/SiteFooter";
 import { FeaturedPropertyLaunchCard } from "@/components/real-estate/FeaturedPropertyLaunchCard";
+import { DUBAI_IMAGES } from "@/components/real-estate/dubai-images";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -121,10 +122,9 @@ const Index = () => {
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0">
             {[
-              // Burj Khalifa / Dubai skyline / towers
-              "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=3200&q=90",
-              "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=3200&q=90",
-              "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=3200&q=90",
+              DUBAI_IMAGES.hero.burjKhalifa,
+              DUBAI_IMAGES.hero.skyline,
+              DUBAI_IMAGES.hero.towers,
             ].map((src, idx) => (
               <img
                 key={src}
@@ -312,7 +312,7 @@ const Index = () => {
       <div className="mx-auto max-w-6xl px-4">
         <div className="rounded-[5px] border border-white/40 bg-white/45 ring-1 ring-black/10">
           <ExploreCommunities
-            onSearchCommunity={(location) => {
+            onPick={(location) => {
               toast({
                 title: "Community selected",
                 description: `Showing listings in ${location}.`,
