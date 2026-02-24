@@ -1,11 +1,23 @@
 import { useMemo, useState } from "react";
-import { Calculator, Copy, Percent, Wallet, Home, TrendingUp } from "lucide-react";
+import {
+  Calculator,
+  Copy,
+  Percent,
+  Wallet,
+  Home,
+  TrendingUp,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,55 +27,10 @@ import { Slider } from "@/components/ui/slider";
 
 import {
   formatMoneyAED,
-  formatNumber,
   mortgageMonthlyPayment,
   rentalYield,
   safeNumber,
 } from "@/utils/calculators";
-
-function Metric({
-  label,
-  value,
-  hint,
-  tone = "brand",
-}: {
-  label: string;
-  value: string;
-  hint?: string;
-  tone?: "brand" | "violet";
-}) {
-  const badge =
-    tone === "brand"
-      ? "bg-[hsl(var(--brand))]/12 text-[hsl(var(--brand-ink))]"
-      : "bg-[hsl(var(--brand-2))]/12 text-[hsl(var(--brand-ink))]";
-
-  return (
-    <div
-      className={cn(
-        "rounded-[5px] border border-black/10 bg-white/70 p-4",
-        "ring-1 ring-black/5",
-      )}
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <div className="text-xs font-semibold text-muted-foreground">{label}</div>
-          <div className="mt-2 text-xl font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
-            {value}
-          </div>
-          {hint ? (
-            <div className="mt-2 text-xs font-semibold text-muted-foreground">
-              {hint}
-            </div>
-          ) : null}
-        </div>
-
-        <div className={cn("inline-flex rounded-[5px] px-3 py-2 text-xs font-extrabold", badge)}>
-          AED
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function CompactMetric({
   label,
@@ -82,7 +49,9 @@ function CompactMetric({
         </span>
         {label}
       </div>
-      <div className="mt-2 text-sm font-extrabold text-[hsl(var(--brand-ink))]">{value}</div>
+      <div className="mt-2 text-sm font-extrabold text-[hsl(var(--brand-ink))]">
+        {value}
+      </div>
     </div>
   );
 }
@@ -138,7 +107,16 @@ export function CalculatorDialog({
       `Total interest: ${formatMoneyAED(mortgage.totalInterest)}`,
     ];
     return lines.join("\n");
-  }, [downPct, mortgage.downPayment, mortgage.loanAmount, mortgage.monthlyPayment, mortgage.totalInterest, price, ratePct, termYears]);
+  }, [
+    downPct,
+    mortgage.downPayment,
+    mortgage.loanAmount,
+    mortgage.monthlyPayment,
+    mortgage.totalInterest,
+    price,
+    ratePct,
+    termYears,
+  ]);
 
   const roiSummary = useMemo(() => {
     const payback =
@@ -157,13 +135,33 @@ export function CalculatorDialog({
       `Payback: ${payback}`,
     ];
     return lines.join("\n");
-  }, [annualRent, purchase, roi.effectiveRent, roi.grossYieldPct, roi.netIncome, roi.netYieldPct, roi.paybackYears, serviceCharges, vacancyPct]);
+  }, [
+    annualRent,
+    purchase,
+    roi.effectiveRent,
+    roi.grossYieldPct,
+    roi.netIncome,
+    roi.netYieldPct,
+    roi.paybackYears,
+    serviceCharges,
+    vacancyPct,
+  ]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl overflow-hidden rounded-[5px] p-0">
-        <div className="bg-[hsl(var(--page))]">
-          <DialogHeader className="border-b border-black/10 bg-white/70 px-5 py-4 backdrop-blur supports-[backdrop-filter]:bg-white/55">
+      <DialogContent
+        className={cn(
+          // Mobile: full-height, safe insets, scrollable content
+          "p-0",
+          "w-[calc(100vw-24px)] sm:w-full",
+          "max-w-4xl",
+          "h-[90vh] sm:h-auto",
+          "overflow-hidden rounded-[5px]",
+        )}
+      >
+        <div className="flex h-full flex-col bg-[hsl(var(--page))]">
+          {/* Sticky header (so close is always available on mobile) */}
+          <DialogHeader className="sticky top-0 z-10 border-b border-black/10 bg-white/80 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-white/65 sm:px-5 sm:py-4">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <DialogTitle className="flex items-center gap-2 text-left text-base font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
@@ -187,7 +185,8 @@ export function CalculatorDialog({
             </div>
           </DialogHeader>
 
-          <div className="px-4 py-4 sm:px-6 sm:py-6">
+          {/* Scrollable body */}
+          <div className="flex-1 overflow-y-auto px-3 py-4 sm:px-6 sm:py-6">
             <Tabs defaultValue={defaultTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2 rounded-[5px] bg-white/70 p-1 ring-1 ring-black/10">
                 <TabsTrigger value="mortgage" className="rounded-[5px]">
@@ -200,7 +199,7 @@ export function CalculatorDialog({
 
               <TabsContent value="mortgage" className="mt-5">
                 <div className="grid gap-4 lg:grid-cols-12">
-                  <Card className="rounded-[5px] border border-white/40 bg-white/70 p-5 ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55 lg:col-span-7">
+                  <Card className="rounded-[5px] border border-white/40 bg-white/70 p-4 ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55 sm:p-5 lg:col-span-7">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
@@ -296,7 +295,8 @@ export function CalculatorDialog({
                           navigator.clipboard.writeText(mortgageSummary);
                           toast({
                             title: "Copied summary",
-                            description: "Mortgage estimate copied to clipboard.",
+                            description:
+                              "Mortgage estimate copied to clipboard.",
                           });
                         }}
                       >
@@ -307,12 +307,21 @@ export function CalculatorDialog({
                   </Card>
 
                   <div className="grid gap-4 lg:col-span-5">
-                    <Metric
-                      label="Estimated monthly payment"
-                      value={formatMoneyAED(mortgage.monthlyPayment)}
-                      hint="Principal + interest (estimate)"
-                      tone="brand"
-                    />
+                    <div
+                      className={cn(
+                        "rounded-[5px] border border-black/10 bg-white/70 p-4 ring-1 ring-black/5",
+                      )}
+                    >
+                      <div className="text-xs font-semibold text-muted-foreground">
+                        Estimated monthly payment
+                      </div>
+                      <div className="mt-2 text-2xl font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+                        {formatMoneyAED(mortgage.monthlyPayment)}
+                      </div>
+                      <div className="mt-2 text-xs font-semibold text-muted-foreground">
+                        Principal + interest (estimate)
+                      </div>
+                    </div>
 
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
                       <CompactMetric
@@ -347,7 +356,7 @@ export function CalculatorDialog({
 
               <TabsContent value="roi" className="mt-5">
                 <div className="grid gap-4 lg:grid-cols-12">
-                  <Card className="rounded-[5px] border border-white/40 bg-white/70 p-5 ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55 lg:col-span-7">
+                  <Card className="rounded-[5px] border border-white/40 bg-white/70 p-4 ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55 sm:p-5 lg:col-span-7">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="text-sm font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
@@ -388,7 +397,7 @@ export function CalculatorDialog({
                         />
                       </div>
 
-                      <div className="grid gap-2 sm:grid-cols-2">
+                      <div className="grid gap-4 sm:grid-cols-2">
                         <div className="grid gap-2">
                           <Label>Service charges / year (AED)</Label>
                           <Input
@@ -429,7 +438,8 @@ export function CalculatorDialog({
                           navigator.clipboard.writeText(roiSummary);
                           toast({
                             title: "Copied summary",
-                            description: "ROI/Yield estimate copied to clipboard.",
+                            description:
+                              "ROI/Yield estimate copied to clipboard.",
                           });
                         }}
                       >
@@ -503,7 +513,8 @@ export function CalculatorDialog({
             </Tabs>
           </div>
 
-          <div className="border-t border-black/10 bg-white/60 px-4 py-3 text-xs font-semibold text-muted-foreground sm:px-6">
+          {/* Footer hint */}
+          <div className="border-t border-black/10 bg-white/65 px-4 py-3 text-xs font-semibold text-muted-foreground sm:px-6">
             Calculations are estimates; actual mortgage offers and returns vary by lender,
             fees, and occupancy.
           </div>
