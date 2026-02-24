@@ -59,7 +59,7 @@ export function HeaderCurrencyHoverMenu({
             aria-label="Currency"
             aria-expanded={open}
           >
-            AED
+            {value}
           </button>
         </PopoverTrigger>
 

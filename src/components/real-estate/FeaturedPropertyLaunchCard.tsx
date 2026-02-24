@@ -2,8 +2,9 @@ import { ArrowUpRight, Bath, BedDouble, MapPin, Ruler } from "lucide-react";
 
 import type { Property } from "@/components/real-estate/site-data";
 import { SmartImage } from "@/components/real-estate/SmartImage";
-import { formatAED } from "@/components/real-estate/format";
+import { formatPrice } from "@/components/real-estate/format";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/state/currency";
 
 export function FeaturedPropertyLaunchCard({
   property,
@@ -14,6 +15,8 @@ export function FeaturedPropertyLaunchCard({
   onOpen: () => void;
   className?: string;
 }) {
+  const { currency } = useCurrency();
+
   return (
     <article
       className={cn(
@@ -99,7 +102,7 @@ export function FeaturedPropertyLaunchCard({
               FROM
             </div>
             <div className="text-sm font-extrabold text-[hsl(var(--brand-ink))]">
-              {formatAED(property.price)}
+              {formatPrice(property.price, currency)}
             </div>
           </div>
         </div>

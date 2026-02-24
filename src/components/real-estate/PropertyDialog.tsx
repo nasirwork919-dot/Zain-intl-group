@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Bath, BedDouble, Check, MapPin, Ruler } from "lucide-react";
 
 import type { Property } from "@/components/real-estate/site-data";
-import { formatAED } from "@/components/real-estate/format";
+import { formatPrice } from "@/components/real-estate/format";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { SmartImage } from "@/components/real-estate/SmartImage";
+import { useCurrency } from "@/state/currency";
 
 export function PropertyDialog({
   property,
@@ -25,6 +26,8 @@ export function PropertyDialog({
   onOpenChange: (open: boolean) => void;
   onRequest: (property: Property) => void;
 }) {
+  const { currency } = useCurrency();
+
   const images = useMemo(() => {
     if (!property) return [];
     return property.gallery?.length ? property.gallery : [property.coverImage];
@@ -71,7 +74,7 @@ export function PropertyDialog({
                     From
                   </div>
                   <div className="text-base font-extrabold text-foreground">
-                    {formatAED(property.price)}
+                    {formatPrice(property.price, currency)}
                   </div>
                 </div>
               </div>

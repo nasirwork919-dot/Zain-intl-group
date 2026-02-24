@@ -1,12 +1,19 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Bath, BedDouble, Check, ChevronLeft, MapPin, Ruler } from "lucide-react";
+import {
+  Bath,
+  BedDouble,
+  Check,
+  ChevronLeft,
+  MapPin,
+  Ruler,
+} from "lucide-react";
 
 import { RealEstateHeader } from "@/components/real-estate/RealEstateHeader";
 import { SiteFooter } from "@/components/real-estate/SiteFooter";
 import { SmartImage } from "@/components/real-estate/SmartImage";
 import { FeaturedPropertyLaunchCard } from "@/components/real-estate/FeaturedPropertyLaunchCard";
-import { formatAED } from "@/components/real-estate/format";
+import { formatPrice } from "@/components/real-estate/format";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 
@@ -18,10 +25,12 @@ import {
   usePublishedProperties,
   type PublicProperty as Property,
 } from "@/hooks/use-published-properties";
+import { useCurrency } from "@/state/currency";
 
 export default function PropertyDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { currency } = useCurrency();
 
   const { data: all = [] } = usePublishedProperties();
   const property = useMemo(
@@ -148,7 +157,7 @@ export default function PropertyDetailsPage() {
                     PRICE
                   </div>
                   <div className="text-sm font-extrabold text-[hsl(var(--brand-ink))] sm:text-base">
-                    {formatAED(property.price)}
+                    {formatPrice(property.price, currency)}
                   </div>
                 </div>
               </div>
