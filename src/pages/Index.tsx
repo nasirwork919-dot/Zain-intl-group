@@ -130,8 +130,12 @@ const Index = () => {
                 key={`${src}-${idx}`}
                 src={src}
                 alt=""
-                className="absolute inset-0 h-full w-full object-cover opacity-0 hero-slide"
-                style={{ animationDelay: `${idx * 8}s` }}
+                className={
+                  idx === 0
+                    ? "absolute inset-0 h-full w-full object-cover opacity-100 hero-slide hero-slide--first"
+                    : "absolute inset-0 h-full w-full object-cover opacity-0 hero-slide"
+                }
+                style={idx === 0 ? undefined : { animationDelay: `${idx * 8}s` }}
                 loading={idx === 0 ? "eager" : "lazy"}
                 onError={(e) => {
                   const img = e.currentTarget;
@@ -182,11 +186,24 @@ const Index = () => {
               85% { opacity: 0; transform: scale(1.005); }
               100% { opacity: 0; transform: scale(1.005); }
             }
-            .hero-slide{ animation: heroHoldFade 24s ease-in-out infinite; will-change: opacity, transform; }
+
+            /* default (all non-first) */
+            .hero-slide{
+              animation: heroHoldFade 24s ease-in-out infinite;
+              will-change: opacity, transform;
+            }
+
+            /* Force first slide to be visible immediately on load/refresh,
+               then let it join the same looping animation. */
+            .hero-slide--first{
+              opacity: 1;
+              animation-delay: 0s;
+              animation-fill-mode: both;
+            }
 
             @media (prefers-reduced-motion: reduce){
-              .hero-slide{ animation: none !important; opacity: 0 !important; }
-              .hero-slide:first-of-type{ opacity: 1 !important; }
+              .hero-slide{ animation: none !important; opacity: 0 !important; transform: none !important; }
+              .hero-slide--first{ opacity: 1 !important; }
             }
           `}</style>
         </div>
