@@ -16,35 +16,35 @@ const communities: Community[] = [
     title: "Dubai Hills Estate",
     subtitle: "Family-first green district",
     image:
-      "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=2400&q=85",
+      "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1400&q=75",
     locationFilter: "Dubai Hills Estate",
   },
   {
     title: "Dubai Marina",
     subtitle: "Waterfront lifestyle & skyline",
     image:
-      "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=2400&q=85",
+      "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1400&q=75",
     locationFilter: "Dubai Marina",
   },
   {
     title: "Downtown Dubai",
     subtitle: "Landmarks & prime access",
     image:
-      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2400&q=85",
+      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1400&q=75",
     locationFilter: "Downtown Dubai",
   },
   {
     title: "Business Bay",
     subtitle: "Canal-side living",
     image:
-      "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=2400&q=85",
+      "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=1400&q=75",
     locationFilter: "Business Bay",
   },
   {
     title: "Jumeirah Village Circle",
     subtitle: "Value + community convenience",
     image:
-      "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=2400&q=85",
+      "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=1400&q=75",
     locationFilter: "Jumeirah Village Circle",
   },
 ];
@@ -216,7 +216,9 @@ export function ExploreCommunities({
           </button>
           <button
             type="button"
-            onClick={() => setActive((v) => Math.min(communities.length - 1, v + 1))}
+            onClick={() =>
+              setActive((v) => Math.min(communities.length - 1, v + 1))
+            }
             disabled={!canNext}
             className={cn(
               "inline-flex h-11 w-11 items-center justify-center rounded-2xl",
