@@ -1,28 +1,21 @@
-const FALLBACK = "/placeholder.svg";
-
-function localOrFallback(path: string) {
-  // If the file is missing, the browser will 404; we still want a deterministic src.
-  // Keep the intended local paths, but allow callers to use FALLBACK easily.
-  return path || FALLBACK;
-}
-
 export const DUBAI_IMAGES = {
-  // ORIGINAL/REVERTED behavior: local assets in /public/hero
-  // Expected files:
-  // - /public/hero/skyline.jpg
-  // - /public/hero/towers.jpg
-  // - /public/hero/burj-khalifa.jpg
   hero: {
-    skyline: localOrFallback("/hero/skyline.jpg"),
-    towers: localOrFallback("/hero/towers.jpg"),
-    burjKhalifa: localOrFallback("/hero/burj-khalifa.jpg"),
+    skyline:
+      "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=3200&q=90",
+    towers:
+      "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=3200&q=90",
+    burjKhalifa:
+      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=3200&q=90",
   },
 
   tiles: {
-    skyline: localOrFallback("/hero/skyline.jpg"),
-    towers: localOrFallback("/hero/towers.jpg"),
-    burjKhalifa: localOrFallback("/hero/burj-khalifa.jpg"),
+    skyline:
+      "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=2200&q=85",
+    towers:
+      "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=2200&q=85",
+    burjKhalifa:
+      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2200&q=85",
   },
 
-  fallback: FALLBACK,
+  fallback: "/placeholder.svg",
 } as const;
