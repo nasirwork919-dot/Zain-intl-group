@@ -122,9 +122,9 @@ const Index = () => {
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0">
             {[
-              DUBAI_IMAGES.hero.burjKhalifa,
               DUBAI_IMAGES.hero.skyline,
               DUBAI_IMAGES.hero.towers,
+              DUBAI_IMAGES.hero.burjKhalifa,
             ].map((src, idx) => (
               <img
                 key={src}
