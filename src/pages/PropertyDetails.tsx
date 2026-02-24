@@ -26,6 +26,7 @@ import {
   type PublicProperty as Property,
 } from "@/hooks/use-published-properties";
 import { useCurrency } from "@/state/currency";
+import { featuredProperties } from "@/components/real-estate/site-data";
 
 export default function PropertyDetailsPage() {
   const { id } = useParams();
@@ -33,10 +34,15 @@ export default function PropertyDetailsPage() {
   const { currency } = useCurrency();
 
   const { data: all = [] } = usePublishedProperties();
-  const property = useMemo(
-    () => all.find((p) => p.id === id) ?? null,
-    [all, id],
-  );
+
+  const property = useMemo<Property | null>(() => {
+    const fromDb = all.find((p) => p.id === id) ?? null;
+    if (fromDb) return fromDb;
+
+    // Fallback: local demo inventory (so opening cards never shows "not found")
+    const fromLocal = featuredProperties.find((p) => p.id === id) ?? null;
+    return fromLocal;
+  }, [all, id]);
 
   const [activeIdx, setActiveIdx] = useState(0);
 
@@ -47,10 +53,13 @@ export default function PropertyDetailsPage() {
 
   const related = useMemo(() => {
     if (!property) return [];
-    const same = all.filter(
+    // Prefer DB inventory for related; fallback to local if DB is empty
+    const pool = all.length ? all : featuredProperties;
+
+    const same = pool.filter(
       (p) => p.id !== property.id && p.location === property.location,
     );
-    const rest = all.filter(
+    const rest = pool.filter(
       (p) => p.id !== property.id && p.location !== property.location,
     );
     return [...same, ...rest].slice(0, 8);
