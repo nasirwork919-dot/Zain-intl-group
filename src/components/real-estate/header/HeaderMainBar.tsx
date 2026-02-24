@@ -1,9 +1,10 @@
-import { Calculator, ChevronDown } from "lucide-react";
+import { Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import { cn } from "@/lib/utils";
-import { toast } from "@/hooks/use-toast";
+import { CalculatorDialog } from "@/components/real-estate/CalculatorDialog";
 
 export type HeaderNavItem = {
   label: string;
@@ -31,6 +32,8 @@ export function HeaderMainBar({
   onNavClickCloseMegas: () => void;
   expandedByMega: Partial<Record<NonNullable<HeaderNavItem["mega"]>, boolean>>;
 }) {
+  const [calcOpen, setCalcOpen] = useState(false);
+
   return (
     <div className="w-full bg-white">
       <div className="mx-auto max-w-7xl px-4">
@@ -94,11 +97,12 @@ export function HeaderMainBar({
                 >
                   <span>{item.label}</span>
                   {item.hasChevron ? (
-                    <ChevronDown
+                    <span
                       className={cn(
                         "h-4 w-4 opacity-70 transition-transform",
                         expanded && "rotate-180",
                       )}
+                      aria-hidden="true"
                     />
                   ) : null}
                 </Link>
@@ -115,17 +119,14 @@ export function HeaderMainBar({
               "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/35",
             )}
             aria-label="Calculator"
-            onClick={() =>
-              toast({
-                title: "Calculator",
-                description: "We can add a mortgage calculator next.",
-              })
-            }
+            onClick={() => setCalcOpen(true)}
           >
             <Calculator className="h-5 w-5" />
           </button>
         </div>
       </div>
+
+      <CalculatorDialog open={calcOpen} onOpenChange={setCalcOpen} defaultTab="mortgage" />
     </div>
   );
 }
