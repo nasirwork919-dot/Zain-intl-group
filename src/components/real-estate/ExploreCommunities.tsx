@@ -3,7 +3,6 @@ import { ArrowUpRight, ChevronLeft, ChevronRight, Search } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { SmartImage } from "@/components/real-estate/SmartImage";
-import { DUBAI_IMAGES } from "@/components/real-estate/dubai-images";
 
 type Community = {
   title: string;
@@ -16,31 +15,36 @@ const communities: Community[] = [
   {
     title: "Dubai Hills Estate",
     subtitle: "Family-first green district",
-    image: DUBAI_IMAGES.tiles.towers,
+    image:
+      "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=2400&q=85",
     locationFilter: "Dubai Hills Estate",
   },
   {
     title: "Dubai Marina",
     subtitle: "Waterfront lifestyle & skyline",
-    image: DUBAI_IMAGES.tiles.skyline,
+    image:
+      "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=2400&q=85",
     locationFilter: "Dubai Marina",
   },
   {
     title: "Downtown Dubai",
     subtitle: "Landmarks & prime access",
-    image: DUBAI_IMAGES.tiles.burjKhalifa,
+    image:
+      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2400&q=85",
     locationFilter: "Downtown Dubai",
   },
   {
     title: "Business Bay",
     subtitle: "Canal-side living",
-    image: DUBAI_IMAGES.tiles.towers,
+    image:
+      "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=2400&q=85",
     locationFilter: "Business Bay",
   },
   {
     title: "Jumeirah Village Circle",
     subtitle: "Value + community convenience",
-    image: DUBAI_IMAGES.tiles.skyline,
+    image:
+      "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=2400&q=85",
     locationFilter: "Jumeirah Village Circle",
   },
 ];
@@ -162,7 +166,11 @@ export function ExploreCommunities({
     if (!el) return;
     const child = el.children.item(idx) as HTMLElement | null;
     if (!child) return;
-    child.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    child.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest",
+    });
   };
 
   useEffect(() => {
@@ -183,8 +191,8 @@ export function ExploreCommunities({
             Neighborhoods with skyline energy
           </h2>
           <p className="mt-2 max-w-xl text-sm font-medium leading-relaxed text-[hsl(var(--muted-ink))]">
-            Browse Dubai by vibe — from landmark living in Downtown to marina-front
-            towers and calm, family-first districts.
+            Browse Dubai by vibe — from landmark living in Downtown to
+            marina-front towers and calm, family-first districts.
           </p>
         </div>
 
@@ -237,11 +245,7 @@ export function ExploreCommunities({
 
       <div
         ref={scrollerRef}
-        className={cn(
-          "mt-7 grid gap-4",
-          "sm:grid-cols-2",
-          "lg:grid-cols-3",
-        )}
+        className={cn("mt-7 grid gap-4", "sm:grid-cols-2", "lg:grid-cols-3")}
       >
         {filtered.map((c, idx) => (
           <div key={c.title} className="min-h-[320px]">
