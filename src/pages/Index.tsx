@@ -35,6 +35,7 @@ import {
   usePublishedProperties,
   type PublicProperty as Property,
 } from "@/hooks/use-published-properties";
+import { useScrollToTop } from "@/hooks/use-scroll-to-top";
 
 function hasPlacement(placements: string[], key: string) {
   return (placements ?? [])
@@ -43,6 +44,8 @@ function hasPlacement(placements: string[], key: string) {
 }
 
 const Index = () => {
+  useScrollToTop({ enabled: true });
+
   const navigate = useNavigate();
 
   const { data: allProperties = [] } = usePublishedProperties();
