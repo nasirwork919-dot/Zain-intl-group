@@ -17,6 +17,7 @@ import AdminDashboardPage from "./pages/AdminDashboard";
 import AdminPropertiesPage from "./pages/AdminProperties";
 import AdminLeadsPage from "./pages/AdminLeads";
 import { AdminGate } from "@/components/admin/AdminGate";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
 
