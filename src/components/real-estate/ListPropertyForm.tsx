@@ -12,6 +12,7 @@ import {
 
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -44,6 +45,65 @@ function formatNumber(v: string) {
   const n = Number(String(v).replace(/[^0-9.]/g, ""));
   if (!Number.isFinite(n) || n <= 0) return "";
   return n.toLocaleString();
+}
+
+function buildListingLines(input: {
+  ownerName: string;
+  ownerPhone: string;
+  ownerEmail: string;
+  listingType: ListingType;
+  propertyType: PropertyType;
+  title: string;
+  community: string;
+  building: string;
+  addressNotes: string;
+  price: string;
+  beds: string;
+  baths: string;
+  areaSqft: string;
+  furnishing: "furnished" | "unfurnished" | "partly";
+  availability: "ready" | "vacant" | "tenanted" | "off-plan";
+  description: string;
+  photoLinks: string;
+}) {
+  const priceFormatted = formatNumber(input.price);
+  const areaFormatted = formatNumber(input.areaSqft);
+
+  const photosClean = input.photoLinks
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+  return [
+    "New Property Listing Request (Website)",
+    "",
+    "Owner details",
+    `• Name: ${input.ownerName.trim()}`,
+    input.ownerPhone.trim() ? `• Phone/WhatsApp: ${input.ownerPhone.trim()}` : "",
+    input.ownerEmail.trim() ? `• Email: ${input.ownerEmail.trim()}` : "",
+    "",
+    "Listing details",
+    `• Listing type: ${input.listingType.toUpperCase()}`,
+    `• Property type: ${input.propertyType.toUpperCase()}`,
+    `• Title: ${input.title.trim()}`,
+    `• Community: ${input.community.trim()}`,
+    input.building.trim() ? `• Building: ${input.building.trim()}` : "",
+    input.addressNotes.trim() ? `• Address notes: ${input.addressNotes.trim()}` : "",
+    `• Price (AED): ${priceFormatted || input.price.trim()}`,
+    `• Beds: ${input.beds}`,
+    `• Baths: ${input.baths}`,
+    areaFormatted
+      ? `• Area: ${areaFormatted} sqft`
+      : input.areaSqft.trim()
+        ? `• Area: ${input.areaSqft.trim()}`
+        : "",
+    `• Furnishing: ${input.furnishing.replace("-", " ").toUpperCase()}`,
+    `• Availability: ${input.availability.replace("-", " ").toUpperCase()}`,
+    "",
+    input.description.trim() ? `Description:\n${input.description.trim()}` : "",
+    "",
+    photosClean.length ? `Photos / links:\n${photosClean.join("\n")}` : "",
+  ].filter(Boolean);
 }
 
 export function ListPropertyForm({
@@ -111,56 +171,49 @@ export function ListPropertyForm({
     setPhotoLinks("");
   };
 
-  const submitToWhatsApp = () => {
+  const submit = async () => {
     const wa = whatsappNumber.replace(/[^\d]/g, "");
-    const priceFormatted = formatNumber(price);
-    const areaFormatted = formatNumber(areaSqft);
 
-    const lines: string[] = [
-      "New Property Listing Request (Website)",
-      "",
-      "Owner details",
-      `• Name: ${ownerName.trim()}`,
-      ownerPhone.trim() ? `• Phone/WhatsApp: ${ownerPhone.trim()}` : "",
-      ownerEmail.trim() ? `• Email: ${ownerEmail.trim()}` : "",
-      "",
-      "Listing details",
-      `• Listing type: ${listingType.toUpperCase()}`,
-      `• Property type: ${propertyType.toUpperCase()}`,
-      `• Title: ${title.trim()}`,
-      `• Community: ${community.trim()}`,
-      building.trim() ? `• Building: ${building.trim()}` : "",
-      addressNotes.trim() ? `• Address notes: ${addressNotes.trim()}` : "",
-      `• Price (AED): ${priceFormatted || price.trim()}`,
-      `• Beds: ${beds}`,
-      `• Baths: ${baths}`,
-      areaFormatted
-        ? `• Area: ${areaFormatted} sqft`
-        : areaSqft.trim()
-          ? `• Area: ${areaSqft.trim()}`
-          : "",
-      `• Furnishing: ${furnishing.replace("-", " ").toUpperCase()}`,
-      `• Availability: ${availability.replace("-", " ").toUpperCase()}`,
-      "",
-      description.trim() ? `Description:\n${description.trim()}` : "",
-      "",
-      photoLinks.trim()
-        ? `Photos / links:\n${photoLinks
-            .split("\n")
-            .map((l) => l.trim())
-            .filter(Boolean)
-            .join("\n")}`
-        : "",
-    ];
+    const lines = buildListingLines({
+      ownerName,
+      ownerPhone,
+      ownerEmail,
+      listingType,
+      propertyType,
+      title,
+      community,
+      building,
+      addressNotes,
+      price,
+      beds,
+      baths,
+      areaSqft,
+      furnishing,
+      availability,
+      description,
+      photoLinks,
+    });
 
+    // 1) Save into admin inbox (leads table)
+    const messageForDb = lines.join("\n");
+    const { error } = await supabase.from("leads").insert({
+      name: ownerName.trim() || null,
+      phone: ownerPhone.trim() || null,
+      email: ownerEmail.trim() || null,
+      message: messageForDb,
+      source: "website:list-property",
+    });
+    if (error) throw error;
+
+    // 2) Open WhatsApp with the same details
     const text = toWhatsAppText(lines);
     const url = `https://wa.me/${wa}?text=${text}`;
-
     window.open(url, "_blank", "noopener,noreferrer");
 
     toast({
-      title: "Sending to WhatsApp",
-      description: "We opened WhatsApp with your property details pre-filled.",
+      title: "Sent",
+      description:
+        "Saved in admin inbox and opened WhatsApp with your property details pre-filled.",
     });
 
     reset();
@@ -485,7 +538,7 @@ export function ListPropertyForm({
                 <Button
                   type="button"
                   disabled={!canSubmit}
-                  onClick={submitToWhatsApp}
+                  onClick={submit}
                   className={cn(
                     "h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92",
                     "disabled:opacity-50",

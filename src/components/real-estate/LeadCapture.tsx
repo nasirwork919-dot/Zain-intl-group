@@ -8,10 +8,29 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
+function toWhatsAppText(lines: string[]) {
+  return encodeURIComponent(lines.filter(Boolean).join("\n"));
+}
+
+function openWhatsApp({
+  whatsappNumber,
+  lines,
+}: {
+  whatsappNumber: string;
+  lines: string[];
+}) {
+  const wa = whatsappNumber.replace(/[^\d]/g, "");
+  const text = toWhatsAppText(lines);
+  const url = `https://wa.me/${wa}?text=${text}`;
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
 export function LeadCapture({
   defaultMessage,
+  whatsappNumber = "+971521362224",
 }: {
   defaultMessage?: string;
+  whatsappNumber?: string;
 }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -102,10 +121,23 @@ export function LeadCapture({
               throw error;
             }
 
+            openWhatsApp({
+              whatsappNumber,
+              lines: [
+                "New Website Lead (Talk to an agent)",
+                "",
+                `• Name: ${name.trim()}`,
+                phone.trim() ? `• Phone/WhatsApp: ${phone.trim()}` : "",
+                email.trim() ? `• Email: ${email.trim()}` : "",
+                "",
+                message.trim() ? `Message:\n${message.trim()}` : "",
+              ],
+            });
+
             toast({
               title: "Request sent",
               description:
-                "Thanks! An agent will reach out shortly with a curated shortlist.",
+                "Saved in admin inbox and opened WhatsApp with your details pre-filled.",
             });
 
             setName("");
