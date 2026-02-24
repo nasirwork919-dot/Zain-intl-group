@@ -120,23 +120,30 @@ const Index = () => {
       {/* Hero (Dubai towers + Burj Khalifa vibe) */}
       <section className="relative flex overflow-hidden pt-24 min-h-[760px] sm:pt-20 sm:min-h-[820px] lg:min-h-[920px]">
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute inset-0">
-            {[
-              DUBAI_IMAGES.hero.skyline,
-              DUBAI_IMAGES.hero.towers,
-              DUBAI_IMAGES.hero.burjKhalifa,
-            ].map((src, idx) => (
+          {/* Static base layer: ALWAYS skyline on first paint */}
+          <img
+            src={DUBAI_IMAGES.hero.skyline}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover opacity-100"
+            loading="eager"
+            onError={(e) => {
+              const img = e.currentTarget;
+              if (img.dataset.fallbackApplied === "1") return;
+              img.dataset.fallbackApplied = "1";
+              img.src = DUBAI_IMAGES.fallback;
+            }}
+          />
+
+          {/* Animated layers on top */}
+          {[DUBAI_IMAGES.hero.towers, DUBAI_IMAGES.hero.burjKhalifa].map(
+            (src, i) => (
               <img
-                key={`${src}-${idx}`}
+                key={`${src}-${i}`}
                 src={src}
                 alt=""
-                className={
-                  idx === 0
-                    ? "absolute inset-0 h-full w-full object-cover opacity-100 hero-slide hero-slide--first"
-                    : "absolute inset-0 h-full w-full object-cover opacity-0 hero-slide"
-                }
-                style={idx === 0 ? undefined : { animationDelay: `${idx * 8}s` }}
-                loading={idx === 0 ? "eager" : "lazy"}
+                className="absolute inset-0 h-full w-full object-cover opacity-0 hero-slide"
+                style={{ animationDelay: `${i * 8}s` }}
+                loading="lazy"
                 onError={(e) => {
                   const img = e.currentTarget;
                   if (img.dataset.fallbackApplied === "1") return;
@@ -144,8 +151,8 @@ const Index = () => {
                   img.src = DUBAI_IMAGES.fallback;
                 }}
               />
-            ))}
-          </div>
+            ),
+          )}
 
           <div className="absolute inset-0 bg-[#0b1220]/38" />
         </div>
@@ -187,23 +194,14 @@ const Index = () => {
               100% { opacity: 0; transform: scale(1.005); }
             }
 
-            /* default (all non-first) */
+            /* Only animated overlays use this */
             .hero-slide{
               animation: heroHoldFade 24s ease-in-out infinite;
               will-change: opacity, transform;
             }
 
-            /* Force first slide to be visible immediately on load/refresh,
-               then let it join the same looping animation. */
-            .hero-slide--first{
-              opacity: 1;
-              animation-delay: 0s;
-              animation-fill-mode: both;
-            }
-
             @media (prefers-reduced-motion: reduce){
               .hero-slide{ animation: none !important; opacity: 0 !important; transform: none !important; }
-              .hero-slide--first{ opacity: 1 !important; }
             }
           `}</style>
         </div>
