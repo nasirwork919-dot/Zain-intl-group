@@ -101,7 +101,7 @@ export function CuratedOpportunities({
   }, [canNext, canPrev]);
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-16">
+    <section className="mx-auto mt-6 max-w-7xl px-4 pb-16 sm:mt-10">
       <div className="text-left">
         <h2 className="font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           Stay up to date on the latest{" "}
