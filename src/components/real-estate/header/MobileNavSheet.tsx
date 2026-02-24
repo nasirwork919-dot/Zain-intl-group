@@ -135,10 +135,7 @@ export function MobileNavSheet({
           <div className="flex-1 overflow-y-auto px-4 pb-6 pt-4">
             <div className="grid gap-3">
               <div className="rounded-[5px] bg-muted/35 p-3 ring-1 ring-black/5">
-                <MobileCalculatorButton
-                  variant="full"
-                  onOpened={() => onOpenChange(false)}
-                />
+                <MobileCalculatorButton variant="full" />
                 <div className="mt-2 text-xs font-semibold text-muted-foreground">
                   Mortgage + ROI/Yield in one place.
                 </div>

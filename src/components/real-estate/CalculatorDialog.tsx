@@ -173,15 +173,16 @@ export function CalculatorDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          "p-0",
+          "flex flex-col p-0",
           "w-[calc(100vw-24px)] sm:w-full",
           "max-w-4xl",
           "h-[90vh] sm:h-auto",
-          "overflow-hidden rounded-[5px]",
+          // IMPORTANT: don't use overflow-hidden on mobile, it can block inner scrolling
+          "rounded-[5px]",
         )}
       >
-        <div className="flex h-full flex-col bg-[hsl(var(--page))]">
-          <DialogHeader className="sticky top-0 z-10 border-b border-black/10 bg-white/80 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-white/65 sm:px-5 sm:py-4">
+        <div className="flex min-h-0 flex-1 flex-col bg-[hsl(var(--page))]">
+          <DialogHeader className="shrink-0 border-b border-black/10 bg-white/80 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-white/65 sm:px-5 sm:py-4">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <DialogTitle className="flex items-center gap-2 text-left text-base font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
@@ -205,10 +206,10 @@ export function CalculatorDialog({
             </div>
           </DialogHeader>
 
-          {/* Scrollable body (enhanced mobile scroll behavior) */}
+          {/* Scrollable body */}
           <div
             className={cn(
-              "flex-1 overflow-y-auto px-3 py-4 sm:px-6 sm:py-6",
+              "min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-6 sm:py-6",
               "overscroll-contain",
               "[-webkit-overflow-scrolling:touch]",
             )}
@@ -522,7 +523,7 @@ export function CalculatorDialog({
             </Tabs>
           </div>
 
-          <div className="border-t border-black/10 bg-white/65 px-4 py-3 text-xs font-semibold text-muted-foreground sm:px-6">
+          <div className="shrink-0 border-t border-black/10 bg-white/65 px-4 py-3 text-xs font-semibold text-muted-foreground sm:px-6">
             Calculations are estimates; actual mortgage offers and returns vary
             by lender, fees, and occupancy.
           </div>
