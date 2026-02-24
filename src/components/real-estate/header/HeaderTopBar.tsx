@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { HeaderCurrencyHoverMenu } from "@/components/real-estate/header/HeaderCurrencyHoverMenu";
 import { useNavigate } from "react-router-dom";
+import { MobileCalculatorButton } from "@/components/real-estate/header/MobileCalculatorButton";
 
 type CurrencyCode = "AED" | "EUR" | "GBP" | "USD";
 
@@ -89,7 +90,10 @@ export function HeaderTopBar({
                 </UtilityPill>
               </div>
 
-              <HeaderCurrencyHoverMenu value={topCurrency} onChange={setTopCurrency} />
+              <HeaderCurrencyHoverMenu
+                value={topCurrency}
+                onChange={setTopCurrency}
+              />
             </div>
 
             <div className="hidden items-center gap-3 md:flex">
@@ -125,7 +129,11 @@ export function HeaderTopBar({
               </button>
             </div>
 
-            <div className="md:hidden">{mobileMenuTrigger}</div>
+            {/* Mobile actions */}
+            <div className="flex items-center gap-2 md:hidden">
+              <MobileCalculatorButton />
+              {mobileMenuTrigger}
+            </div>
           </div>
         </div>
       </div>
