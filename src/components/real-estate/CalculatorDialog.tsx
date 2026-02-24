@@ -47,10 +47,32 @@ function CompactMetric({
         <span className="inline-flex h-7 w-7 items-center justify-center rounded-[5px] bg-white/70 ring-1 ring-black/5">
           <Icon className="h-4 w-4 text-[hsl(var(--brand-ink))]" />
         </span>
-        {label}
+        <span className="min-w-0 break-words">{label}</span>
       </div>
-      <div className="mt-2 text-sm font-extrabold text-[hsl(var(--brand-ink))]">
+      <div className="mt-2 break-words text-sm font-extrabold text-[hsl(var(--brand-ink))]">
         {value}
+      </div>
+    </div>
+  );
+}
+
+function KpiCard({
+  label,
+  value,
+  hint,
+}: {
+  label: string;
+  value: string;
+  hint: string;
+}) {
+  return (
+    <div className="rounded-[5px] border border-black/10 bg-white/70 p-4 ring-1 ring-black/5">
+      <div className="text-xs font-semibold text-muted-foreground">{label}</div>
+      <div className="mt-2 break-words text-2xl font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
+        {value}
+      </div>
+      <div className="mt-2 text-xs font-semibold text-muted-foreground">
+        {hint}
       </div>
     </div>
   );
@@ -151,7 +173,6 @@ export function CalculatorDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          // Mobile: full-height, safe insets, scrollable content
           "p-0",
           "w-[calc(100vw-24px)] sm:w-full",
           "max-w-4xl",
@@ -160,7 +181,6 @@ export function CalculatorDialog({
         )}
       >
         <div className="flex h-full flex-col bg-[hsl(var(--page))]">
-          {/* Sticky header (so close is always available on mobile) */}
           <DialogHeader className="sticky top-0 z-10 border-b border-black/10 bg-white/80 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-white/65 sm:px-5 sm:py-4">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
@@ -185,7 +205,6 @@ export function CalculatorDialog({
             </div>
           </DialogHeader>
 
-          {/* Scrollable body */}
           <div className="flex-1 overflow-y-auto px-3 py-4 sm:px-6 sm:py-6">
             <Tabs defaultValue={defaultTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2 rounded-[5px] bg-white/70 p-1 ring-1 ring-black/10">
@@ -307,11 +326,7 @@ export function CalculatorDialog({
                   </Card>
 
                   <div className="grid gap-4 lg:col-span-5">
-                    <div
-                      className={cn(
-                        "rounded-[5px] border border-black/10 bg-white/70 p-4 ring-1 ring-black/5",
-                      )}
-                    >
+                    <div className="rounded-[5px] border border-black/10 bg-white/70 p-4 ring-1 ring-black/5">
                       <div className="text-xs font-semibold text-muted-foreground">
                         Estimated monthly payment
                       </div>
@@ -450,33 +465,22 @@ export function CalculatorDialog({
                   </Card>
 
                   <div className="grid gap-4 lg:col-span-5">
+                    {/* KPI cards should never squeeze into 2 columns on small screens */}
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-                      <div className="rounded-[5px] border border-black/10 bg-white/70 p-4 ring-1 ring-black/5">
-                        <div className="text-xs font-semibold text-muted-foreground">
-                          Gross yield
-                        </div>
-                        <div className="mt-2 text-2xl font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
-                          {roi.grossYieldPct.toFixed(2)}%
-                        </div>
-                        <div className="mt-2 text-xs font-semibold text-muted-foreground">
-                          Rent ÷ purchase price
-                        </div>
-                      </div>
-
-                      <div className="rounded-[5px] border border-black/10 bg-white/70 p-4 ring-1 ring-black/5">
-                        <div className="text-xs font-semibold text-muted-foreground">
-                          Net yield
-                        </div>
-                        <div className="mt-2 text-2xl font-extrabold tracking-tight text-[hsl(var(--brand-ink))]">
-                          {roi.netYieldPct.toFixed(2)}%
-                        </div>
-                        <div className="mt-2 text-xs font-semibold text-muted-foreground">
-                          After vacancy + service charges
-                        </div>
-                      </div>
+                      <KpiCard
+                        label="Gross yield"
+                        value={`${roi.grossYieldPct.toFixed(2)}%`}
+                        hint="Rent ÷ purchase price"
+                      />
+                      <KpiCard
+                        label="Net yield"
+                        value={`${roi.netYieldPct.toFixed(2)}%`}
+                        hint="After vacancy + service charges"
+                      />
                     </div>
 
-                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+                    {/* Keep metrics 1-col on mobile, 2-col only on md+, then 1-col on lg */}
+                    <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-1">
                       <CompactMetric
                         icon={TrendingUp}
                         label="Effective rent"
@@ -513,10 +517,9 @@ export function CalculatorDialog({
             </Tabs>
           </div>
 
-          {/* Footer hint */}
           <div className="border-t border-black/10 bg-white/65 px-4 py-3 text-xs font-semibold text-muted-foreground sm:px-6">
-            Calculations are estimates; actual mortgage offers and returns vary by lender,
-            fees, and occupancy.
+            Calculations are estimates; actual mortgage offers and returns vary
+            by lender, fees, and occupancy.
           </div>
         </div>
       </DialogContent>
