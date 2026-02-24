@@ -205,7 +205,14 @@ export function CalculatorDialog({
             </div>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto px-3 py-4 sm:px-6 sm:py-6">
+          {/* Scrollable body (enhanced mobile scroll behavior) */}
+          <div
+            className={cn(
+              "flex-1 overflow-y-auto px-3 py-4 sm:px-6 sm:py-6",
+              "overscroll-contain",
+              "[-webkit-overflow-scrolling:touch]",
+            )}
+          >
             <Tabs defaultValue={defaultTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2 rounded-[5px] bg-white/70 p-1 ring-1 ring-black/10">
                 <TabsTrigger value="mortgage" className="rounded-[5px]">
@@ -465,7 +472,6 @@ export function CalculatorDialog({
                   </Card>
 
                   <div className="grid gap-4 lg:col-span-5">
-                    {/* KPI cards should never squeeze into 2 columns on small screens */}
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
                       <KpiCard
                         label="Gross yield"
@@ -479,7 +485,6 @@ export function CalculatorDialog({
                       />
                     </div>
 
-                    {/* Keep metrics 1-col on mobile, 2-col only on md+, then 1-col on lg */}
                     <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-1">
                       <CompactMetric
                         icon={TrendingUp}
