@@ -24,12 +24,12 @@ const BATHS_FIELD = Deno.env.get("BRITIX_BATHS_FIELD") ?? "UF_CRM_1772303064261"
 const AREA_FIELD = Deno.env.get("BRITIX_AREA_FIELD") ?? "UF_CRM_1772303090036";
 const PROPERTY_TYPE_FIELD = Deno.env.get("BRITIX_PROPERTY_TYPE_FIELD") ?? "UF_CRM_1772303144011";
 const LISTING_TYPE_FIELD = Deno.env.get("BRITIX_LISTING_TYPE_FIELD") ?? "UF_CRM_1772303195091";
-const LOCATION_FIELD = Deno.env.get("BRITIX_LOCATION_FIELD") ?? "UF_CRM_LOCATION";
-const COVER_FIELD = Deno.env.get("BRITIX_COVER_IMAGE_FIELD") ?? "UF_CRM_COVER_IMAGE";
-const GALLERY_FIELD = Deno.env.get("BRITIX_GALLERY_FIELD") ?? "UF_CRM_GALLERY";
-const AMENITIES_FIELD = Deno.env.get("BRITIX_AMENITIES_FIELD") ?? "UF_CRM_AMENITIES";
-const TAG_FIELD = Deno.env.get("BRITIX_TAG_FIELD") ?? "UF_CRM_TAG";
-const FEATURED_FIELD = Deno.env.get("BRITIX_FEATURED_FIELD") ?? "UF_CRM_FEATURED";
+const LOCATION_FIELD = Deno.env.get("BRITIX_LOCATION_FIELD") ?? "";
+const COVER_FIELD = Deno.env.get("BRITIX_COVER_IMAGE_FIELD") ?? "";
+const GALLERY_FIELD = Deno.env.get("BRITIX_GALLERY_FIELD") ?? "";
+const AMENITIES_FIELD = Deno.env.get("BRITIX_AMENITIES_FIELD") ?? "";
+const TAG_FIELD = Deno.env.get("BRITIX_TAG_FIELD") ?? "";
+const FEATURED_FIELD = Deno.env.get("BRITIX_FEATURED_FIELD") ?? "";
 
 function toNumber(value: unknown, fallback = 0) {
   const n = Number(value);
@@ -66,6 +66,23 @@ function toStringArray(value: unknown) {
   }
 
   return [] as string[];
+}
+
+function stripBitrixMarkup(value: unknown, fallback = "") {
+  const raw = toStringSafe(value, fallback);
+  if (!raw) return fallback;
+
+  return raw
+    .replace(/\[(\/)?p\]/gi, " ")
+    .replace(/\[(\/)?br\]/gi, "\n")
+    .replace(/\[br\s*\/?\]/gi, "\n")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\[\/?[a-z0-9_]+(?:=[^\]]+)?\]/gi, " ")
+    .replace(/\s+\n/g, "\n")
+    .replace(/\n\s+/g, "\n")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
 }
 
 function normalizeListingType(value: unknown) {
@@ -146,8 +163,8 @@ function mapDeal(item: BitrixDeal) {
     tag: toStringSafe(readDealField(item, TAG_FIELD)) || null,
     cover_image: cover,
     gallery,
-    description: toStringSafe(item.COMMENTS, "Imported from Bitrix24."),
-    amenities: toStringArray(readDealField(item, AMENITIES_FIELD)),
+    description: stripBitrixMarkup(item.COMMENTS, "Imported from Bitrix24."),
+    amenities: toStringArray(readDealField(item, AMENITIES_FIELD)).map((x) => stripBitrixMarkup(x)).filter(Boolean),
     published: normalizePublished(null, stageId),
     listing_type: listingType,
     property_type: propertyType,
