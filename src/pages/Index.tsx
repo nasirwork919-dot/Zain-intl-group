@@ -26,6 +26,7 @@ import { YourHomeYourWay } from "@/components/real-estate/YourHomeYourWay";
 import { SiteFooter } from "@/components/real-estate/SiteFooter";
 import { FeaturedPropertyLaunchCard } from "@/components/real-estate/FeaturedPropertyLaunchCard";
 import { DUBAI_IMAGES } from "@/components/real-estate/dubai-images";
+import { WhatsAppFloatingButton } from "@/components/WhatsAppFloatingButton";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -538,10 +539,14 @@ const Index = () => {
 
             <div className="grid gap-3">
               {[
-                { label: "WhatsApp", value: "+971 55 123 4567" },
-                { label: "Email", value: "hello@primadom.ae" },
-                { label: "Office", value: "Dubai, United Arab Emirates" },
+                { label: "Call / WhatsApp", value: "+971 50 5033721" },
+                { label: "Email", value: "info@zaindubai.com" },
+                {
+                  label: "Address",
+                  value: "Tamani Arts Office Tower, Business Bay, Dubai, U.A.E.",
+                },
               ].map((i) => (
+
                 <div
                   key={i.label}
                   className="rounded-[5px] border border-black/5 bg-white/70 p-4 ring-1 ring-black/10"
@@ -580,6 +585,18 @@ const Index = () => {
       <SiteFooter
         onGetInTouch={() => scrollTo("#contact")}
         onNavigateSection={(hash) => scrollTo(hash)}
+      />
+
+      <WhatsAppFloatingButton
+        number="+971 50 5033721"
+        defaultMessageLines={[
+          "Hello Zain Dubai,",
+          "I’m interested in a property in Dubai.",
+          "",
+          "My name:",
+          "My preferred area:",
+          "My budget:",
+        ]}
       />
 
       <ScrollUpButton />
