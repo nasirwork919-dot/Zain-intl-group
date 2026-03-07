@@ -41,7 +41,7 @@ export function WhatsAppFloatingButton({
   });
 
   return (
-    <div className={cn("fixed bottom-5 right-5 z-50", className)}>
+    <div className={cn("fixed bottom-5 left-5 z-50", className)}>
       <Tooltip>
         <TooltipTrigger asChild>
           <a
@@ -50,40 +50,30 @@ export function WhatsAppFloatingButton({
             rel="noopener noreferrer"
             aria-label="Chat on WhatsApp"
             className={cn(
-              "group inline-flex items-center gap-3",
-              "rounded-full",
+              "group inline-flex items-center justify-center",
+              "h-11 w-11 rounded-full",
               "border border-white/30",
               "bg-[#128C7E] text-white",
-              "px-4 py-3",
-              "shadow-[0_18px_45px_-22px_rgba(18,140,126,0.75)]",
+              "shadow-[0_18px_45px_-26px_rgba(18,140,126,0.72)]",
               "ring-1 ring-black/5",
               "transition-all duration-200",
-              "hover:-translate-y-0.5 hover:bg-[#0F7A6E] hover:shadow-[0_22px_55px_-26px_rgba(18,140,126,0.85)]",
+              "hover:-translate-y-0.5 hover:bg-[#0F7A6E]",
               "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#128C7E]/35 focus-visible:ring-offset-2",
             )}
           >
             <span
               className={cn(
-                "grid h-10 w-10 place-items-center rounded-full",
-                "bg-white/15 ring-1 ring-white/20",
-                "transition-transform duration-200 group-hover:scale-[1.03]",
+                "grid h-9 w-9 place-items-center rounded-full",
+                "bg-white/12 ring-1 ring-white/20",
+                "transition-transform duration-200 group-hover:scale-[1.04]",
               )}
             >
               <MessageCircle className="h-5 w-5" />
             </span>
-
-            <span className="hidden flex-col leading-tight sm:flex">
-              <span className="text-xs font-semibold text-white/85">
-                WhatsApp us
-              </span>
-              <span className="text-sm font-extrabold tracking-tight">
-                +971 50 5033721
-              </span>
-            </span>
           </a>
         </TooltipTrigger>
         <TooltipContent className="rounded-[5px] bg-[#0b1220] text-white/90">
-          Chat with us on WhatsApp
+          WhatsApp: +971 50 5033721
         </TooltipContent>
       </Tooltip>
     </div>
