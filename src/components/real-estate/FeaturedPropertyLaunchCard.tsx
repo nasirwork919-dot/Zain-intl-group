@@ -34,10 +34,17 @@ export function FeaturedPropertyLaunchCard({
       />
 
       <div className="relative z-[1] h-full w-full">
+        <div className="absolute inset-0 bg-[#0b1220]" />
         <SmartImage
           src={property.coverImage}
           alt={property.title}
-          className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+          className="absolute inset-0 h-full w-full scale-[1.05] object-cover opacity-25 blur-md transition duration-700 group-hover:scale-[1.08]"
+          loading="lazy"
+        />
+        <SmartImage
+          src={property.coverImage}
+          alt={property.title}
+          className="relative h-full w-full object-contain p-3 transition duration-700 group-hover:scale-[1.02] sm:p-4"
           loading="lazy"
         />
 

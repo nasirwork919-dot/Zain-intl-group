@@ -36,10 +36,17 @@ export function CuratedLaunchCard({
       />
 
       <div className="relative z-[1]">
+        <div className="absolute inset-0 bg-[#0b1220]" />
         <SmartImage
           src={property.coverImage}
           alt={property.title}
-          className="h-[440px] w-full object-cover transition duration-700 group-hover:scale-[1.03] sm:h-[520px]"
+          className="absolute inset-0 h-[440px] w-full scale-[1.05] object-cover opacity-25 blur-md transition duration-700 group-hover:scale-[1.08] sm:h-[520px]"
+          loading="lazy"
+        />
+        <SmartImage
+          src={property.coverImage}
+          alt={property.title}
+          className="relative h-[440px] w-full object-contain p-3 transition duration-700 group-hover:scale-[1.02] sm:h-[520px] sm:p-4"
           loading="lazy"
         />
 
