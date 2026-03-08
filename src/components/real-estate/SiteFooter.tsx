@@ -86,30 +86,18 @@ export function SiteFooter({
     () => [
       {
         label: "Blogs",
-        onClick: () =>
-          toast({
-            title: "Blogs",
-            description: "We can add a blog section next.",
-          }),
+        onClick: () => navigate("/blogs"),
       },
       {
         label: "Careers",
-        onClick: () =>
-          toast({
-            title: "Careers",
-            description: "We can add a careers page next.",
-          }),
+        onClick: () => navigate("/careers"),
       },
       {
         label: "Insights",
-        onClick: () =>
-          toast({
-            title: "Insights",
-            description: "We can add insights/reports next.",
-          }),
+        onClick: () => navigate("/insights"),
       },
     ],
-    [],
+    [navigate],
   );
 
   const social = useMemo(
@@ -471,12 +459,7 @@ export function SiteFooter({
 
                   <button
                     type="button"
-                    onClick={() =>
-                      toast({
-                        title: "Privacy Policy",
-                        description: "We can add a privacy policy page next.",
-                      })
-                    }
+                    onClick={() => navigate("/privacy-policy")}
                     className={bottomLinkClass}
                   >
                     Privacy Policy
@@ -484,12 +467,7 @@ export function SiteFooter({
 
                   <button
                     type="button"
-                    onClick={() =>
-                      toast({
-                        title: "Terms of Service",
-                        description: "We can add terms of service next.",
-                      })
-                    }
+                    onClick={() => navigate("/terms-of-service")}
                     className={bottomLinkClass}
                   >
                     Terms of Service

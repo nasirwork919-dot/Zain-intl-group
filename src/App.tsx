@@ -16,6 +16,11 @@ import AdminLoginPage from "./pages/AdminLogin";
 import AdminDashboardPage from "./pages/AdminDashboard";
 import AdminPropertiesPage from "./pages/AdminProperties";
 import AdminLeadsPage from "./pages/AdminLeads";
+import PrivacyPolicyPage from "./pages/PrivacyPolicy";
+import TermsOfServicePage from "./pages/TermsOfService";
+import InsightsPage from "./pages/Insights";
+import CareersPage from "./pages/Careers";
+import BlogsPage from "./pages/Blogs";
 import { AdminGate } from "@/components/admin/AdminGate";
 import { ScrollToTop } from "@/components/ScrollToTop";
 
@@ -30,6 +35,11 @@ const App = () => (
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+          <Route path="/insights" element={<InsightsPage />} />
+          <Route path="/careers" element={<CareersPage />} />
+          <Route path="/blogs" element={<BlogsPage />} />
 
           <Route path="/property/:id" element={<PropertyDetailsPage />} />
 
