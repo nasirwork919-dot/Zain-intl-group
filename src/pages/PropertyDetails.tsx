@@ -124,11 +124,11 @@ export default function PropertyDetailsPage() {
 
         {/* Hero image */}
         <section className="mt-5 overflow-hidden rounded-[5px] border border-white/50 bg-white/70 shadow-[0_25px_70px_-55px_rgba(15,23,42,0.6)] ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55 sm:mt-6">
-          <div className="relative">
+          <div className="relative bg-[#0b1220]">
             <SmartImage
               src={mainSrc}
               alt={property.title}
-              className="h-[320px] w-full object-cover sm:h-[460px]"
+              className="h-[360px] w-full object-contain px-2 py-2 sm:h-[560px] sm:px-4 sm:py-4 lg:h-[640px]"
               loading="eager"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-black/0" />
