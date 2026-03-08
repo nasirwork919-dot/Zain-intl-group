@@ -4,57 +4,19 @@ import { ArrowUpRight, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SmartImage } from "@/components/real-estate/SmartImage";
 
-type Community = {
+export type CommunitySpotlight = {
   title: string;
   image: string;
   locationFilter: string;
   subtitle?: string;
 };
 
-const communities: Community[] = [
-  {
-    title: "Dubai Hills Estate",
-    subtitle: "Family-first green district",
-    image:
-      "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1400&q=75",
-    locationFilter: "Dubai Hills Estate",
-  },
-  {
-    title: "Dubai Marina",
-    subtitle: "Waterfront lifestyle & skyline",
-    image:
-      "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1400&q=75",
-    locationFilter: "Dubai Marina",
-  },
-  {
-    title: "Downtown Dubai",
-    subtitle: "Landmarks & prime access",
-    image:
-      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1400&q=75",
-    locationFilter: "Downtown Dubai",
-  },
-  {
-    title: "Business Bay",
-    subtitle: "Canal-side living",
-    image:
-      "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=1400&q=75",
-    locationFilter: "Business Bay",
-  },
-  {
-    title: "Jumeirah Village Circle",
-    subtitle: "Value + community convenience",
-    image:
-      "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=1400&q=75",
-    locationFilter: "Jumeirah Village Circle",
-  },
-];
-
 function CommunityLaunchStyleCard({
   community,
   onOpen,
   className,
 }: {
-  community: Community;
+  community: CommunitySpotlight;
   onOpen: () => void;
   className?: string;
 }) {
@@ -87,7 +49,6 @@ function CommunityLaunchStyleCard({
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10" />
       </div>
 
-      {/* Top controls (match CuratedLaunchCard vibe) */}
       <div className="pointer-events-none absolute left-0 right-0 top-0 z-[3] p-5">
         <div className="flex items-start justify-between gap-4">
           <div className="pointer-events-none inline-flex items-center gap-2">
@@ -101,7 +62,7 @@ function CommunityLaunchStyleCard({
                 ZAIN INTERNATIONAL GROUP
               </div>
               <div className="text-[10px] font-semibold tracking-[0.22em] text-white/70">
-                REAL ESTATE · DUBAI
+                LIVE COMMUNITIES
               </div>
             </div>
           </div>
@@ -149,17 +110,30 @@ function CommunityLaunchStyleCard({
 }
 
 export function ExploreCommunities({
+  communities,
   onPick,
   className,
 }: {
+  communities: CommunitySpotlight[];
   onPick?: (locationFilter: string) => void;
   className?: string;
 }) {
   const [active, setActive] = useState(0);
   const scrollerRef = useRef<HTMLDivElement | null>(null);
 
+  const filtered = useMemo(() => communities, [communities]);
+
+  useEffect(() => {
+    if (!filtered.length) {
+      setActive(0);
+      return;
+    }
+
+    setActive((current) => Math.min(current, filtered.length - 1));
+  }, [filtered]);
+
   const canPrev = active > 0;
-  const canNext = active < communities.length - 1;
+  const canNext = active < filtered.length - 1;
 
   const scrollToActive = (idx: number) => {
     const el = scrollerRef.current;
@@ -174,11 +148,10 @@ export function ExploreCommunities({
   };
 
   useEffect(() => {
+    if (!filtered.length) return;
     scrollToActive(active);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active]);
-
-  const filtered = useMemo(() => communities, []);
+  }, [active, filtered.length]);
 
   return (
     <section className={cn("mx-auto w-full max-w-6xl px-4 py-12", className)}>
@@ -188,11 +161,10 @@ export function ExploreCommunities({
             Explore communities
           </div>
           <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[hsl(var(--ink))] sm:text-3xl">
-            Neighborhoods with skyline energy
+            Areas currently live on the website
           </h2>
           <p className="mt-2 max-w-xl text-sm font-medium leading-relaxed text-[hsl(var(--muted-ink))]">
-            Browse Dubai by vibe — from landmark living in Downtown to
-            marina-front towers and calm, family-first districts.
+            These cards are generated from the active CRM listings already synced into the site.
           </p>
         </div>
 
@@ -216,9 +188,7 @@ export function ExploreCommunities({
           </button>
           <button
             type="button"
-            onClick={() =>
-              setActive((v) => Math.min(communities.length - 1, v + 1))
-            }
+            onClick={() => setActive((v) => Math.min(filtered.length - 1, v + 1))}
             disabled={!canNext}
             className={cn(
               "inline-flex h-11 w-11 items-center justify-center rounded-2xl",
@@ -241,24 +211,35 @@ export function ExploreCommunities({
           <Search className="h-5 w-5" />
         </div>
         <div className="text-sm font-semibold text-[hsl(var(--muted-ink))]">
-          Tip: click a card to filter the listings by area
+          Click a card to open the matching live community results.
         </div>
       </div>
 
-      <div
-        ref={scrollerRef}
-        className={cn("mt-7 grid gap-4", "sm:grid-cols-2", "lg:grid-cols-3")}
-      >
-        {filtered.map((c, idx) => (
-          <div key={c.title} className="min-h-[320px]">
-            <CommunityLaunchStyleCard
-              community={c}
-              onOpen={() => onPick?.(c.locationFilter)}
-              className={cn(idx === 0 ? "lg:col-span-2" : "")}
-            />
+      {filtered.length === 0 ? (
+        <div className="mt-7 rounded-[22px] border border-black/5 bg-white p-6 text-center shadow-sm">
+          <div className="text-lg font-extrabold tracking-tight">
+            No community inventory live yet
           </div>
-        ))}
-      </div>
+          <div className="mt-2 text-sm text-muted-foreground">
+            Once CRM listings are published, this section will fill automatically.
+          </div>
+        </div>
+      ) : (
+        <div
+          ref={scrollerRef}
+          className={cn("mt-7 grid gap-4", "sm:grid-cols-2", "lg:grid-cols-3")}
+        >
+          {filtered.map((community, idx) => (
+            <div key={community.locationFilter} className="min-h-[320px]">
+              <CommunityLaunchStyleCard
+                community={community}
+                onOpen={() => onPick?.(community.locationFilter)}
+                className={cn(idx === 0 ? "lg:col-span-2" : "")}
+              />
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

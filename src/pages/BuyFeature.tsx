@@ -206,7 +206,7 @@ export default function BuyFeaturePage() {
       </section>
 
       <SiteFooter
-        onGetInTouch={() => navigate("/nav/services")}
+        onGetInTouch={() => navigate("/nav/services/option/all")}
         onNavigateSection={(hash) => {
           if (hash === "#top") window.scrollTo({ top: 0, behavior: "smooth" });
         }}

@@ -13,7 +13,7 @@ import {
 
 export type HeroSearchBarLayoutValue = {
   operation: "buy" | "rent" | "sell" | "manage";
-  propertyType: "apartment" | "villa" | "townhouse";
+  propertyType: "any" | "apartment" | "villa" | "townhouse";
   query: string;
 };
 
@@ -111,6 +111,7 @@ export function HeroSearchBarLayout({
               <SelectValue placeholder="Choose Property Type" />
             </SelectTrigger>
             <SelectContent className="rounded-[5px]">
+              <SelectItem value="any">All Types</SelectItem>
               <SelectItem value="apartment">Apartment</SelectItem>
               <SelectItem value="villa">Villa</SelectItem>
               <SelectItem value="townhouse">Townhouse</SelectItem>
@@ -285,6 +286,7 @@ export function HeroSearchBarLayout({
               <SelectValue placeholder="Residential" />
             </SelectTrigger>
             <SelectContent className="rounded-[5px]">
+              <SelectItem value="any">All Types</SelectItem>
               <SelectItem value="apartment">Residential</SelectItem>
               <SelectItem value="villa">Villa</SelectItem>
               <SelectItem value="townhouse">Townhouse</SelectItem>

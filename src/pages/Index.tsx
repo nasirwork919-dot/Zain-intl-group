@@ -14,12 +14,14 @@ import {
   type HeroBarFilters,
   HeroSearchBar,
 } from "@/components/real-estate/HeroSearchBar";
-import { type SearchFilters } from "@/components/real-estate/HeroSearch";
 import { LeadCapture } from "@/components/real-estate/LeadCapture";
 import { CuratedOpportunities } from "@/components/real-estate/CuratedOpportunities";
 import { ScrollingTextSeparator } from "@/components/real-estate/ScrollingTextSeparator";
 import { ExperienceStatsStrip } from "@/components/real-estate/ExperienceStatsStrip";
-import { ExploreCommunities } from "@/components/real-estate/ExploreCommunities";
+import {
+  ExploreCommunities,
+  type CommunitySpotlight,
+} from "@/components/real-estate/ExploreCommunities";
 import { ScrollUpButton } from "@/components/ScrollUpButton";
 import { FeaturedListingsMobileSlider } from "@/components/real-estate/FeaturedListingsMobileSlider";
 import { YourHomeYourWay } from "@/components/real-estate/YourHomeYourWay";
@@ -44,6 +46,102 @@ function hasPlacement(placements: string[], key: string) {
     .includes(String(key).toLowerCase().trim());
 }
 
+function slugify(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/\s+&\s+/g, "-")
+    .replace(/\s+/g, "-")
+    .replace(/\(|\)/g, "")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-");
+}
+
+function pickCuratedProperties(items: Property[], limit = 4) {
+  const seen = new Set<string>();
+  const deduped = items.filter((property) => {
+    const key = [
+      property.title,
+      property.location,
+      property.price,
+      property.listingType,
+    ]
+      .join("|")
+      .toLowerCase();
+
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  const picks: Property[] = [];
+  const usedLocations = new Set<string>();
+
+  for (const property of deduped) {
+    if (usedLocations.has(property.location)) continue;
+    picks.push(property);
+    usedLocations.add(property.location);
+    if (picks.length === limit) return picks;
+  }
+
+  for (const property of deduped) {
+    if (picks.some((picked) => picked.id === property.id)) continue;
+    picks.push(property);
+    if (picks.length === limit) return picks;
+  }
+
+  return picks;
+}
+
+function toCommunityTitle(location: string) {
+  const parts = location
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .filter((part) => part.toLowerCase() !== "dubai");
+
+  return parts.at(-1) ?? location;
+}
+
+function buildCommunitySpotlights(items: Property[]): CommunitySpotlight[] {
+  const grouped = new Map<string, Property[]>();
+
+  for (const property of items) {
+    const group = grouped.get(property.location) ?? [];
+    group.push(property);
+    grouped.set(property.location, group);
+  }
+
+  return Array.from(grouped.entries())
+    .sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]))
+    .slice(0, 5)
+    .map(([location, properties]) => {
+      const listingMix = Array.from(
+        new Set(
+          properties.map((property) =>
+            property.listingType === "rent" ? "Rent" : "Buy",
+          ),
+        ),
+      ).join(" & ");
+
+      return {
+        title: toCommunityTitle(location),
+        image: properties[0]?.coverImage || DUBAI_IMAGES.fallback,
+        locationFilter: location,
+        subtitle: `${properties.length} live listing${properties.length === 1 ? "" : "s"} · ${listingMix}`,
+      };
+    });
+}
+
+type ListingFilters = {
+  query: string;
+  location: string | "any";
+  beds: number | "any";
+  maxPrice: number;
+  operation: "any" | "buy" | "rent";
+  propertyType: HeroBarFilters["propertyType"];
+};
+
 const Index = () => {
   useScrollToTop({ enabled: true });
 
@@ -51,16 +149,18 @@ const Index = () => {
 
   const { data: allProperties = [] } = usePublishedProperties();
 
-  const [filters, setFilters] = useState<SearchFilters>({
+  const [filters, setFilters] = useState<ListingFilters>({
     query: "",
     location: "any",
     beds: "any",
     maxPrice: 20000000,
+    operation: "any",
+    propertyType: "any",
   });
 
   const [heroBar, setHeroBar] = useState<HeroBarFilters>({
     operation: "buy",
-    propertyType: "apartment",
+    propertyType: "any",
     query: "",
   });
 
@@ -85,7 +185,26 @@ const Index = () => {
 
       const matchesPrice = p.price <= filters.maxPrice;
 
-      return matchesQuery && matchesLocation && matchesBeds && matchesPrice;
+      const matchesOperation =
+        filters.operation === "any"
+          ? true
+          : filters.operation === "rent"
+            ? p.listingType === "rent"
+            : p.listingType === "sale";
+
+      const matchesPropertyType =
+        filters.propertyType === "any"
+          ? true
+          : p.propertyType === filters.propertyType;
+
+      return (
+        matchesQuery &&
+        matchesLocation &&
+        matchesBeds &&
+        matchesPrice &&
+        matchesOperation &&
+        matchesPropertyType
+      );
     });
   }, [allProperties, filters]);
 
@@ -95,6 +214,44 @@ const Index = () => {
     );
     return featured.length ? featured : results;
   }, [results]);
+
+  const curatedResults = useMemo(() => {
+    const featured = allProperties.filter(
+      (property) =>
+        property.featured || hasPlacement(property.placements, "featured"),
+    );
+    const nonFeatured = allProperties.filter(
+      (property) =>
+        !featured.some((featuredProperty) => featuredProperty.id === property.id),
+    );
+
+    return pickCuratedProperties(
+      featured.length ? [...featured, ...nonFeatured] : allProperties,
+    );
+  }, [allProperties]);
+
+  const communitySpotlights = useMemo(
+    () => buildCommunitySpotlights(allProperties),
+    [allProperties],
+  );
+
+  const liveStats = useMemo(() => {
+    const buyCount = allProperties.filter(
+      (property) => property.listingType === "sale",
+    ).length;
+    const rentCount = allProperties.filter(
+      (property) => property.listingType === "rent",
+    ).length;
+    const communityCount = new Set(
+      allProperties.map((property) => property.location),
+    ).size;
+
+    return [
+      { value: String(allProperties.length), label: "Live Listings" },
+      { value: String(buyCount), label: "Buy Listings" },
+      { value: String(rentCount || communityCount), label: rentCount ? "Rent Listings" : "Communities" },
+    ];
+  }, [allProperties]);
 
   const openProperty = (p: Property) => {
     setActiveProperty(p);
@@ -107,8 +264,14 @@ const Index = () => {
       location: "any",
       beds: "any",
       maxPrice: 20000000,
+      operation: "any",
+      propertyType: "any",
     });
-    setHeroBar((prev) => ({ ...prev, query: "" }));
+    setHeroBar({
+      operation: "buy",
+      propertyType: "any",
+      query: "",
+    });
   };
 
   const scrollTo = (hash: string) => {
@@ -180,7 +343,20 @@ const Index = () => {
                 value={heroBar}
                 onChange={setHeroBar}
                 onSubmit={() => {
-                  setFilters((prev) => ({ ...prev, query: heroBar.query }));
+                  if (
+                    heroBar.operation === "manage" ||
+                    heroBar.operation === "sell"
+                  ) {
+                    navigate("/list-your-property");
+                    return;
+                  }
+
+                  setFilters((prev) => ({
+                    ...prev,
+                    query: heroBar.query,
+                    operation: heroBar.operation,
+                    propertyType: heroBar.propertyType,
+                  }));
                   document
                     .getElementById("listings")
                     ?.scrollIntoView({ behavior: "smooth" });
@@ -211,17 +387,19 @@ const Index = () => {
         </div>
       </section>
 
-      <ExperienceStatsStrip className="-mt-2" />
+      <ExperienceStatsStrip className="-mt-2" stats={liveStats} />
 
       <ScrollingTextSeparator label="A handpicked edit" />
 
       <CuratedOpportunities
+        properties={curatedResults}
         onOpenProperty={openProperty}
         onViewAll={() => {
           resetListingFilters();
           toast({
-            title: "Showing all listings",
-            description: "Filters cleared — here are all published properties.",
+            title: "Showing all live listings",
+            description:
+              "Filters cleared. You are back to the full published inventory.",
           });
         }}
       />
@@ -337,12 +515,13 @@ const Index = () => {
       <div className="mx-auto max-w-6xl px-4">
         <div className="rounded-[5px] border border-white/40 bg-white/45 ring-1 ring-black/10">
           <ExploreCommunities
+            communities={communitySpotlights}
             onPick={(location) => {
               toast({
                 title: "Community selected",
-                description: `Showing listings in ${location}.`,
+                description: `Opening live listings for ${location}.`,
               });
-              navigate(`/nav/buy/option/all?q=${encodeURIComponent(location)}`);
+              navigate(`/nav/communities/option/${slugify(location)}`);
             }}
           />
         </div>

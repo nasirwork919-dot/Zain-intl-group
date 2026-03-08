@@ -7,7 +7,7 @@ import {
 
 export type HeroBarFilters = {
   operation: "buy" | "rent" | "sell" | "manage";
-  propertyType: "apartment" | "villa" | "townhouse";
+  propertyType: "any" | "apartment" | "villa" | "townhouse";
   query: string;
 };
 

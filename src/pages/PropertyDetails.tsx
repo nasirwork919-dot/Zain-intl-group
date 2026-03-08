@@ -26,7 +26,6 @@ import {
   type PublicProperty as Property,
 } from "@/hooks/use-published-properties";
 import { useCurrency } from "@/state/currency";
-import { featuredProperties } from "@/components/real-estate/site-data";
 
 export default function PropertyDetailsPage() {
   const { id } = useParams();
@@ -35,14 +34,10 @@ export default function PropertyDetailsPage() {
 
   const { data: all = [] } = usePublishedProperties();
 
-  const property = useMemo<Property | null>(() => {
-    const fromDb = all.find((p) => p.id === id) ?? null;
-    if (fromDb) return fromDb;
-
-    // Fallback: local demo inventory (so opening cards never shows "not found")
-    const fromLocal = featuredProperties.find((p) => p.id === id) ?? null;
-    return fromLocal;
-  }, [all, id]);
+  const property = useMemo<Property | null>(
+    () => all.find((p) => p.id === id) ?? null,
+    [all, id],
+  );
 
   const [activeIdx, setActiveIdx] = useState(0);
 
@@ -53,13 +48,10 @@ export default function PropertyDetailsPage() {
 
   const related = useMemo(() => {
     if (!property) return [];
-    // Prefer DB inventory for related; fallback to local if DB is empty
-    const pool = all.length ? all : featuredProperties;
-
-    const same = pool.filter(
+    const same = all.filter(
       (p) => p.id !== property.id && p.location === property.location,
     );
-    const rest = pool.filter(
+    const rest = all.filter(
       (p) => p.id !== property.id && p.location !== property.location,
     );
     return [...same, ...rest].slice(0, 8);
@@ -313,16 +305,27 @@ export default function PropertyDetailsPage() {
             </div>
           </div>
 
-          <div className="mt-5 grid gap-4 sm:mt-6 sm:grid-cols-2 lg:grid-cols-3">
-            {related.map((p) => (
-              <div key={p.id} className="h-[520px]">
-                <FeaturedPropertyLaunchCard
-                  property={p}
-                  onOpen={() => navigate(`/property/${p.id}`)}
-                />
+          {related.length > 0 ? (
+            <div className="mt-5 grid gap-4 sm:mt-6 sm:grid-cols-2 lg:grid-cols-3">
+              {related.map((p) => (
+                <div key={p.id} className="h-[520px]">
+                  <FeaturedPropertyLaunchCard
+                    property={p}
+                    onOpen={() => navigate(`/property/${p.id}`)}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <Card className="mt-5 rounded-[5px] border border-black/5 bg-white/70 p-6 text-center ring-1 ring-black/10">
+              <div className="text-lg font-extrabold tracking-tight">
+                No related listings yet
               </div>
-            ))}
-          </div>
+              <div className="mt-2 text-sm text-muted-foreground">
+                As more CRM inventory goes live in this area, it will appear here automatically.
+              </div>
+            </Card>
+          )}
         </section>
       </main>
 

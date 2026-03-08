@@ -78,3 +78,11 @@ Your frontend already reads published rows from `public.properties`, so no code 
 
 For Bayut/Dubizzle publication, keep Britix as master and connect Britix to their official broker feed onboarding.
 Your website sync remains independent and controlled by this function.
+
+## 8) Import Bayut / Dubizzle CSV into Britix
+
+Use:
+
+`BRITIX_CSV_IMPORT.md`
+
+This importer merges Bayut and Dubizzle exports by `property_ref_no`, upserts the combined listing into Britix, and can trigger the website sync immediately after import.

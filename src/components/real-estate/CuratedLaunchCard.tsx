@@ -1,18 +1,20 @@
-import { ArrowUpRight, Calendar, Tag } from "lucide-react";
+import { ArrowUpRight, Tag } from "lucide-react";
 
 import { SmartImage } from "@/components/real-estate/SmartImage";
-import type { Property } from "@/components/real-estate/site-data";
+import type { PublicProperty as Property } from "@/hooks/use-published-properties";
 import { formatAED } from "@/components/real-estate/format";
 import { cn } from "@/lib/utils";
 
 export function CuratedLaunchCard({
   property,
-  completionDate,
+  primaryBadge,
+  secondaryBadge,
   onOpen,
   className,
 }: {
   property: Property;
-  completionDate: string;
+  primaryBadge: string;
+  secondaryBadge: string;
   onOpen: () => void;
   className?: string;
 }) {
@@ -45,7 +47,6 @@ export function CuratedLaunchCard({
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10" />
       </div>
 
-      {/* Top controls */}
       <div className="pointer-events-none absolute left-0 right-0 top-0 z-[3] p-5">
         <div className="flex items-start justify-between gap-4">
           <div className="pointer-events-none inline-flex items-center gap-2">
@@ -56,10 +57,10 @@ export function CuratedLaunchCard({
             </div>
             <div className="hidden sm:block">
               <div className="text-xs font-extrabold tracking-[0.08em] text-white">
-                ZAIN INTERNATIONAL GROUP
+                LIVE LISTING
               </div>
               <div className="text-[10px] font-semibold tracking-[0.22em] text-white/70">
-                REAL ESTATE · DUBAI
+                ZAIN INTERNATIONAL GROUP
               </div>
             </div>
           </div>
@@ -85,7 +86,6 @@ export function CuratedLaunchCard({
         </div>
       </div>
 
-      {/* Bottom overlay content */}
       <div className="absolute bottom-0 left-0 right-0 z-[3] p-5">
         <div className="max-w-[90%]">
           <div className="font-serif text-2xl font-semibold tracking-tight text-white sm:text-[28px]">
@@ -119,12 +119,9 @@ export function CuratedLaunchCard({
               "shadow-sm ring-1 ring-black/5",
             )}
           >
-            <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[hsl(var(--brand-2))]/12 text-[hsl(var(--brand-ink))] ring-1 ring-black/5">
-              <Calendar className="h-4 w-4" />
-            </span>
-            <span className="whitespace-nowrap">
-              Completion Date {completionDate}
-            </span>
+            <span>{primaryBadge}</span>
+            <span className="text-[hsl(var(--brand-ink))]/35">•</span>
+            <span>{secondaryBadge}</span>
           </div>
         </div>
       </div>

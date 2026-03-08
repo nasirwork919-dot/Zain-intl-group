@@ -1,35 +1,47 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
-import type { Property } from "@/components/real-estate/site-data";
-import { featuredProperties } from "@/components/real-estate/site-data";
+import type { PublicProperty as Property } from "@/hooks/use-published-properties";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CuratedLaunchCard } from "@/components/real-estate/CuratedLaunchCard";
 
-const completionById: Record<string, string> = {
-  p1: "2029 Q1",
-  p2: "2028",
-  p3: "TCB",
-  p4: "2029 Q3",
-  p5: "2028 Q4",
-  p6: "2029 Q2",
-  p7: "2028 Q2",
-  p8: "TCB",
-};
+function titleCase(value?: string) {
+  return String(value ?? "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((part) => part[0]!.toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function listingBadge(property: Property) {
+  return property.listingType === "rent" ? "For Rent" : "For Sale";
+}
+
+function typeBadge(property: Property) {
+  return titleCase(property.propertyType || "Property");
+}
 
 export function CuratedOpportunities({
+  properties,
   onOpenProperty,
   onViewAll,
 }: {
+  properties: Property[];
   onOpenProperty: (p: Property) => void;
   onViewAll?: () => void;
 }) {
-  const items = featuredProperties.slice(0, 4);
+  const items = properties.slice(0, 4);
 
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const [canPrev, setCanPrev] = useState(false);
-  const [canNext, setCanNext] = useState(true);
+  const [canNext, setCanNext] = useState(items.length > 1);
+
+  useEffect(() => {
+    setCanPrev(false);
+    setCanNext(items.length > 1);
+  }, [items.length]);
 
   const updateScrollState = () => {
     const el = scrollerRef.current;
@@ -46,7 +58,6 @@ export function CuratedOpportunities({
     const el = scrollerRef.current;
     if (!el) return;
 
-    // Find a reasonable "card step" based on the first child.
     const first = el.firstElementChild as HTMLElement | null;
     const step = first ? first.offsetWidth : Math.max(280, el.clientWidth * 0.85);
     const delta = dir === "next" ? step : -step;
@@ -58,7 +69,7 @@ export function CuratedOpportunities({
     return (
       <div className="mt-5 flex items-center justify-between gap-3 sm:hidden">
         <div className="text-xs font-semibold tracking-[0.18em] text-[hsl(var(--brand-ink))]/75">
-          CURATED LAUNCHES
+          LIVE INVENTORY
         </div>
 
         <div className="flex items-center gap-2">
@@ -70,9 +81,7 @@ export function CuratedOpportunities({
               "inline-flex h-10 w-10 items-center justify-center rounded-full transition",
               "ring-1 ring-black/10 bg-white/70 text-[hsl(var(--brand-ink))]",
               "shadow-sm",
-              canPrev
-                ? "hover:bg-white"
-                : "cursor-not-allowed opacity-50",
+              canPrev ? "hover:bg-white" : "cursor-not-allowed opacity-50",
             )}
             aria-label="Scroll left"
           >
@@ -87,9 +96,7 @@ export function CuratedOpportunities({
               "inline-flex h-10 w-10 items-center justify-center rounded-full transition",
               "ring-1 ring-black/10 bg-white/70 text-[hsl(var(--brand-ink))]",
               "shadow-sm",
-              canNext
-                ? "hover:bg-white"
-                : "cursor-not-allowed opacity-50",
+              canNext ? "hover:bg-white" : "cursor-not-allowed opacity-50",
             )}
             aria-label="Scroll right"
           >
@@ -104,56 +111,71 @@ export function CuratedOpportunities({
     <section className="mx-auto mt-6 max-w-7xl px-4 pb-16 sm:mt-10">
       <div className="text-left">
         <h2 className="font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-          Stay up to date on the latest{" "}
-          <span className="text-[hsl(var(--brand))]">off-plan launches</span>.
+          Browse the latest <span className="text-[hsl(var(--brand))]">live listings</span>.
         </h2>
+        <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+          This section pulls from the published CRM inventory already synced to the website.
+        </p>
       </div>
 
-      {/* Mobile: header + horizontal scroll row + buttons */}
-      {mobileHeader}
-
-      <div className="mt-4 sm:hidden">
-        <div
-          ref={scrollerRef}
-          className={cn(
-            "flex gap-4 overflow-x-auto pb-4",
-            "snap-x snap-mandatory",
-            "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
-          )}
-          onScroll={updateScrollState}
-          onPointerEnter={updateScrollState}
-          onTouchStart={updateScrollState}
-        >
-          {items.map((p) => (
-            <div
-              key={p.id}
-              className="w-[82vw] max-w-[340px] flex-none snap-start"
-            >
-              <CuratedLaunchCard
-                property={p}
-                completionDate={completionById[p.id] ?? "TCB"}
-                onOpen={() => onOpenProperty(p)}
-              />
-            </div>
-          ))}
+      {items.length === 0 ? (
+        <div className="mt-8 rounded-[5px] border border-black/5 bg-white/70 p-6 text-center ring-1 ring-black/10">
+          <div className="text-lg font-extrabold tracking-tight">
+            No live listings yet
+          </div>
+          <div className="mt-2 text-sm text-muted-foreground">
+            Publish CRM listings to populate this section automatically.
+          </div>
         </div>
-      </div>
+      ) : (
+        <>
+          {mobileHeader}
 
-      {/* Desktop/tablet: 4 column grid */}
-      <div className="mt-8 hidden sm:grid sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
-        {items.map((p) => (
-          <CuratedLaunchCard
-            key={p.id}
-            property={p}
-            completionDate={completionById[p.id] ?? "TCB"}
-            onOpen={() => onOpenProperty(p)}
-          />
-        ))}
-      </div>
+          <div className="mt-4 sm:hidden">
+            <div
+              ref={scrollerRef}
+              className={cn(
+                "flex gap-4 overflow-x-auto pb-4",
+                "snap-x snap-mandatory",
+                "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
+              )}
+              onScroll={updateScrollState}
+              onPointerEnter={updateScrollState}
+              onTouchStart={updateScrollState}
+            >
+              {items.map((property) => (
+                <div
+                  key={property.id}
+                  className="w-[82vw] max-w-[340px] flex-none snap-start"
+                >
+                  <CuratedLaunchCard
+                    property={property}
+                    primaryBadge={listingBadge(property)}
+                    secondaryBadge={typeBadge(property)}
+                    onOpen={() => onOpenProperty(property)}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-8 hidden sm:grid sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
+            {items.map((property) => (
+              <CuratedLaunchCard
+                key={property.id}
+                property={property}
+                primaryBadge={listingBadge(property)}
+                secondaryBadge={typeBadge(property)}
+                onOpen={() => onOpenProperty(property)}
+              />
+            ))}
+          </div>
+        </>
+      )}
 
       <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-sm text-muted-foreground">
-          Explore new launches, compare pricing, and request a curated shortlist.
+          View the live inventory, compare prices, and jump straight into the listing pages.
         </div>
 
         <Button

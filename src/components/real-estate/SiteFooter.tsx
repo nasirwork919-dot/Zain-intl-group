@@ -9,12 +9,14 @@ import {
   ChevronUp,
   Sparkles,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
+import { useNavMenuInventory } from "@/hooks/use-nav-menu-inventory";
 
 type FooterLink = { label: string; onClick: () => void };
 
@@ -29,18 +31,55 @@ export function SiteFooter({
 }) {
   const year = new Date().getFullYear();
   const [email, setEmail] = useState("");
+  const navigate = useNavigate();
+  const { menus } = useNavMenuInventory();
 
   const quickLinks = useMemo<FooterLink[]>(
     () => [
-      { label: "Buy", onClick: () => onNavigateSection("#listings") },
-      { label: "Rent", onClick: () => onNavigateSection("#listings") },
-      { label: "Communities", onClick: () => onNavigateSection("#projects") },
-      { label: "Developers", onClick: () => onNavigateSection("#projects") },
-      { label: "Market Trends", onClick: () => onNavigateSection("#about") },
-      { label: "Services", onClick: () => onNavigateSection("#contact") },
-      { label: "Guides", onClick: () => onNavigateSection("#about") },
+      ...(menus.buy.hasAny
+        ? [{ label: "Buy", onClick: () => navigate("/nav/buy/option/all") }]
+        : []),
+      ...(menus.rent.hasAny
+        ? [{ label: "Rent", onClick: () => navigate("/nav/rent/option/all") }]
+        : []),
+      ...(menus.communities.hasAny
+        ? [
+            {
+              label: "Communities",
+              onClick: () => navigate("/nav/communities/option/all"),
+            },
+          ]
+        : []),
+      ...(menus.developers.hasAny
+        ? [
+            {
+              label: "Developers",
+              onClick: () => navigate("/nav/developers/option/all"),
+            },
+          ]
+        : []),
+      ...(menus["featured-projects"].hasAny
+        ? [
+            {
+              label: "Featured Projects",
+              onClick: () => navigate("/nav/featured-projects/option/all"),
+            },
+          ]
+        : []),
+      ...(menus.services.hasAny
+        ? [
+            {
+              label: "Services",
+              onClick: () => navigate("/nav/services/option/all"),
+            },
+          ]
+        : []),
+      ...(menus.more.hasAny
+        ? [{ label: "More", onClick: () => navigate("/nav/more/option/all") }]
+        : []),
+      { label: "Top", onClick: () => onNavigateSection("#top") },
     ],
-    [onNavigateSection],
+    [menus, navigate, onNavigateSection],
   );
 
   const resources = useMemo<FooterLink[]>(
