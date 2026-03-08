@@ -32,7 +32,7 @@ export function CuratedOpportunities({
   onOpenProperty: (p: Property) => void;
   onViewAll?: () => void;
 }) {
-  const items = properties.slice(0, 4);
+  const items = properties.slice(0, 3);
 
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const [canPrev, setCanPrev] = useState(false);
@@ -159,7 +159,7 @@ export function CuratedOpportunities({
             </div>
           </div>
 
-          <div className="mt-8 hidden sm:grid sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
+          <div className="mt-8 hidden sm:grid sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
             {items.map((property) => (
               <CuratedLaunchCard
                 key={property.id}
