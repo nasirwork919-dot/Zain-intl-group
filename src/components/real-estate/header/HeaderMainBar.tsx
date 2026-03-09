@@ -51,13 +51,13 @@ export function HeaderMainBar({
 
               <div className="leading-tight">
                 <div className="text-sm font-black tracking-tight text-[#111827]">
-                  ZAIN Avenue Reality
+                  ZAiN Avenue Realty
                 </div>
                 <div className="-mt-0.5 text-sm font-black tracking-tight text-[#111827]">
                   Real Estate
                 </div>
                 <div className="mt-0.5 text-[10px] font-semibold tracking-[0.22em] text-[#6b7280]">
-                  DUBAI · UAE
+                  DUBAI / U.A.E.
                 </div>
               </div>
             </div>

@@ -705,7 +705,7 @@ const Index = () => {
 
           <Card className="rounded-[5px] border border-white/40 bg-white/65 p-6 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.55)] ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55 md:col-span-5">
             <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">
-              Contact
+              Contact Details
             </div>
             <div className="mt-2 text-2xl font-extrabold tracking-tight">
               Let’s match you fast
@@ -718,12 +718,13 @@ const Index = () => {
 
             <div className="grid gap-3">
               {[
-                { label: "Call / WhatsApp", value: "+971 50 5033721" },
-                { label: "Email", value: "info@zaindubai.com" },
                 {
                   label: "Address",
                   value: "Tamani Arts Office Tower, Business Bay, Dubai, U.A.E.",
                 },
+                { label: "Email", value: "info@zaindubai.com" },
+                { label: "Visit Us", value: "www.zaindubai.com" },
+                { label: "Call / WhatsApp", value: "+971 50 5033721" },
               ].map((i) => (
 
                 <div

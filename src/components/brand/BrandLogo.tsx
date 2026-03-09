@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 export function BrandLogo({
   className,
-  alt = "ZAIN Avenue Reality Real Estate",
+  alt = "ZAiN Avenue Realty Real Estate",
   variant = "mark",
 }: {
   className?: string;

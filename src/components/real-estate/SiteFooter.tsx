@@ -192,8 +192,8 @@ export function SiteFooter({
             <div className="grid gap-8 md:grid-cols-12 md:items-center">
               <div className="md:col-span-8">
                 <div className="inline-flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold tracking-[0.18em] text-white/80">
-                  <span>ZAIN AVENUE REALITY REAL ESTATE</span>
-                  <span className="hidden sm:inline">•</span>
+                  <span>ZAiN AVENUE REALTY REAL ESTATE</span>
+                  <span className="hidden sm:inline">/</span>
                   <span className="text-white/70">
                     Your Efficient Partner in Real Estate Since 2011
                   </span>
@@ -372,7 +372,7 @@ export function SiteFooter({
 
                 {/* Contact */}
                 <div>
-                  <div className={sectionTitle}>Contact Us</div>
+                  <div className={sectionTitle}>Contact Details</div>
 
                   <div className="mt-5 grid gap-4">
                     <div className={outlineCard}>
@@ -380,18 +380,7 @@ export function SiteFooter({
                         ADDRESS
                       </div>
                       <div className="mt-2 text-sm font-semibold leading-relaxed text-[#0b1025]/85">
-                        Floor 13, Blue Bay Tower
-                        <br />
-                        Business Bay, Dubai, UAE
-                      </div>
-                    </div>
-
-                    <div className={outlineCard}>
-                      <div className="text-[11px] font-semibold tracking-[0.18em] text-[#0b1025]/55">
-                        PHONE
-                      </div>
-                      <div className="mt-2 text-sm font-semibold text-[#0b1025]/85">
-                        +971 800 32632
+                        Tamani Arts Office Tower, Business Bay, Dubai, U.A.E.
                       </div>
                     </div>
 
@@ -400,7 +389,25 @@ export function SiteFooter({
                         EMAIL
                       </div>
                       <div className="mt-2 text-sm font-semibold text-[#0b1025]/85">
-                        inquiry@zaininternational.ae
+                        info@zaindubai.com
+                      </div>
+                    </div>
+
+                    <div className={outlineCard}>
+                      <div className="text-[11px] font-semibold tracking-[0.18em] text-[#0b1025]/55">
+                        VISIT US
+                      </div>
+                      <div className="mt-2 text-sm font-semibold text-[#0b1025]/85">
+                        www.zaindubai.com
+                      </div>
+                    </div>
+
+                    <div className={outlineCard}>
+                      <div className="text-[11px] font-semibold tracking-[0.18em] text-[#0b1025]/55">
+                        CALL / WHATSAPP
+                      </div>
+                      <div className="mt-2 text-sm font-semibold text-[#0b1025]/85">
+                        +971 50 5033721
                       </div>
                     </div>
                   </div>
@@ -452,7 +459,7 @@ export function SiteFooter({
               <div className="text-center">
                 <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
                   <div className="text-xs font-semibold text-[#0b1025]/80">
-                    © {year} Zain International Group. All Rights Reserved
+                    © {year} ZAiN International Group. All Rights Reserved
                   </div>
 
                   <span className="h-4 w-px bg-black/10" />
