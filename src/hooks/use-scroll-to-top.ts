@@ -14,13 +14,7 @@ export function useScrollToTop({
     if (!enabled || typeof window === "undefined" || !("scrollRestoration" in window.history)) {
       return;
     }
-
-    const previous = window.history.scrollRestoration;
     window.history.scrollRestoration = "manual";
-
-    return () => {
-      window.history.scrollRestoration = previous;
-    };
   }, [enabled]);
 
   useLayoutEffect(() => {
