@@ -4,6 +4,7 @@ type Json = Record<string, unknown>;
 
 type BitrixDeal = Json & {
   ID?: string | number;
+  ORIGIN_ID?: string;
   TITLE?: string;
   OPPORTUNITY?: string | number;
   STAGE_ID?: string;
@@ -24,12 +25,20 @@ const BATHS_FIELD = Deno.env.get("BRITIX_BATHS_FIELD") ?? "UF_CRM_1772303064261"
 const AREA_FIELD = Deno.env.get("BRITIX_AREA_FIELD") ?? "UF_CRM_1772303090036";
 const PROPERTY_TYPE_FIELD = Deno.env.get("BRITIX_PROPERTY_TYPE_FIELD") ?? "UF_CRM_1772303144011";
 const LISTING_TYPE_FIELD = Deno.env.get("BRITIX_LISTING_TYPE_FIELD") ?? "UF_CRM_1772303195091";
-const LOCATION_FIELD = Deno.env.get("BRITIX_LOCATION_FIELD") ?? "";
-const COVER_FIELD = Deno.env.get("BRITIX_COVER_IMAGE_FIELD") ?? "";
-const GALLERY_FIELD = Deno.env.get("BRITIX_GALLERY_FIELD") ?? "";
-const AMENITIES_FIELD = Deno.env.get("BRITIX_AMENITIES_FIELD") ?? "";
+const LOCATION_FIELD = Deno.env.get("BRITIX_LOCATION_FIELD") ?? "UF_CRM_1772385717044";
+const COVER_FIELD = Deno.env.get("BRITIX_COVER_IMAGE_FIELD") ?? "UF_CRM_1772365261741";
+const GALLERY_FIELD = Deno.env.get("BRITIX_GALLERY_FIELD") ?? "UF_CRM_1772365274394";
+const AMENITIES_FIELD = Deno.env.get("BRITIX_AMENITIES_FIELD") ?? "UF_CRM_1772367383673";
 const TAG_FIELD = Deno.env.get("BRITIX_TAG_FIELD") ?? "";
-const FEATURED_FIELD = Deno.env.get("BRITIX_FEATURED_FIELD") ?? "";
+const FEATURED_FIELD = Deno.env.get("BRITIX_FEATURED_FIELD") ?? "UF_CRM_1772369604965";
+const REFERENCE_FIELD = Deno.env.get("BRITIX_REFERENCE_FIELD") ?? "";
+const PERMIT_FIELD = Deno.env.get("BRITIX_PERMIT_FIELD") ?? "UF_CRM_1772385640292";
+const AGENT_NAME_FIELD =
+  Deno.env.get("BRITIX_LISTING_AGENT_NAME_FIELD") ?? "UF_CRM_1772385684972";
+const AGENT_PHONE_FIELD =
+  Deno.env.get("BRITIX_LISTING_AGENT_PHONE_FIELD") ?? "UF_CRM_1772385701700";
+const AGENT_EMAIL_FIELD =
+  Deno.env.get("BRITIX_LISTING_AGENT_EMAIL_FIELD") ?? "UF_CRM_1772385709132";
 
 function toNumber(value: unknown, fallback = 0) {
   const n = Number(value);
@@ -139,8 +148,11 @@ function readDealField(item: BitrixDeal, fieldName: string) {
 }
 
 function mapDeal(item: BitrixDeal) {
-  const externalId = toStringSafe(item.ID);
-  if (!externalId) return null;
+  const dealId = toStringSafe(item.ID);
+  if (!dealId) return null;
+
+  const referenceId =
+    toStringSafe(item.ORIGIN_ID) || toStringSafe(readDealField(item, REFERENCE_FIELD)) || dealId;
 
   const listingType = normalizeListingType(readDealField(item, LISTING_TYPE_FIELD));
   const propertyType = normalizePropertyType(readDealField(item, PROPERTY_TYPE_FIELD));
@@ -152,9 +164,9 @@ function mapDeal(item: BitrixDeal) {
 
   return {
     external_source: "britix",
-    external_id: externalId,
+    external_id: referenceId,
     external_url: null,
-    title: toStringSafe(item.TITLE, `Bitrix Listing ${externalId}`),
+    title: toStringSafe(item.TITLE, `Bitrix Listing ${dealId}`),
     location: toStringSafe(readDealField(item, LOCATION_FIELD), "Dubai"),
     price: Math.max(0, Math.round(toNumber(item.OPPORTUNITY, 0))),
     beds: Math.max(0, Math.round(toNumber(readDealField(item, BEDS_FIELD), 0))),
@@ -195,6 +207,7 @@ async function fetchBritixListings() {
     if (!url.searchParams.has("start")) url.searchParams.set("start", String(start));
     if (!url.searchParams.has("select[]")) {
       url.searchParams.append("select[]", "ID");
+      url.searchParams.append("select[]", "ORIGIN_ID");
       url.searchParams.append("select[]", "TITLE");
       url.searchParams.append("select[]", "OPPORTUNITY");
       url.searchParams.append("select[]", "STAGE_ID");
@@ -210,6 +223,11 @@ async function fetchBritixListings() {
       if (AMENITIES_FIELD) url.searchParams.append("select[]", AMENITIES_FIELD);
       if (TAG_FIELD) url.searchParams.append("select[]", TAG_FIELD);
       if (FEATURED_FIELD) url.searchParams.append("select[]", FEATURED_FIELD);
+      if (REFERENCE_FIELD) url.searchParams.append("select[]", REFERENCE_FIELD);
+      if (PERMIT_FIELD) url.searchParams.append("select[]", PERMIT_FIELD);
+      if (AGENT_NAME_FIELD) url.searchParams.append("select[]", AGENT_NAME_FIELD);
+      if (AGENT_PHONE_FIELD) url.searchParams.append("select[]", AGENT_PHONE_FIELD);
+      if (AGENT_EMAIL_FIELD) url.searchParams.append("select[]", AGENT_EMAIL_FIELD);
     }
 
     const res = await fetch(url.toString(), { method: "GET", headers });

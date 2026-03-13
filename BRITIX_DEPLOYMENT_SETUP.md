@@ -15,16 +15,19 @@ In Supabase SQL Editor, run:
 
 This adds external sync columns and creates a helper function that unpublishes missing Britix listings.
 
-## 2) Deploy the Edge Function
+## 2) Deploy the Edge Functions
 
 Function path:
 
 `supabase/functions/britix-sync/index.ts`
 
+`supabase/functions/bayut-feed/index.ts`
+
 Deploy with Supabase CLI:
 
 ```bash
 supabase functions deploy britix-sync
+supabase functions deploy bayut-feed
 ```
 
 ## 3) Set function secrets
@@ -38,6 +41,7 @@ Set these in Supabase Edge Function secrets:
 - `BRITIX_API_TOKEN` (optional)
 - `BRITIX_API_KEY` (optional)
 - `BRITIX_SYNC_SECRET` (custom secret to protect trigger endpoint)
+- `BAYUT_FEED_SECRET` (custom secret for the XML feed URL)
 
 Optional field-code overrides (if your Bitrix field codes change):
 
@@ -52,6 +56,12 @@ Optional field-code overrides (if your Bitrix field codes change):
 - `BRITIX_AMENITIES_FIELD`
 - `BRITIX_TAG_FIELD`
 - `BRITIX_FEATURED_FIELD`
+- `BRITIX_REFERENCE_FIELD`
+- `BRITIX_PERMIT_FIELD`
+- `BRITIX_LISTING_AGENT_NAME_FIELD`
+- `BRITIX_LISTING_AGENT_PHONE_FIELD`
+- `BRITIX_LISTING_AGENT_EMAIL_FIELD`
+- `BAYUT_REFERENCE_FIELD`
 
 ## 4) Trigger sync manually
 
@@ -76,8 +86,13 @@ Your frontend already reads published rows from `public.properties`, so no code 
 
 ## 7) Bayut + Dubizzle note
 
-For Bayut/Dubizzle publication, keep Britix as master and connect Britix to their official broker feed onboarding.
-Your website sync remains independent and controlled by this function.
+For Bayut/Dubizzle publication, keep Britix as master and expose the XML from:
+
+`supabase/functions/v1/bayut-feed?secret=<BAYUT_FEED_SECRET>`
+
+The feed reads published `britix` rows from `public.properties`, so the full path is:
+
+`Bitrix/Britix -> britix-sync -> public.properties -> bayut-feed XML`
 
 ## 8) Import Bayut / Dubizzle CSV into Britix
 

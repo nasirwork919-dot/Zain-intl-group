@@ -1,9 +1,6 @@
 import { useMemo, useState } from "react";
 import {
   Facebook,
-  Instagram,
-  Linkedin,
-  Twitter,
   ArrowRight,
   Mail,
   ChevronUp,
@@ -106,37 +103,11 @@ export function SiteFooter({
         label: "Facebook",
         icon: Facebook,
         onClick: () =>
-          toast({
-            title: "Social",
-            description: "Connect your social profiles here.",
-          }),
-      },
-      {
-        label: "LinkedIn",
-        icon: Linkedin,
-        onClick: () =>
-          toast({
-            title: "Social",
-            description: "Connect your social profiles here.",
-          }),
-      },
-      {
-        label: "X",
-        icon: Twitter,
-        onClick: () =>
-          toast({
-            title: "Social",
-            description: "Connect your social profiles here.",
-          }),
-      },
-      {
-        label: "Instagram",
-        icon: Instagram,
-        onClick: () =>
-          toast({
-            title: "Social",
-            description: "Connect your social profiles here.",
-          }),
+          window.open(
+            "https://www.facebook.com/ZainRealEstate",
+            "_blank",
+            "noopener,noreferrer",
+          ),
       },
     ],
     [],
