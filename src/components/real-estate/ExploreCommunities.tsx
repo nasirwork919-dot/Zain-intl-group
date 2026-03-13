@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowUpRight, ChevronLeft, ChevronRight, Search } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -119,7 +119,6 @@ export function ExploreCommunities({
   className?: string;
 }) {
   const [active, setActive] = useState(0);
-  const scrollerRef = useRef<HTMLDivElement | null>(null);
 
   const filtered = useMemo(() => communities, [communities]);
 
@@ -134,24 +133,6 @@ export function ExploreCommunities({
 
   const canPrev = active > 0;
   const canNext = active < filtered.length - 1;
-
-  const scrollToActive = (idx: number) => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const child = el.children.item(idx) as HTMLElement | null;
-    if (!child) return;
-    child.scrollIntoView({
-      behavior: "smooth",
-      inline: "center",
-      block: "nearest",
-    });
-  };
-
-  useEffect(() => {
-    if (!filtered.length) return;
-    scrollToActive(active);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active, filtered.length]);
 
   return (
     <section className={cn("mx-auto w-full max-w-6xl px-4 py-12", className)}>
@@ -225,10 +206,7 @@ export function ExploreCommunities({
           </div>
         </div>
       ) : (
-        <div
-          ref={scrollerRef}
-          className={cn("mt-7 grid gap-4", "sm:grid-cols-2", "lg:grid-cols-3")}
-        >
+        <div className={cn("mt-7 grid gap-4", "sm:grid-cols-2", "lg:grid-cols-3")}>
           {filtered.map((community, idx) => (
             <div key={community.locationFilter} className="min-h-[320px]">
               <CommunityLaunchStyleCard
