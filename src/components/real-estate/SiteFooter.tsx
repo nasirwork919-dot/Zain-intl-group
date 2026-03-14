@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
+  Facebook,
   Instagram,
   Linkedin,
   Mail,
@@ -114,6 +115,12 @@ export function SiteFooter({
 
   const social = useMemo(
     () => [
+      {
+        label: "Facebook",
+        handle: "Zain Real Estate",
+        href: "https://www.facebook.com/ZainRealEstate",
+        icon: Facebook,
+      },
       {
         label: "X",
         handle: "@zainavenue10",
