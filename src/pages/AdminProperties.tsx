@@ -202,6 +202,28 @@ type FilterPlacement =
   | "featured-projects"
   | "services"
   | "more";
+type FilterDuplicate = "all" | "duplicates" | "website-duplicates";
+
+type DuplicateGroupMeta = {
+  totalCount: number;
+  publishedCount: number;
+  ids: string[];
+};
+
+function normalizeDuplicateText(value: string) {
+  return value.trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+function buildDuplicateKey(
+  property: Pick<DbProperty, "title" | "location" | "price" | "listing_type">,
+) {
+  return [
+    normalizeDuplicateText(property.title),
+    normalizeDuplicateText(property.location),
+    String(property.price ?? 0),
+    normalizeDuplicateText(property.listing_type ?? "sale"),
+  ].join("|");
+}
 
 function FiltersPanel({
   query,
@@ -214,9 +236,13 @@ function FiltersPanel({
   setFeaturedOnly,
   placement,
   setPlacement,
+  duplicateMode,
+  setDuplicateMode,
   activeFiltersCount,
   clearFilters,
   filteredCount,
+  duplicateGroupsCount,
+  websiteDuplicateGroupsCount,
   loading,
   onNew,
   onRefresh,
@@ -234,9 +260,13 @@ function FiltersPanel({
   setFeaturedOnly: (v: FilterFeatured) => void;
   placement: FilterPlacement;
   setPlacement: (v: FilterPlacement) => void;
+  duplicateMode: FilterDuplicate;
+  setDuplicateMode: (v: FilterDuplicate) => void;
   activeFiltersCount: number;
   clearFilters: () => void;
   filteredCount: number;
+  duplicateGroupsCount: number;
+  websiteDuplicateGroupsCount: number;
   loading: boolean;
   onNew: () => void;
   onRefresh: () => void;
@@ -370,6 +400,28 @@ function FiltersPanel({
         </Select>
       </div>
 
+      <div className="grid gap-2">
+        <div className="text-xs font-extrabold tracking-[0.18em] text-[hsl(var(--brand-ink))]/70">
+          DUPLICATES
+        </div>
+        <Select
+          value={duplicateMode}
+          onValueChange={(v) => setDuplicateMode(v as FilterDuplicate)}
+        >
+          <SelectTrigger className="h-11 rounded-[5px] bg-white/80">
+            <SelectValue placeholder="All" />
+          </SelectTrigger>
+          <SelectContent className="rounded-[5px]">
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="duplicates">Any duplicate</SelectItem>
+            <SelectItem value="website-duplicates">Website live duplicates</SelectItem>
+          </SelectContent>
+        </Select>
+        <div className="text-[11px] font-semibold text-muted-foreground">
+          Groups: {duplicateGroupsCount} all / {websiteDuplicateGroupsCount} live on website
+        </div>
+      </div>
+
       <div className="mt-1 flex items-center justify-between rounded-[5px] bg-white/75 px-3 py-2 text-xs font-semibold text-muted-foreground ring-1 ring-black/10">
         <span>Showing</span>
         <span className="text-[hsl(var(--brand-ink))]">
@@ -449,6 +501,7 @@ export default function AdminPropertiesPage() {
   const [listingType, setListingType] = useState<FilterListingType>("all");
   const [featuredOnly, setFeaturedOnly] = useState<FilterFeatured>("all");
   const [placement, setPlacement] = useState<FilterPlacement>("all");
+  const [duplicateMode, setDuplicateMode] = useState<FilterDuplicate>("all");
 
   // Mobile filters sheet
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -492,6 +545,41 @@ export default function AdminPropertiesPage() {
     sessionStorage.setItem(MODE_STORAGE_KEY, view);
   }, [view]);
 
+  const duplicateInsights = useMemo(() => {
+    const grouped = new Map<string, DbProperty[]>();
+
+    for (const item of items) {
+      const key = buildDuplicateKey(item);
+      const group = grouped.get(key) ?? [];
+      group.push(item);
+      grouped.set(key, group);
+    }
+
+    const byId = new Map<string, DuplicateGroupMeta>();
+    let duplicateGroupsCount = 0;
+    let websiteDuplicateGroupsCount = 0;
+
+    for (const group of grouped.values()) {
+      if (group.length < 2) continue;
+
+      duplicateGroupsCount += 1;
+      const publishedCount = group.filter((item) => item.published).length;
+      if (publishedCount > 1) websiteDuplicateGroupsCount += 1;
+
+      const meta: DuplicateGroupMeta = {
+        totalCount: group.length,
+        publishedCount,
+        ids: group.map((item) => item.id),
+      };
+
+      for (const item of group) {
+        byId.set(item.id, meta);
+      }
+    }
+
+    return { byId, duplicateGroupsCount, websiteDuplicateGroupsCount };
+  }, [items]);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
 
@@ -516,15 +604,33 @@ export default function AdminPropertiesPage() {
       const matchesPlacement =
         placement === "all" ? true : placements.includes(placement);
 
+      const duplicateMeta = duplicateInsights.byId.get(p.id);
+      const matchesDuplicates =
+        duplicateMode === "all"
+          ? true
+          : duplicateMode === "duplicates"
+            ? !!duplicateMeta
+            : !!duplicateMeta && p.published && duplicateMeta.publishedCount > 1;
+
       return (
         matchesQuery &&
         matchesStatus &&
         matchesListingType &&
         matchesFeatured &&
-        matchesPlacement
+        matchesPlacement &&
+        matchesDuplicates
       );
     });
-  }, [featuredOnly, items, listingType, placement, query, status]);
+  }, [
+    duplicateInsights.byId,
+    duplicateMode,
+    featuredOnly,
+    items,
+    listingType,
+    placement,
+    query,
+    status,
+  ]);
 
   const selected = useMemo(() => {
     if (!selectedId) return null;
@@ -647,6 +753,7 @@ export default function AdminPropertiesPage() {
     setListingType("all");
     setFeaturedOnly("all");
     setPlacement("all");
+    setDuplicateMode("all");
   };
 
   const activeFiltersCount = useMemo(() => {
@@ -656,8 +763,9 @@ export default function AdminPropertiesPage() {
     if (listingType !== "all") c += 1;
     if (featuredOnly !== "all") c += 1;
     if (placement !== "all") c += 1;
+    if (duplicateMode !== "all") c += 1;
     return c;
-  }, [featuredOnly, listingType, placement, query, status]);
+  }, [duplicateMode, featuredOnly, listingType, placement, query, status]);
 
   const onSeedLuxury = async () => {
     setSeeding(true);
@@ -782,9 +890,13 @@ export default function AdminPropertiesPage() {
                       setFeaturedOnly={setFeaturedOnly}
                       placement={placement}
                       setPlacement={setPlacement}
+                      duplicateMode={duplicateMode}
+                      setDuplicateMode={setDuplicateMode}
                       activeFiltersCount={activeFiltersCount}
                       clearFilters={clearFilters}
                       filteredCount={filtered.length}
+                      duplicateGroupsCount={duplicateInsights.duplicateGroupsCount}
+                      websiteDuplicateGroupsCount={duplicateInsights.websiteDuplicateGroupsCount}
                       loading={loading}
                       onNew={openNew}
                       onRefresh={load}
@@ -827,9 +939,13 @@ export default function AdminPropertiesPage() {
                   setFeaturedOnly={setFeaturedOnly}
                   placement={placement}
                   setPlacement={setPlacement}
+                  duplicateMode={duplicateMode}
+                  setDuplicateMode={setDuplicateMode}
                   activeFiltersCount={activeFiltersCount}
                   clearFilters={clearFilters}
                   filteredCount={filtered.length}
+                  duplicateGroupsCount={duplicateInsights.duplicateGroupsCount}
+                  websiteDuplicateGroupsCount={duplicateInsights.websiteDuplicateGroupsCount}
                   loading={loading}
                   onNew={openNew}
                   onRefresh={load}
@@ -865,6 +981,9 @@ export default function AdminPropertiesPage() {
                       const statusLabel = p.published ? "Published" : "Draft";
                       const typeHint = p.listing_type === "rent" ? "Rent" : "Sale";
                       const hasCover = String(p.cover_image ?? "").trim().length > 5;
+                      const duplicateMeta = duplicateInsights.byId.get(p.id);
+                      const isWebsiteDuplicate =
+                        !!duplicateMeta && p.published && duplicateMeta.publishedCount > 1;
 
                       return (
                         <button
@@ -913,6 +1032,16 @@ export default function AdminPropertiesPage() {
                                     Featured
                                   </Badge>
                                 ) : null}
+                                {duplicateMeta ? (
+                                  <Badge className="rounded-[5px] bg-amber-100 text-amber-900 hover:bg-amber-100">
+                                    Duplicate x{duplicateMeta.totalCount}
+                                  </Badge>
+                                ) : null}
+                                {isWebsiteDuplicate ? (
+                                  <Badge className="rounded-[5px] bg-rose-100 text-rose-900 hover:bg-rose-100">
+                                    Live duplicate
+                                  </Badge>
+                                ) : null}
                               </div>
 
                               <div className="absolute bottom-3 left-3 right-3">
@@ -944,6 +1073,17 @@ export default function AdminPropertiesPage() {
                                     </span>
                                   </div>
                                 </div>
+
+                                {duplicateMeta ? (
+                                  <div className="rounded-[5px] bg-amber-50 px-3 py-2 text-right ring-1 ring-amber-200">
+                                    <div className="text-[11px] font-semibold text-amber-900/75">
+                                      Duplicate Group
+                                    </div>
+                                    <div className="text-xs font-extrabold text-amber-900">
+                                      {duplicateMeta.totalCount} total / {duplicateMeta.publishedCount} live
+                                    </div>
+                                  </div>
+                                ) : null}
 
                                 <div className="rounded-[5px] bg-muted/35 px-3 py-2 text-right ring-1 ring-black/5">
                                   <div className="text-[11px] font-semibold text-muted-foreground">
