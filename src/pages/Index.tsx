@@ -39,6 +39,11 @@ import {
   type PublicProperty as Property,
 } from "@/hooks/use-published-properties";
 import { useScrollToTop } from "@/hooks/use-scroll-to-top";
+import {
+  buildBuyerInquiryLines,
+  buildWhatsAppUrl,
+  DEFAULT_WHATSAPP_NUMBER,
+} from "@/utils/whatsapp";
 
 function hasPlacement(placements: string[], key: string) {
   return (placements ?? [])
@@ -744,10 +749,14 @@ const Index = () => {
             <Button
               className="mt-5 h-11 w-full rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92"
               onClick={() =>
-                toast({
-                  title: "We’re online",
-                  description: "Send your criteria and we’ll respond quickly.",
-                })
+                window.open(
+                  buildWhatsAppUrl({
+                    number: DEFAULT_WHATSAPP_NUMBER,
+                    lines: buildBuyerInquiryLines({}),
+                  }),
+                  "_blank",
+                  "noopener,noreferrer",
+                )
               }
             >
               Message us
@@ -768,15 +777,8 @@ const Index = () => {
       />
 
       <WhatsAppFloatingButton
-        number="+971 50 5033721"
-        defaultMessageLines={[
-          "Hello Zain Dubai,",
-          "I’m interested in a property in Dubai.",
-          "",
-          "My name:",
-          "My preferred area:",
-          "My budget:",
-        ]}
+        number={DEFAULT_WHATSAPP_NUMBER}
+        defaultMessageLines={buildBuyerInquiryLines({})}
       />
 
       <ScrollUpButton />

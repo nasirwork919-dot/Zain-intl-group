@@ -6,19 +6,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
-function toWhatsAppText(lines: string[]) {
-  return encodeURIComponent(lines.join("\n"));
-}
-
-function buildWhatsAppUrl({ number, lines }: { number: string; lines: string[] }) {
-  const wa = number.replace(/[^\d]/g, "");
-  const text = toWhatsAppText(lines);
-  return `https://wa.me/${wa}?text=${text}`;
-}
+import {
+  buildBuyerInquiryLines,
+  buildWhatsAppUrl,
+  DEFAULT_WHATSAPP_NUMBER,
+} from "@/utils/whatsapp";
 
 export function WhatsAppFloatingButton({
-  number = "+971 50 5033721",
+  number = DEFAULT_WHATSAPP_NUMBER,
   defaultMessageLines,
   className,
 }: {
@@ -26,19 +21,10 @@ export function WhatsAppFloatingButton({
   defaultMessageLines?: string[];
   className?: string;
 }) {
-  const displayNumber = number.trim() || "+971 50 5033721";
+  const displayNumber = number.trim() || DEFAULT_WHATSAPP_NUMBER;
   const href = buildWhatsAppUrl({
     number: displayNumber,
-    lines:
-      defaultMessageLines ??
-      [
-        "Hello Zain Dubai,",
-        "I’d like to inquire about a property.",
-        "",
-        "My name:",
-        "My budget:",
-        "Preferred area:",
-      ],
+    lines: defaultMessageLines ?? buildBuyerInquiryLines({}),
   });
 
   return (

@@ -58,6 +58,43 @@ type DbProperty = {
   featured: boolean;
 };
 
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error) return error.message;
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "message" in error &&
+    typeof error.message === "string"
+  ) {
+    return error.message;
+  }
+  return "Unexpected error.";
+}
+
+function formatPropertyAdminError(error: unknown) {
+  const message = getErrorMessage(error);
+  const lower = message.toLowerCase();
+
+  if (
+    lower.includes("row-level security") ||
+    lower.includes("permission denied")
+  ) {
+    return "Database rejected the write. This admin screen is browser-only; Supabase Auth/RLS still needs to allow property writes for the active user.";
+  }
+
+  if (
+    lower.includes("column") &&
+    (lower.includes("listing_type") ||
+      lower.includes("property_type") ||
+      lower.includes("placements") ||
+      lower.includes("featured"))
+  ) {
+    return "Database schema is missing the newer property listing columns. Run the updated SQL schema before using the admin panel.";
+  }
+
+  return message;
+}
+
 const DRAFT_STORAGE_KEY = "zain_admin_new_property_draft_v1";
 const MODE_STORAGE_KEY = "zain_admin_properties_mode_v1";
 
@@ -425,16 +462,26 @@ export default function AdminPropertiesPage() {
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("properties")
-      .select(
-        "id,title,location,price,beds,baths,area_sqft,tag,cover_image,gallery,description,amenities,published,created_at,listing_type,property_type,placements,featured",
-      )
-      .order("created_at", { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from("properties")
+        .select(
+          "id,title,location,price,beds,baths,area_sqft,tag,cover_image,gallery,description,amenities,published,created_at,listing_type,property_type,placements,featured",
+        )
+        .order("created_at", { ascending: false });
 
-    if (error) throw error;
-    setItems((data ?? []) as DbProperty[]);
-    setLoading(false);
+      if (error) throw error;
+      setItems((data ?? []) as DbProperty[]);
+    } catch (error) {
+      toast({
+        title: "Could not load properties",
+        description: formatPropertyAdminError(error),
+        variant: "destructive",
+      });
+      setItems([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -484,64 +531,83 @@ export default function AdminPropertiesPage() {
     return items.find((x) => x.id === selectedId) ?? null;
   }, [items, selectedId]);
 
-  const save = async () => {
+  const save = async (nextDraft: AdminPropertyDraft = draft) => {
     setSaving(true);
+    try {
+      const payload = {
+        title: nextDraft.title,
+        location: nextDraft.location,
+        price: nextDraft.price,
+        beds: nextDraft.beds,
+        baths: nextDraft.baths,
+        area_sqft: nextDraft.areaSqFt,
+        tag: nextDraft.tag.trim() ? nextDraft.tag.trim() : null,
+        cover_image: nextDraft.coverImage,
+        gallery: nextDraft.gallery,
+        description: nextDraft.description,
+        amenities: nextDraft.amenities,
+        published: nextDraft.published,
 
-    const payload = {
-      title: draft.title,
-      location: draft.location,
-      price: draft.price,
-      beds: draft.beds,
-      baths: draft.baths,
-      area_sqft: draft.areaSqFt,
-      tag: draft.tag.trim() ? draft.tag.trim() : null,
-      cover_image: draft.coverImage,
-      gallery: draft.gallery,
-      description: draft.description,
-      amenities: draft.amenities,
-      published: draft.published,
+        listing_type: nextDraft.listingType,
+        property_type: nextDraft.propertyType,
+        placements: nextDraft.placements,
+        featured: nextDraft.featured,
+      };
 
-      listing_type: draft.listingType,
-      property_type: draft.propertyType,
-      placements: draft.placements,
-      featured: draft.featured,
-    };
+      if (nextDraft.id) {
+        const { error } = await supabase
+          .from("properties")
+          .update(payload)
+          .eq("id", nextDraft.id);
+        if (error) throw error;
 
-    if (draft.id) {
-      const { error } = await supabase
-        .from("properties")
-        .update(payload)
-        .eq("id", draft.id);
-      if (error) throw error;
+        toast({ title: "Saved", description: "Property updated." });
+      } else {
+        const { error } = await supabase.from("properties").insert(payload);
+        if (error) throw error;
 
-      toast({ title: "Saved", description: "Property updated." });
-    } else {
-      const { error } = await supabase.from("properties").insert(payload);
-      if (error) throw error;
+        toast({ title: "Created", description: "New property added." });
+        sessionStorage.removeItem(DRAFT_STORAGE_KEY);
+        setDraft(emptyDraft());
+        setNewMode("setup");
+        setView("list");
+      }
 
-      toast({ title: "Created", description: "New property added." });
-      sessionStorage.removeItem(DRAFT_STORAGE_KEY);
-      persistDraft(emptyDraft());
-      setNewMode("setup");
-      setView("list");
+      await load();
+    } catch (error) {
+      toast({
+        title: "Could not save property",
+        description: formatPropertyAdminError(error),
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
     }
-
-    await load();
-    setSaving(false);
   };
 
   const del = async () => {
     if (!draft.id) return;
     setDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("properties")
+        .delete()
+        .eq("id", draft.id);
+      if (error) throw error;
 
-    const { error } = await supabase.from("properties").delete().eq("id", draft.id);
-    if (error) throw error;
-
-    toast({ title: "Deleted", description: "Property removed." });
-    setSelectedId(null);
-    setView("list");
-    await load();
-    setDeleting(false);
+      toast({ title: "Deleted", description: "Property removed." });
+      setSelectedId(null);
+      setView("list");
+      await load();
+    } catch (error) {
+      toast({
+        title: "Could not delete property",
+        description: formatPropertyAdminError(error),
+        variant: "destructive",
+      });
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const openNew = () => {
@@ -595,16 +661,25 @@ export default function AdminPropertiesPage() {
 
   const onSeedLuxury = async () => {
     setSeeding(true);
-    const { inserted } = await seedPremiumListings();
-    toast({
-      title: "Luxury seed complete",
-      description:
-        inserted === 0
-          ? "Seed listings already exist."
-          : `Inserted ${inserted} luxury listings.`,
-    });
-    await load();
-    setSeeding(false);
+    try {
+      const { inserted } = await seedPremiumListings();
+      toast({
+        title: "Luxury seed complete",
+        description:
+          inserted === 0
+            ? "Seed listings already exist."
+            : `Inserted ${inserted} luxury listings.`,
+      });
+      await load();
+    } catch (error) {
+      toast({
+        title: "Could not seed listings",
+        description: formatPropertyAdminError(error),
+        variant: "destructive",
+      });
+    } finally {
+      setSeeding(false);
+    }
   };
 
   const isEditingExisting = !!draft.id;

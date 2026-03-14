@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import {
-  Facebook,
   ArrowRight,
+  ArrowUpRight,
+  Instagram,
+  Linkedin,
   Mail,
   ChevronUp,
   Sparkles,
@@ -16,6 +18,19 @@ import { toast } from "@/hooks/use-toast";
 import { useNavMenuInventory } from "@/hooks/use-nav-menu-inventory";
 
 type FooterLink = { label: string; onClick: () => void };
+
+function XIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className={className}
+      fill="currentColor"
+    >
+      <path d="M18.9 2H22l-6.77 7.74L23 22h-6.1l-4.78-6.97L6.02 22H2.9l7.24-8.28L1 2h6.25l4.32 6.31L18.9 2Zm-1.07 18h1.69L6.33 3.89H4.52L17.83 20Z" />
+    </svg>
+  );
+}
 
 export function SiteFooter({
   onGetInTouch,
@@ -100,14 +115,22 @@ export function SiteFooter({
   const social = useMemo(
     () => [
       {
-        label: "Facebook",
-        icon: Facebook,
-        onClick: () =>
-          window.open(
-            "https://www.facebook.com/ZainRealEstate",
-            "_blank",
-            "noopener,noreferrer",
-          ),
+        label: "X",
+        handle: "@zainavenue10",
+        href: "https://x.com/zainavenue10",
+        icon: XIcon,
+      },
+      {
+        label: "LinkedIn",
+        handle: "Kashif Raza",
+        href: "https://www.linkedin.com/in/kashif-raza-33062513/",
+        icon: Linkedin,
+      },
+      {
+        label: "Instagram",
+        handle: "@zainavenuereality",
+        href: "https://www.instagram.com/zainavenuereality/",
+        icon: Instagram,
       },
     ],
     [],
@@ -386,24 +409,40 @@ export function SiteFooter({
 
                 {/* Social + availability */}
                 <div>
-                  <div className={sectionTitle}>Social Media</div>
+                  <div className={sectionTitle}>Follow ZAiN</div>
+                  <div className="mt-2 text-sm font-semibold text-[#0b1025]/65">
+                    Property updates, market signals, and direct contact points.
+                  </div>
 
-                  <div className="mt-5 flex flex-wrap items-center gap-3">
+                  <div className="mt-5 grid gap-3">
                     {social.map((s) => (
-                      <button
+                      <a
                         key={s.label}
-                        type="button"
-                        onClick={s.onClick}
+                        href={s.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className={cn(
-                          "inline-flex h-10 w-10 items-center justify-center rounded-[5px]",
-                          "border border-black/12 bg-white text-[#0b1025]",
-                          "transition hover:bg-[#0b1025]/[0.04]",
+                          "group flex items-center justify-between gap-3 rounded-[5px]",
+                          "border border-black/12 bg-white px-4 py-3 text-left text-[#0b1025]",
+                          "transition hover:bg-[#0b1025]/[0.03]",
                           "focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand))]/25",
                         )}
-                        aria-label={s.label}
                       >
-                        <s.icon className="h-4 w-4" />
-                      </button>
+                        <div className="flex items-center gap-3">
+                          <span className="inline-flex h-10 w-10 items-center justify-center rounded-[5px] bg-[#0b1025]/[0.04] text-[#0b1025] ring-1 ring-black/8">
+                            <s.icon className="h-4 w-4" />
+                          </span>
+                          <span className="min-w-0">
+                            <span className="block text-xs font-semibold tracking-[0.18em] text-[#0b1025]/55">
+                              {s.label}
+                            </span>
+                            <span className="block truncate text-sm font-semibold text-[#0b1025]/85">
+                              {s.handle}
+                            </span>
+                          </span>
+                        </div>
+                        <ArrowUpRight className="h-4 w-4 text-[#0b1025]/45 transition group-hover:text-[#0b1025]" />
+                      </a>
                     ))}
                   </div>
 

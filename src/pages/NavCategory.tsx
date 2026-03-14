@@ -24,6 +24,11 @@ import {
   type PublicProperty as Property,
 } from "@/hooks/use-published-properties";
 import { useNavMenuInventory, type NavMenuKey } from "@/hooks/use-nav-menu-inventory";
+import {
+  buildBuyerInquiryLines,
+  buildWhatsAppUrl,
+  DEFAULT_WHATSAPP_NUMBER,
+} from "@/utils/whatsapp";
 
 function slugify(v: string) {
   return v
@@ -252,6 +257,32 @@ export default function NavCategoryPage() {
   };
 
   const labelTop = menus[category]?.label ?? category.toUpperCase();
+  const whatsappPrefill = useMemo(() => {
+    const propertyType =
+      category === "buy" || category === "rent"
+        ? optionLabel === "View All"
+          ? ""
+          : optionLabel
+        : "";
+
+    const propertyLocation =
+      category === "communities" ||
+      category === "developers" ||
+      category === "featured-projects" ||
+      category === "services" ||
+      category === "more"
+        ? optionLabel === "View All"
+          ? ""
+          : optionLabel
+        : "";
+
+    return buildBuyerInquiryLines({
+      propertyType,
+      propertyLocation,
+      extraLines:
+        optionLabel === "View All" ? [] : [`Interest: ${labelTop} - ${optionLabel}`],
+    });
+  }, [category, labelTop, optionLabel]);
 
   return (
     <div className="min-h-screen bg-[hsl(var(--page))]">
@@ -390,17 +421,20 @@ export default function NavCategoryPage() {
 
                   <div className="mt-4 grid gap-2 sm:grid-cols-2">
                     <Button
+                      asChild
                       variant="outline"
                       className="h-11 rounded-[5px]"
-                      onClick={() =>
-                        toast({
-                          title: "WhatsApp",
-                          description:
-                            "We can wire WhatsApp CTAs with your real number next.",
-                        })
-                      }
                     >
-                      WhatsApp
+                      <a
+                        href={buildWhatsAppUrl({
+                          number: DEFAULT_WHATSAPP_NUMBER,
+                          lines: whatsappPrefill,
+                        })}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        WhatsApp
+                      </a>
                     </Button>
                     <Button
                       className={cn(

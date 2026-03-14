@@ -7,27 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-
-function toWhatsAppText(lines: string[]) {
-  return encodeURIComponent(lines.filter(Boolean).join("\n"));
-}
-
-function openWhatsApp({
-  whatsappNumber,
-  lines,
-}: {
-  whatsappNumber: string;
-  lines: string[];
-}) {
-  const wa = whatsappNumber.replace(/[^\d]/g, "");
-  const text = toWhatsAppText(lines);
-  const url = `https://wa.me/${wa}?text=${text}`;
-  window.open(url, "_blank", "noopener,noreferrer");
-}
+import {
+  buildBuyerInquiryLines,
+  buildWhatsAppUrl,
+  DEFAULT_WHATSAPP_NUMBER,
+} from "@/utils/whatsapp";
 
 export function LeadCapture({
   defaultMessage,
-  whatsappNumber = "+971521362224",
+  whatsappNumber = DEFAULT_WHATSAPP_NUMBER,
 }: {
   defaultMessage?: string;
   whatsappNumber?: string;
@@ -121,18 +109,23 @@ export function LeadCapture({
               throw error;
             }
 
-            openWhatsApp({
-              whatsappNumber,
-              lines: [
-                "New Website Lead (Talk to an agent)",
-                "",
-                `• Name: ${name.trim()}`,
-                phone.trim() ? `• Phone/WhatsApp: ${phone.trim()}` : "",
-                email.trim() ? `• Email: ${email.trim()}` : "",
-                "",
-                message.trim() ? `Message:\n${message.trim()}` : "",
-              ],
-            });
+            const extraLines = [
+              email.trim() ? `Email: ${email.trim()}` : "",
+              message.trim() ? `Additional Details: ${message.trim()}` : "",
+            ].filter(Boolean);
+
+            window.open(
+              buildWhatsAppUrl({
+                number: whatsappNumber,
+                lines: buildBuyerInquiryLines({
+                  fullName: name,
+                  phone,
+                  extraLines,
+                }),
+              }),
+              "_blank",
+              "noopener,noreferrer",
+            );
 
             toast({
               title: "Request sent",

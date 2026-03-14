@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Image as ImageIcon, Save, Trash2, Tag } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -96,7 +96,7 @@ export function PropertyEditor({
 }: {
   value: AdminPropertyDraft;
   onChange: (next: AdminPropertyDraft) => void;
-  onSave: () => void;
+  onSave: (next: AdminPropertyDraft) => void | Promise<void>;
   onDelete?: () => void;
   saving?: boolean;
   deleting?: boolean;
@@ -105,16 +105,42 @@ export function PropertyEditor({
   const [galleryText, setGalleryText] = useState(value.gallery.join("\n"));
   const [amenitiesText, setAmenitiesText] = useState(value.amenities.join("\n"));
 
-  const canSave = useMemo(() => {
-    return (
-      value.title.trim().length >= 4 &&
-      value.location.trim().length >= 2 &&
-      value.coverImage.trim().length >= 8 &&
-      value.description.trim().length >= 20 &&
-      Number.isFinite(value.price) &&
-      value.price > 0
-    );
-  }, [value.coverImage, value.description, value.location, value.price, value.title]);
+  useEffect(() => {
+    setGalleryText(value.gallery.join("\n"));
+  }, [value.gallery, value.id]);
+
+  useEffect(() => {
+    setAmenitiesText(value.amenities.join("\n"));
+  }, [value.amenities, value.id]);
+
+  const parsedGallery = useMemo(() => parseLines(galleryText), [galleryText]);
+  const parsedAmenities = useMemo(() => parseLines(amenitiesText), [amenitiesText]);
+
+  const missingFields = useMemo(() => {
+    const missing: string[] = [];
+
+    if (value.title.trim().length < 4) missing.push("title");
+    if (value.location.trim().length < 2) missing.push("location");
+    if (!Number.isFinite(value.price) || value.price <= 0) missing.push("price");
+    if (value.coverImage.trim().length < 8) missing.push("cover image");
+    if (parsedGallery.length === 0) missing.push("gallery");
+    if (value.description.trim().length === 0) missing.push("description");
+    if (parsedAmenities.length === 0) missing.push("amenities");
+    if (value.placements.length === 0) missing.push("placement");
+
+    return missing;
+  }, [
+    parsedAmenities.length,
+    parsedGallery.length,
+    value.coverImage,
+    value.description,
+    value.location,
+    value.placements.length,
+    value.price,
+    value.title,
+  ]);
+
+  const canSave = missingFields.length === 0;
 
   const placementsCount = value.placements.length;
 
@@ -137,6 +163,11 @@ export function PropertyEditor({
             You can now place a property into multiple site sections (Buy, Rent,
             Featured, etc.).
           </div>
+          <div className="mt-2 text-xs font-semibold text-muted-foreground">
+            {canSave
+              ? "Ready to save."
+              : `Required before save: ${missingFields.join(", ")}.`}
+          </div>
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row">
@@ -158,38 +189,23 @@ export function PropertyEditor({
             className="h-11 rounded-[5px] bg-[hsl(var(--brand-ink))] text-white hover:bg-[hsl(var(--brand-ink))]/92 disabled:opacity-50"
             disabled={!canSave || saving}
             onClick={() => {
-              const g = parseLines(galleryText);
-              const a = parseLines(amenitiesText);
-
-              if (g.length === 0) {
+              if (!canSave) {
                 toast({
-                  title: "Gallery required",
-                  description:
-                    "Add at least one gallery image URL (can be same as cover).",
-                  variant: "destructive",
-                });
-                return;
-              }
-              if (a.length === 0) {
-                toast({
-                  title: "Amenities required",
-                  description: "Add at least one amenity.",
-                  variant: "destructive",
-                });
-                return;
-              }
-              if (value.placements.length === 0) {
-                toast({
-                  title: "Placements required",
-                  description:
-                    "Select at least one placement (e.g. Buy, Rent, Featured).",
+                  title: "Complete required fields",
+                  description: `Before saving, add: ${missingFields.join(", ")}.`,
                   variant: "destructive",
                 });
                 return;
               }
 
-              onChange({ ...value, gallery: g, amenities: a });
-              onSave();
+              const nextValue = {
+                ...value,
+                gallery: parsedGallery,
+                amenities: parsedAmenities,
+              };
+
+              onChange(nextValue);
+              void onSave(nextValue);
             }}
           >
             <Save className="mr-2 h-4 w-4" />

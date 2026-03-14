@@ -88,6 +88,12 @@ create table if not exists public.properties (
   updated_at timestamp with time zone not null default now()
 );
 
+alter table public.properties
+  add column if not exists listing_type text not null default 'sale',
+  add column if not exists property_type text not null default 'apartment',
+  add column if not exists placements text[] not null default '{"buy"}'::text[],
+  add column if not exists featured boolean not null default false;
+
 create index if not exists properties_published_idx on public.properties (published);
 create index if not exists properties_created_at_idx on public.properties (created_at desc);
 
