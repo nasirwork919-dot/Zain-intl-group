@@ -24,6 +24,7 @@ export function buildWhatsAppUrl({
 export function buildBuyerInquiryLines({
   fullName,
   phone,
+  purpose,
   propertyType,
   propertyLocation,
   budget,
@@ -31,6 +32,7 @@ export function buildBuyerInquiryLines({
 }: {
   fullName?: string;
   phone?: string;
+  purpose?: string;
   propertyType?: string;
   propertyLocation?: string;
   budget?: string;
@@ -40,13 +42,14 @@ export function buildBuyerInquiryLines({
 
   return [
     "Hello ZAiN Int'l Group",
-    "I'm interested to buy a property in Dubai, U.A.E.",
+    "I'm interested in buying a property in Dubai, U.A.E.",
     "",
-    labelLine("Full Name", fullName),
-    labelLine("Call & WhatsApp no.", phone),
-    labelLine("Preferred Property Type", propertyType),
-    labelLine("Preferred Property Location", propertyLocation),
-    labelLine("Budget", budget),
+    labelLine("Full Name :", fullName),
+    labelLine("Call & WhatsApp no. :", phone),
+    labelLine("Purpose Investment or live-in :", purpose),
+    labelLine("Preferred Property Type :", propertyType),
+    labelLine("Preferred Property Location :", propertyLocation),
+    labelLine("Budget in AED or US$ :", budget),
     ...(extras.length ? ["", ...extras] : []),
   ];
 }
