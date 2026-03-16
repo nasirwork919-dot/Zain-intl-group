@@ -606,41 +606,49 @@ const Index = () => {
           ) : null}
         </div>
       </section>
-
       <section id="about" className="mx-auto max-w-6xl px-4 pb-14">
         <div className="grid gap-4 md:grid-cols-12">
           <Card className="overflow-hidden rounded-[5px] border border-white/40 bg-white/65 shadow-[0_20px_60px_-45px_rgba(15,23,42,0.65)] ring-1 ring-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/55 md:col-span-7">
             <div className="p-6 sm:p-7">
               <div className="text-sm font-semibold text-[hsl(var(--brand-ink))]">
-                About Zain International Group
+                Corporate Overview
               </div>
               <h2 className="mt-2 text-3xl font-extrabold tracking-tight">
-                A calmer way to buy in Dubai
+                ZAiN Avenue Reality Real Estate
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                We combine local market knowledge with a buyer-first process.
-                Whether you’re investing or relocating, we help you compare the
-                right options quickly — with clean pricing, payment plans, and
-                guidance from first message to handover.
+                ZAiN Avenue Reality Real Estate is a distinguished property
+                brokerage and management firm headquartered in Dubai. Since its
+                inception in 2011, the company has remained a steadfast partner
+                in the UAE's evolving real estate landscape.
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Built on a foundation of integrity, transparency, and market
+                intelligence, ZAiN Avenue Reality provides bespoke consulting
+                services to a diverse global clientele, ranging from private
+                homeowners to institutional investors.
               </p>
 
-              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              <div className="mt-6 text-sm font-semibold text-[hsl(var(--brand-ink))]">
+                Core Competencies
+              </div>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
                 {[
                   {
-                    title: "Curated inventory",
-                    desc: "Only projects we would recommend to friends.",
+                    title: "Investment Brokerage",
+                    desc: "High-value transactions across secondary and premium off-plan markets.",
                   },
                   {
-                    title: "Clarity-first",
-                    desc: "Numbers, not noise — with realistic timelines.",
+                    title: "Leasing Representation",
+                    desc: "Marketing, tenant vetting, contract execution, and Ejari compliance.",
                   },
                   {
-                    title: "End-to-end support",
-                    desc: "From viewings to documentation and closing.",
+                    title: "Asset Management",
+                    desc: "Maintenance, legal adherence, and long-term value preservation.",
                   },
                   {
-                    title: "Post-sale care",
-                    desc: "Handover, snagging, and leasing guidance.",
+                    title: "Overseas Investor Division",
+                    desc: "Turnkey services for international investors and overseas clients.",
                   },
                 ].map((i) => (
                   <div
@@ -656,6 +664,50 @@ const Index = () => {
                   </div>
                 ))}
               </div>
+
+              <div className="mt-6 rounded-[5px] border border-black/5 bg-white/70 p-4 ring-1 ring-black/10">
+                <div className="text-sm font-extrabold tracking-tight">
+                  Strategic Geographic Focus
+                </div>
+                <div className="mt-3 grid gap-3 text-sm text-muted-foreground sm:grid-cols-2">
+                  <div>
+                    <div className="font-semibold text-foreground">
+                      The Elite Core
+                    </div>
+                    <div className="mt-1">
+                      Downtown Dubai, Burj Khalifa District, Business Bay, Palm
+                      Jumeirah, Emirates Hills.
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-foreground">
+                      Waterfront & Lifestyle Hubs
+                    </div>
+                    <div className="mt-1">
+                      Dubai Marina, Jumeirah Beach Residence (JBR), Dubai
+                      Islands.
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-foreground">
+                      High-Growth Modern Districts
+                    </div>
+                    <div className="mt-1">
+                      MBR City, Sobha Hartland Greens, Dubai Meydan, Dubai Hills
+                      Estate.
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-foreground">
+                      Emerging Investment Zones
+                    </div>
+                    <div className="mt-1">
+                      Dubai South (Expo City), Al Jaddaf, DAMAC Hills 1 & 2, JVC,
+                      International City.
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </Card>
 
@@ -667,22 +719,69 @@ const Index = () => {
               loading="lazy"
             />
             <div className="p-6">
-              <div className="text-sm font-semibold">What you’ll get</div>
-              <ul className="mt-3 grid gap-2 text-sm text-muted-foreground">
+              <div className="text-sm font-semibold">
+                Specialized Overseas Investor Division
+              </div>
+              <p className="mt-2 text-sm text-muted-foreground">
+                We provide a complete turnkey experience for international
+                clients, ensuring that distance is never a barrier to achieving
+                high yields in Dubai's tax-free property market.
+              </p>
+              <div className="mt-3 text-sm font-semibold text-[hsl(var(--brand-ink))]">
+                Remote Management Services
+              </div>
+              <ul className="mt-4 grid gap-2 text-sm text-muted-foreground">
                 {[
-                  "Project comparisons",
-                  "Payment plan breakdowns",
-                  "ROI & rental insights",
-                  "Priority access",
+                  "Handover and snagging services with developer compliance checks.",
+                  "End-to-end tenancy management and rent collection.",
+                  "Portfolio ROI optimization and timing advisory.",
                 ].map((t) => (
-                  <li key={t} className="inline-flex items-center gap-2">
-                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-[5px] bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))] ring-1 ring-black/5">
+                  <li key={t} className="inline-flex items-start gap-2">
+                    <span className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-[5px] bg-[hsl(var(--brand))]/10 text-[hsl(var(--brand-ink))] ring-1 ring-black/5">
                       <CheckCircle2 className="h-4 w-4" />
                     </span>
                     <span>{t}</span>
                   </li>
                 ))}
               </ul>
+
+              <div className="mt-6 rounded-[5px] border border-black/5 bg-white/70 p-4 ring-1 ring-black/10">
+                <div className="text-sm font-extrabold tracking-tight">
+                  Why ZAiN Avenue Reality
+                </div>
+                <ul className="mt-2 grid gap-2 text-sm text-muted-foreground">
+                  <li>
+                    Proven longevity with 15+ years of operational excellence.
+                  </li>
+                  <li>
+                    Global standard service designed for overseas investors.
+                  </li>
+                  <li>
+                    Unbiased, data-driven consultancy for yield and
+                    diversification.
+                  </li>
+                </ul>
+              </div>
+
+              <div className="mt-6 rounded-[5px] border border-black/5 bg-white/70 p-4 ring-1 ring-black/10">
+                <div className="text-sm font-extrabold tracking-tight">
+                  Contact Information
+                </div>
+                <div className="mt-3 grid gap-2 text-sm text-muted-foreground">
+                  <div>Direct / WhatsApp: +971 50 503 3721</div>
+                  <div>Direct / WhatsApp: +44 7818 112091</div>
+                  <div>Email: info@zaindubai.com</div>
+                  <div>Website: www.zaindubai.com</div>
+                </div>
+              </div>
+              <div className="mt-6 rounded-[5px] border border-black/5 bg-white/70 p-4 ring-1 ring-black/10">
+                <div className="text-sm font-extrabold tracking-tight">
+                  ZAiN International Group
+                </div>
+                <div className="mt-2 text-sm text-muted-foreground">
+                  Expanding Globally: Dubai | United Kingdom | Europe
+                </div>
+              </div>
 
               <Button
                 variant="secondary"
