@@ -16,6 +16,10 @@ import AdminLoginPage from "./pages/AdminLogin";
 import AdminDashboardPage from "./pages/AdminDashboard";
 import AdminPropertiesPage from "./pages/AdminProperties";
 import AdminLeadsPage from "./pages/AdminLeads";
+import AdminInternationalPage from "./pages/AdminInternational";
+import InternationalLandingPage from "./pages/InternationalLanding";
+import InternationalRegionPage from "./pages/InternationalRegion";
+import InternationalPropertyDetailsPage from "./pages/InternationalPropertyDetails";
 import PrivacyPolicyPage from "./pages/PrivacyPolicy";
 import TermsOfServicePage from "./pages/TermsOfService";
 import InsightsPage from "./pages/Insights";
@@ -71,6 +75,19 @@ const App = () => (
               </AdminGate>
             }
           />
+          <Route
+            path="/admin/international"
+            element={
+              <AdminGate>
+                <AdminInternationalPage />
+              </AdminGate>
+            }
+          />
+
+          {/* International Properties */}
+          <Route path="/international" element={<InternationalLandingPage />} />
+          <Route path="/international/:region" element={<InternationalRegionPage />} />
+          <Route path="/international/:region/:id" element={<InternationalPropertyDetailsPage />} />
 
           {/* Buy: 2-step landing (features -> options) */}
           <Route path="/nav/buy" element={<BuyLanding />} />

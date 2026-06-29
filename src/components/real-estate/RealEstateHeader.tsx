@@ -11,6 +11,7 @@ import {
 } from "@/components/real-estate/header/HeaderMainBar";
 import { MobileNavSheet } from "@/components/real-estate/header/MobileNavSheet";
 import { SimpleMegaMenu } from "@/components/real-estate/SimpleMegaMenu";
+import { InternationalMegaMenu } from "@/components/real-estate/InternationalMegaMenu";
 import { useNavMenuInventory, type NavMenuKey } from "@/hooks/use-nav-menu-inventory";
 
 export function RealEstateHeader() {
@@ -26,6 +27,7 @@ export function RealEstateHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const [openMega, setOpenMega] = useState<NavMenuKey | null>(null);
+  const [openInternational, setOpenInternational] = useState(false);
   const { cancel: cancelClose, schedule: scheduleClose } = useDelayedClose();
 
   const { menus } = useNavMenuInventory();
@@ -33,6 +35,7 @@ export function RealEstateHeader() {
   const closeMegas = () => {
     cancelClose();
     setOpenMega(null);
+    setOpenInternational(false);
   };
 
   const openOnly = (key: NavMenuKey) => {
@@ -51,7 +54,7 @@ export function RealEstateHeader() {
       { key: "more", href: "/nav/more/option/all", label: "MORE" },
     ];
 
-    return items
+    const dynamicItems = items
       .filter((it) => menus[it.key]?.hasAny)
       .map(
         (it) =>
@@ -62,6 +65,16 @@ export function RealEstateHeader() {
             mega: it.key as any,
           }) satisfies HeaderNavItem,
       );
+
+    // International is always shown — not inventory-driven
+    const intlItem: HeaderNavItem = {
+      label: "INTERNATIONAL",
+      href: "/international",
+      hasChevron: true,
+      mega: "international",
+    };
+
+    return [...dynamicItems, intlItem];
   }, [menus]);
 
   const expandedByMega = useMemo(() => {
@@ -74,10 +87,11 @@ export function RealEstateHeader() {
       "services",
       "more",
     ];
-    const obj: Partial<Record<NavMenuKey, boolean>> = {};
+    const obj: Partial<Record<string, boolean>> = {};
     keys.forEach((k) => (obj[k] = openMega === k));
+    obj["international"] = openInternational;
     return obj;
-  }, [openMega]);
+  }, [openMega, openInternational]);
 
   const anyOpen = openMega !== null;
 
@@ -100,9 +114,16 @@ export function RealEstateHeader() {
         activeSectionId={active}
         onLogoClick={() => navigate("/")}
         onNavHoverOpen={(mega) => {
+          if (mega === "international") {
+            cancelClose();
+            setOpenMega(null);
+            setOpenInternational(true);
+            return;
+          }
           const key = mega as NavMenuKey | undefined;
           if (!key) return;
           if (!menus[key]?.hasAny) return;
+          setOpenInternational(false);
           openOnly(key);
         }}
         onNavHoverCancelClose={cancelClose}
@@ -134,6 +155,11 @@ export function RealEstateHeader() {
             />
           );
         })}
+
+        <InternationalMegaMenu
+          open={openInternational}
+          onClose={() => setOpenInternational(false)}
+        />
       </div>
     </header>
   );

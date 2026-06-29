@@ -10,7 +10,7 @@ export type HeaderNavItem = {
   label: string;
   href: string;
   hasChevron?: boolean;
-  mega?: "buy" | "rent" | "featured-projects" | "services" | "off-plan";
+  mega?: "buy" | "rent" | "featured-projects" | "services" | "off-plan" | "international";
 };
 
 export function HeaderMainBar({

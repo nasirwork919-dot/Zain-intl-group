@@ -8,6 +8,7 @@ import {
   Building2,
   Inbox,
   ExternalLink,
+  Globe,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -133,6 +134,12 @@ export function AdminShell({
       label: "Properties",
       icon: Building2,
       hint: "Listings & publishing",
+    },
+    {
+      to: "/admin/international",
+      label: "International",
+      icon: Globe,
+      hint: "Europe · UK · Pakistan",
     },
     { to: "/admin/leads", label: "Leads", icon: Inbox, hint: "Inbox & inquiries" },
   ];

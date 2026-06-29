@@ -19,7 +19,7 @@ import {
 } from "@/hooks/use-nav-menu-inventory";
 import { MobileCalculatorButton } from "@/components/real-estate/header/MobileCalculatorButton";
 
-type MobileSectionKey = NavMenuKey | null;
+type MobileSectionKey = NavMenuKey | "international" | null;
 
 function MobileMenuSection({
   title,
@@ -178,6 +178,39 @@ export function MobileNavSheet({
                   </div>
                 </MobileMenuSection>
               ))}
+
+              {/* International — always shown */}
+              <MobileMenuSection
+                title="INTERNATIONAL"
+                open={openSection === "international"}
+                onToggle={() =>
+                  setOpenSection((prev) => (prev === "international" ? null : "international"))
+                }
+              >
+                <div className="grid gap-2">
+                  {[
+                    { flag: "🇪🇺", label: "EUROPE", path: "/international/europe" },
+                    { flag: "🇬🇧", label: "UNITED KINGDOM", path: "/international/uk" },
+                    { flag: "🇵🇰", label: "PAKISTAN", path: "/international/pakistan" },
+                  ].map((r) => (
+                    <MobileMenuItem
+                      key={r.path}
+                      label={`${r.flag} ${r.label}`}
+                      onClick={() => {
+                        navigate(r.path);
+                        onOpenChange(false);
+                      }}
+                    />
+                  ))}
+                  <MobileMenuItem
+                    label="VIEW ALL INTERNATIONAL"
+                    onClick={() => {
+                      navigate("/international");
+                      onOpenChange(false);
+                    }}
+                  />
+                </div>
+              </MobileMenuSection>
 
               <div className="rounded-[5px] bg-muted/35 p-4 ring-1 ring-black/5">
                 <div className="text-xs font-semibold text-muted-foreground">
